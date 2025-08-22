@@ -1,137 +1,117 @@
-import multer from 'multer';
+import multer from "multer";
 import dotenv from "dotenv";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { OpenAI } from "openai";
 import PDF from "pdf-extraction";
-import * as cvModel from '../models/CvModel.js'
+import * as cvModel from "../models/CvModel.js";
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage }).array('cv[]', 200);
+const upload = multer({ storage }).array("cv[]", 200);
 
 export const cvs = async (req, res) => {
-    upload(req, res, async (err) => {
-        if (err) {
-            console.error('Error al subir los archivos:', err);
-            return res.status(500).json({ error: 'Error al subir los archivos' });
-        }
+  upload(req, res, async (err) => {
+    if (err) {
+      console.error("Error al subir los archivos:", err);
+      return res.status(500).json({ error: "Error al subir los archivos" });
+    }
 
-        try {
-            dotenv.config();
+    try {
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_KEY
+      });
 
-            const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      dotenv.config();
 
-            let textCv = '';
-            for (const file of req.files) {
+      let textCv = "";
+      for (const file of req.files) {
+        const dataBuffer = file.buffer;
+        const data = await PDF(dataBuffer);
+        const cv = data.text;
+        textCv += " Otra cv " + cv;
+      }
 
-                const dataBuffer = file.buffer;
-                const data = await PDF(dataBuffer);
-                const cv = data.text;
-                textCv += " Otra cv " + cv;
+      const prompt = `
+        I need to extract important information from several resumes,
+        which should be in JSON format, only JSON format without additional text and inside an array.
+        The company is hiring for a Software Development position.
+        The person must have knowledge in Java with Spring Boot.
+        Required fields:
+        name: Full name of the person.
+        email: Email of the person.
+        date_of_birth: Year of birth, if not found, leave null.
+        phone_number: Phone number.
+        occupation: What the person does (inferred from their experience and education).
+        summary: Complete summary of the person.
+        experience: Relevant work experience (freelance, academic, etc.),
+        If there are explicit start and end dates (e.g., "January 2020 - December 2022"), calculate the years of experience by subtracting the start year from the end year.
+        If the experience is currently ongoing (e.g., "January 2020 - present"), assume the current year (2025) and calculate the years of experience accordingly.
+        If there are no explicit dates, but the duration is mentioned in text (e.g., "3 years of experience"), extract the number of years and put it in the "years" field.
+        If the duration cannot be determined or is less than 1 year, set the value as 0.
+        skills: Technical skills relevant to the occupation.
+        languages: Languages the person speaks, if not specified, assume Spanish.
+        education: Studies, relevant courses.
+        status: "Approved" or "Not Approved". This depends on the job requirements.
+        ai_reason: Reason for approval or non-approval. Explain in ai_reason if the candidate has knowledge in Java and Spring Boot. If not, indicate that the candidate does not meet the requirements for the Software Developer position.
+        Rules to determine the status:
+        Approved: If the candidate has experience or knowledge in Java and Spring Boot, it should be marked as "Approved".
+        Not Approved: If the candidate does not have experience in Java or SpringBoot, they should be marked as "Not Approved". In this case, a justification should be provided in the ai_reason field explaining why the candidate does not meet the requirements.
+        {
+          "name": "Carlos Andrés Pérez",
+          "email": "carlos.perez@email.com",
+          "date_of_birth": "1990-03-15",
+          "phone_number": "+57 312 248 2425",
+          "occupation": "Software Engineer",
+          "summary": "Experienced software engineer with strong expertise in Java, SpringBoot, and full-stack development. Skilled in building scalable applications using modern technologies.",
+          "experience": [
+            {
+              "years": 3,
+              "position": "Software Engineer",
+              "company": "Tech Solutions Ltd.",
+              "description": "Developing and maintaining Java-based applications using SpringBoot and Hibernate. Collaborating with front-end developers to integrate UI components."
+            },
+            {
+              "years": 2,
+              "position": "Freelance Developer",
+              "company": "Freelance",
+              "description": "Worked on multiple client projects, building Java-based backend solutions and integrating REST APIs with front-end systems."
             }
+          ],
+          "skills": ["Java", "SpringBoot", "Hibernate", "Full-stack development", "REST APIs", "Agile methodology"],
+          "languages": ["Spanish", "English"],
+          "education": ["B.Sc. in Computer Science - Universidad Nacional de Colombia"],
+          "status": "Approved",
+          "ai_reason": "This candidate has strong experience in Java and SpringBoot, making him a good fit for the Software Development role."
+        } ${textCv}`;
 
-            
-            const prompt = `
-                    You are an information extractor for resumes (CVs).
-                    You must process the text of the CVs and return ONLY an array of JSON objects, one per CV.
+      const result = await openai.chat.completions.create({
+        model: 'gpt-4.1',  // Usar el modelo GPT-3.5 Turbo
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 4000,  // Limitar los tokens para reducir costos
+        temperature: 0.8,   // Controlar la creatividad/respuesta
+      });
 
-                    The response must be JSON only, without explanations or additional text.
+      let rawText = result.choices[0].message.content;
 
-                    If the CV contains information in English or another language, do not translate it. Keep the information in the original language.
+      //  Quitar bloque de código ```json ... ```
+      rawText = rawText
+        .replace(/```json/g, "")
+        .replace(/```/g, "")
+        .trim();
 
-                    Required fields (use exactly these names and types):
+      let parsed = [];
+      parsed = JSON.parse(rawText);
 
-                    VERY IMPORTANT:
-                    - A CV can have multiple pages. Treat all pages of the same CV as belonging to the same person. 
-                    - Do NOT create duplicates of the same candidate if their name, email, or personal info repeats across pages.
-                    - Instead, MERGE the information across pages into a single JSON object for that candidate.
-                    - Final output MUST have one JSON object per unique candidate (one CV = one object).
+      // for (const candidate of parsed) {
+      //     await cvModel.createCandidate(candidate);
+      // }
 
-                    {
-                        "name": string | null,
-                        "email": string | null,
-                        "date_of_birth": date | , If there is no date of birth, enter 2000-01-01.  // Date of birth.
-                        "occupation": string | null, // Occupation (Do not use abbreviations, write it fully. 
-                            If it is not explicitly mentioned, infer the main title or occupation from the experience or education. 
-                            Example: if they worked for several years as a teacher → "Professor of [subject]". 
-                            If they studied Electronic Engineering → "Electronic Engineer". 
-                            If there is no clear clue, put null.)
-                        "summary": string | null,     // Professional summary, as complete as possible
-                        "experience": [ // Structured list of work experiences. 
-                            // IMPORTANT: Always extract ANY professional or work activity, even if it was freelance, occasional, academic, internships, volunteering, or remote. 
-                            // Do not omit experiences just because they are not in a company.
-                            {
-                                "years": number | null,   // Number of years of experience (integers only).
-                                    // Calculation rules (MUST always be applied if dates or durations are present):
-                                    // 1. If the text says "less than one year", return 0.
-                                    // 2. If a range of years appears (e.g., "2019 - 2023"), calculate the difference (2023 - 2019 = 4).
-                                    // 3. If a range ends in "Present", "Actualidad" or "Presente", calculate from the start date until the current year (2025).
-                                    // 4. If ranges with months appear (e.g., "Jan 2019 - Mar 2021"), convert months to years, rounding down.
-                                    //    Example: 2 years and 11 months → 2,
-                                    //    Example: August 2024 - March 2025 -> 0 (because it is 7 months, less than 1 year)
-                                    // 5. If only an explicit number of years appears (e.g., "3 years of experience"), use that number.
-                                    // 6. If there is work experience text but no explicit dates or durations to calculate from, return null.
-                                    // 7. Only return null if NO dates or durations are given. Never ignore valid ranges.
-                                    // 8. This field must always be a number or null, never text
-                                "position": string | null, // Job title (if not given, summarize from description)
-                                "company": string | null,  // Company, institution, or write "Freelance" / "Independent" if self-employed
-                                "description": string | null // Brief detail of main functions
-                            }
-                        ],
+      console.log(parsed);
 
-                        "skills": [string] | null,    // List of technical skills
-                            - Always extract the candidate's main skills.  
-                            - Avoid being too specific: if multiple skills belong to the same category (e.g., "regulated electrical installations, normal electrical installations, lighting"), group them into one general skill ("Electrical installations").  
-                            - Do not list tasks as skills. Only include them if they represent a broader capability or technical area.  
-                            - Aim for 6 to 12 concise skills maximum.  
-                            - Skills must be short and general (e.g., "Automation", "Electrical networks", "Teamwork").  
-                        "languages": [string] | null, // List of languages. If not present, assume ["Spanish"].
-                        "education": [string] | null, // List of academic degrees
-                        "ai_reason": string | null,   // Brief objective analysis of why this candidate may or may not be suitable for the position, Don't just write “approved” or “not approved.”
-                        "status": "Approved" | "Not Approved" // Based on whether they meet the job requirements
-                    }
-
-                    Vacancy: Software development.
-                    Requirements to filter: work experience and knowledge in Java with SpringBoot.
-
-                    Rules:
-                    - If a field does not appear in the CV, use null.
-                    - The output must be strictly an array of JSON objects, valid to be parsed.
-                    - Include ALL fields even if they are null.
-                    - In "status" write "Approved" only if the profile meets the vacancy requirements, otherwise "Not Approved".
-
-                    Output formatting rules (MUST follow strictly):
-                    - The response must be ONLY valid JSON, inside an array.
-                    - Do NOT concatenate strings with +.
-                    - Do NOT insert "\n" or escape characters unless they literally appear in the CV text.
-                    - Strings must be plain text inside quotes, on one line if possible.
-                    - Do NOT add comments, explanations, or extra text outside the JSON.
-
-                    These are the CVs to process:
-                    ${textCv}
-                    `;
-
-            const result = await model.generateContent(prompt);
-
-            let rawText = result.response.text();
-
-            //  Quitar bloque de código ```json ... ```
-            rawText = rawText
-            .replace(/```json/g, "")
-            .replace(/```/g, "")
-            .trim();
-
-            let parsed = [];
-            parsed = JSON.parse(rawText);
-
-            for (const candidate of parsed) {
-                await cvModel.createCandidate(candidate);
-            }
-
-            return res.status(200).json({ message: 'Candidates saved successfully', parsed });
-              
-        } catch (error) {
-            console.error('Error in controller:', error);
-            return res.status(500).json({ error: 'Error processing a cv' });
-        }
-    });
+      return res
+        .status(200)
+        .json({ message: "Candidates saved successfully", parsed });
+    } catch (error) {
+      console.error("Error in controller:", error);
+      return res.status(500).json({ error: "Error processing a cv" });
+    }
+  });
 };
