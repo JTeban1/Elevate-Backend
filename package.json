@@ -19,6 +19,7 @@
     "fs": "^0.0.1-security",
     "multer": "^2.0.2",
     "mysql2": "^3.14.3",
+    "openai": "^5.15.0",
     "pdf-extraction": "^1.0.2"
   }
 }
