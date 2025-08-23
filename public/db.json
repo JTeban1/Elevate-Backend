@@ -1,0 +1,149 @@
+{
+    "roles": [
+        {
+            "role_id": 1,
+            "name": "Admin"
+        },
+        {
+            "role_id": 2,
+            "name": "Recruiter"
+        }
+    ],
+    "candidates": [
+        {
+            "candidate_id": 1,
+            "name": "Daniel Rivera",
+            "email": "daniel@example.com",
+            "date_of_birth": "1995-04-12",
+            "occupation": "Software Developer",
+            "summary": "5 years of experience in backend and frontend development.",
+            "experience": "[\"Worked at TechCorp (2018-2021)\", \"Worked at DevSolutions (2021-2023)\"]",
+            "skills": "[\"Python\", \"JavaScript\", \"SQL\"]",
+            "languages": "[\"English\", \"Spanish\"]",
+            "education": "[\"BSc Computer Science - University of Bogotá\"]"
+        },
+        {
+            "candidate_id": 2,
+            "name": "Laura Martínez",
+            "email": "laura@example.com",
+            "date_of_birth": "1998-09-25",
+            "occupation": "Data Analyst",
+            "summary": "Experienced in statistical analysis and BI tools.",
+            "experience": "[\"Internship at DataCorp (2019)\", \"Analyst at Insights Ltd (2020-2023)\"]",
+            "skills": "[\"Excel\", \"R\", \"Tableau\", \"SQL\"]",
+            "languages": "[\"English\", \"Spanish\"]",
+            "education": "[\"BSc Statistics - National University\"]"
+        },
+        {
+            "candidate_id": 3,
+            "name": "Juan Camilo Sánchez Méndez",
+            "email": "juancamilosanchezmendez@gmail.com",
+            "date_of_birth": "1998-01-27",
+            "occupation": "Electronic Engineer",
+            "summary": "Professional in electronic engineering with experience in automation and networks.",
+            "experience": "[{\"years\": 2, \"company\": \"Inversiones Cuéllar Tovar\", \"position\": \"Technologist\", \"description\": \"Installation of solar systems and structured cabling.\"}]",
+            "skills": "[\"Electronics\", \"Automation\", \"IT Infrastructure\"]",
+            "languages": "[\"Spanish\"]",
+            "education": "[\"Electronic Engineer - ITFIP\"]"
+        }
+    ],
+    "applications": [
+        {
+            "application_id": 1,
+            "application_date": "2025-08-10",
+            "status": "pending",
+            "ai_reason": "Strong match based on backend experience",
+            "candidate_id": 1,
+            "vacancy_id": 1
+        },
+        {
+            "application_id": 2,
+            "application_date": "2025-08-12",
+            "status": "interview",
+            "ai_reason": "Relevant experience with BI tools",
+            "candidate_id": 2,
+            "vacancy_id": 2
+        },
+        {
+            "application_id": 3,
+            "application_date": "2025-08-15",
+            "status": "offered",
+            "ai_reason": "Offer extended after technical test",
+            "candidate_id": 3,
+            "vacancy_id": 1
+        },
+        {
+            "application_id": 4,
+            "application_date": "2025-08-18",
+            "status": "accepted",
+            "ai_reason": "Offer accepted by candidate",
+            "candidate_id": 2,
+            "vacancy_id": 4
+        },
+        {
+            "application_id": 5,
+            "application_date": "2025-07-20",
+            "status": "rejected",
+            "ai_reason": "Insufficient leadership experience",
+            "candidate_id": 3,
+            "vacancy_id": 3
+        }
+    ],
+    "vacancies": [
+        {
+            "vacancy_id": 1,
+            "title": "Software Engineer",
+            "description": "Responsible for backend development",
+            "salary": 4500.00,
+            "status": "open",
+            "creation_date": "2025-08-01"
+        },
+        {
+            "vacancy_id": 2,
+            "title": "Data Analyst",
+            "description": "Analyze and visualize company data",
+            "salary": 3500.00,
+            "status": "open",
+            "creation_date": "2025-08-05"
+        },
+        {
+            "vacancy_id": 3,
+            "title": "Project Manager",
+            "description": "Oversee project execution and delivery",
+            "salary": 5000.00,
+            "status": "paused",
+            "creation_date": "2025-07-15"
+        },
+        {
+            "vacancy_id": 4,
+            "title": "UX Designer",
+            "description": "Design user-friendly interfaces and experiences",
+            "salary": 3200.00,
+            "status": "closed",
+            "creation_date": "2025-06-10"
+        }
+    ],
+    "users": [
+        {
+            "user_id": 1,
+            "name": "Alice Johnson",
+            "email": "alice@example.com",
+            "password": "hashed_password1",
+            "role_id": 1
+        },
+        {
+            "user_id": 2,
+            "name": "Bob Smith",
+            "email": "bob@example.com",
+            "password": "hashed_password2",
+            "role_id": 2
+        },
+        {
+            "user_id": 3,
+            "name": "Charlie Brown",
+            "email": "charlie@example.com",
+            "password": "hashed_password3",
+            "role_id": 2
+        }
+    ]
+}
