@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
-import CvController from './app/routes/CvRoutes.js'
+import CvController from './app/routes/CandidatesRouter.js'
 
 // Load environment variables from .env file
 dotenv.config();

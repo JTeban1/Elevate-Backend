@@ -1,11 +1,12 @@
 {
-  "name": "proyect",
+  "name": "project",
   "version": "1.0.0",
   "main": "cv.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "node app.js",
+    "dev": "node --watch ./app.js"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +21,7 @@
     "multer": "^2.0.2",
     "mysql2": "^3.14.3",
     "openai": "^5.15.0",
+    "sequelize": "^6.37.7",
     "pdf-extraction": "^1.0.2"
   }
 }

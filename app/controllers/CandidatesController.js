@@ -2,7 +2,7 @@ import multer from "multer";
 import dotenv from "dotenv";
 import { OpenAI } from "openai";
 import PDF from "pdf-extraction";
-import * as cvModel from "../models/CvModel.js";
+import * as cvModel from "../models/services/CandidateServices.js";
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage }).array("cv[]", 200);
@@ -54,6 +54,7 @@ export const cvs = async (req, res) => {
         Rules to determine the status:
         Approved: If the candidate has experience or knowledge in Java and Spring Boot, it should be marked as "Approved".
         Not Approved: If the candidate does not have experience in Java or SpringBoot, they should be marked as "Not Approved". In this case, a justification should be provided in the ai_reason field explaining why the candidate does not meet the requirements.
+        This is an output example:
         {
           "name": "Carlos Andrés Pérez",
           "email": "carlos.perez@email.com",
@@ -100,12 +101,12 @@ export const cvs = async (req, res) => {
       let parsed = [];
       parsed = JSON.parse(rawText);
 
-      // for (const candidate of parsed) {
-      //     await cvModel.createCandidate(candidate);
-      // }
+      for (const candidate of parsed) {
+          await cvModel.createCandidate(candidate);
+      }
 
       console.log(parsed);
-
+      
       return res
         .status(200)
         .json({ message: "Candidates saved successfully", parsed });
@@ -114,4 +115,16 @@ export const cvs = async (req, res) => {
       return res.status(500).json({ error: "Error processing a cv" });
     }
   });
+};
+
+
+export const getAllCandidatesController = async (req, res) => {
+    try {
+        const allCandidates = await cvModel.getAllCandidates();
+        console.log('All candidates from separate function:', allCandidates);
+        return res.status(200).json(allCandidates);
+    } catch (error) {
+        console.error("Error fetching candidates:", error);
+        return res.status(500).json({ error: "Error fetching candidates" });
+    }
 };
