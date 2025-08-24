@@ -9,6 +9,29 @@
             "name": "Recruiter"
         }
     ],
+    "users": [
+        {
+            "user_id": 4,
+            "name": "Alice Johnson",
+            "email": "alice@example.com",
+            "password": "hashed_password1",
+            "role_id": 1
+        },
+        {
+            "user_id": 5,
+            "name": "Bob Smith",
+            "email": "bob@example.com",
+            "password": "hashed_password2",
+            "role_id": 2
+        },
+        {
+            "user_id": 6,
+            "name": "Charlie Brown",
+            "email": "charlie@example.com",
+            "password": "hashed_password3",
+            "role_id": 2
+        }
+    ],
     "candidates": [
         {
             "candidate_id": 1,
@@ -36,57 +59,27 @@
         },
         {
             "candidate_id": 3,
+            "name": "JUAN DAVID BARRERA PATIÑO",
+            "email": "barrera.juanda7@gmail.com",
+            "date_of_birth": "2000-01-01",
+            "occupation": "Foreign Language Teacher",
+            "summary": "Responsible, proactive and passionate person, always willing to cooperate and work in team. Enthusiastic about learning and teaching languages.",
+            "experience": "[{\"years\": 6, \"company\": \"Blendex academy\", \"position\": \"English teacher\", \"description\": \"Designing and implementing EFL didactic sequences for students of different age groups. Assessing students' oral, written, listening, and reading skills using summative and formative assessment tools. Handling administrative tasks such as taking student attendance for each lesson and uploading comments to their academic records\"}, {\"years\": 0, \"company\": \"I.E Santos Ángeles Custodios\", \"position\": \"French school teacher\", \"description\": \"Observation of cooperative teacher’s language class and further reflection on pedagogical and didactic concerns. Planning and implementation of French as a foreing language classes to 5th and 6th grade students. Creation and implemention of didactic tools and tasks in order to foster a more encouraging class environment. Statement and developement of a research project whose goal was the solution of a educational problem. Backing up of different language, cultural and institutional related needs requested by the cooperative teacher or the institution.\"}, {\"years\": 4, \"company\": null, \"position\": \"Foreing Language Teacher\", \"description\": \"Academic guidance to students. Planning and implementation of remote lessons\"}]",
+            "skills": "[\"Team work\", \"Conflict resolution\", \"Assertive communication\", \"Languages (English & French)\", \"Teaching\", \"Curriculum Development\", \"Assessment\"]",
+            "languages": "[\"Spanish\", \"English\", \"French\"]",
+            "education": "[\"B.A. in Foreign Language Teaching (English & French) Universidad de Antioquia\"]"
+        },
+        {
+            "candidate_id": 4,
             "name": "Juan Camilo Sánchez Méndez",
             "email": "juancamilosanchezmendez@gmail.com",
             "date_of_birth": "1998-01-27",
             "occupation": "Electronic Engineer",
-            "summary": "Professional in electronic engineering with experience in automation and networks.",
-            "experience": "[{\"years\": 2, \"company\": \"Inversiones Cuéllar Tovar\", \"position\": \"Technologist\", \"description\": \"Installation of solar systems and structured cabling.\"}]",
-            "skills": "[\"Electronics\", \"Automation\", \"IT Infrastructure\"]",
+            "summary": "Professional in electronic engineering, with knowledge and experience in communication networks, electrical networks, electronic systems, automation, industrial instrumentation, analog control, digital control, renewable energies, information technology infrastructure, handling of electronics software, office suite, software for programming electronic and computer systems.",
+            "experience": "[{\"years\": 1, \"company\": \"INVERSIONES CUELLAR TOVAR Y CIA LTDA.\", \"position\": \"Electronic and Electrical Technologist\", \"description\": \"design, installation and configuration of fixed service radio link...\"}, {\"years\": 1, \"company\": \"INVERSIONES CUELLAR TOVAR Y CIA LTDA.\", \"position\": \"Electronic Technician\", \"description\": \"installation of regulated electrical network with a two-phase UPS...\"}]",
+            "skills": "[\"Electronic Systems\", \"Electrical Networks\", \"Automation\", \"Industrial Instrumentation\", \"Renewable Energies\", \"IT Infrastructure\", \"Software Programming\", \"Network Design\", \"Solar Panel Installation\", \"Technical Report Writing\"]",
             "languages": "[\"Spanish\"]",
-            "education": "[\"Electronic Engineer - ITFIP\"]"
-        }
-    ],
-    "applications": [
-        {
-            "application_id": 1,
-            "application_date": "2025-08-10",
-            "status": "pending",
-            "ai_reason": "Strong match based on backend experience",
-            "candidate_id": 1,
-            "vacancy_id": 1
-        },
-        {
-            "application_id": 2,
-            "application_date": "2025-08-12",
-            "status": "interview",
-            "ai_reason": "Relevant experience with BI tools",
-            "candidate_id": 2,
-            "vacancy_id": 2
-        },
-        {
-            "application_id": 3,
-            "application_date": "2025-08-15",
-            "status": "offered",
-            "ai_reason": "Offer extended after technical test",
-            "candidate_id": 3,
-            "vacancy_id": 1
-        },
-        {
-            "application_id": 4,
-            "application_date": "2025-08-18",
-            "status": "accepted",
-            "ai_reason": "Offer accepted by candidate",
-            "candidate_id": 2,
-            "vacancy_id": 4
-        },
-        {
-            "application_id": 5,
-            "application_date": "2025-07-20",
-            "status": "rejected",
-            "ai_reason": "Insufficient leadership experience",
-            "candidate_id": 3,
-            "vacancy_id": 3
+            "education": "[\"Electronic Engineer ITFIP\", \"Technologist in Industrial Electronic Automation ITFIP\", \"Professional Technician in Electronic Maintenance ITFIP\", \"Technical Commercial Baccalaureate\"]"
         }
     ],
     "vacancies": [
@@ -96,7 +89,7 @@
             "description": "Responsible for backend development",
             "salary": 4500.00,
             "status": "open",
-            "creation_date": "2025-08-01"
+            "creation_date": "2025-08-22 06:07:36"
         },
         {
             "vacancy_id": 2,
@@ -104,7 +97,7 @@
             "description": "Analyze and visualize company data",
             "salary": 3500.00,
             "status": "open",
-            "creation_date": "2025-08-05"
+            "creation_date": "2025-08-22 06:07:36"
         },
         {
             "vacancy_id": 3,
@@ -112,38 +105,177 @@
             "description": "Oversee project execution and delivery",
             "salary": 5000.00,
             "status": "paused",
-            "creation_date": "2025-07-15"
+            "creation_date": "2025-08-22 06:07:36"
         },
         {
             "vacancy_id": 4,
             "title": "UX Designer",
             "description": "Design user-friendly interfaces and experiences",
             "salary": 3200.00,
+            "status": "open",
+            "creation_date": "2025-08-23 00:00:00"
+        },
+        {
+            "vacancy_id": 5,
+            "title": "Full Stack Developer",
+            "description": "Work on both frontend and backend projects",
+            "salary": 4800.00,
+            "status": "open",
+            "creation_date": "2025-08-23 00:00:00"
+        },
+        {
+            "vacancy_id": 6,
+            "title": "Systems Engineer",
+            "description": "Manage IT infrastructure and automation projects",
+            "salary": 4000.00,
+            "status": "open",
+            "creation_date": "2025-08-23 00:00:00"
+        },
+        {
+            "vacancy_id": 7,
+            "title": "QA Automation Engineer",
+            "description": "Develop and maintain automated test frameworks",
+            "salary": 3700.00,
+            "status": "open",
+            "creation_date": "2025-08-23 00:00:00"
+        },
+        {
+            "vacancy_id": 8,
+            "title": "Cloud Architect",
+            "description": "Design and implement scalable cloud solutions",
+            "salary": 6000.00,
+            "status": "open",
+            "creation_date": "2025-08-23 00:00:00"
+        },
+        {
+            "vacancy_id": 9,
+            "title": "Cybersecurity Specialist",
+            "description": "Ensure security and compliance across systems",
+            "salary": 5200.00,
+            "status": "open",
+            "creation_date": "2025-08-23 00:00:00"
+        },
+        {
+            "vacancy_id": 10,
+            "title": "Machine Learning Engineer",
+            "description": "Build and deploy ML models",
+            "salary": 5800.00,
+            "status": "open",
+            "creation_date": "2025-08-23 00:00:00"
+        },
+        {
+            "vacancy_id": 11,
+            "title": "Business Analyst",
+            "description": "Bridge business requirements with technical teams",
+            "salary": 4000.00,
             "status": "closed",
-            "creation_date": "2025-06-10"
+            "creation_date": "2025-08-23 00:00:00"
+        },
+        {
+            "vacancy_id": 12,
+            "title": "Product Manager",
+            "description": "Define product strategy and manage roadmap",
+            "salary": 5500.00,
+            "status": "open",
+            "creation_date": "2025-08-23 00:00:00"
         }
     ],
-    "users": [
+    "applications": [
         {
-            "user_id": 1,
-            "name": "Alice Johnson",
-            "email": "alice@example.com",
-            "password": "hashed_password1",
-            "role_id": 1
+            "application_id": 1,
+            "application_date": "2025-08-22 06:07:50",
+            "status": "pending",
+            "ai_reason": "Strong match based on backend experience",
+            "candidate_id": 1,
+            "vacancy_id": 1
         },
         {
-            "user_id": 2,
-            "name": "Bob Smith",
-            "email": "bob@example.com",
-            "password": "hashed_password2",
-            "role_id": 2
+            "application_id": 2,
+            "application_date": "2025-08-22 06:07:50",
+            "status": "interview",
+            "ai_reason": "Relevant experience with BI tools",
+            "candidate_id": 2,
+            "vacancy_id": 2
         },
         {
-            "user_id": 3,
-            "name": "Charlie Brown",
-            "email": "charlie@example.com",
-            "password": "hashed_password3",
-            "role_id": 2
+            "application_id": 3,
+            "application_date": "2025-08-23 09:00:00",
+            "status": "pending",
+            "ai_reason": "Full stack background fits role requirements",
+            "candidate_id": 1,
+            "vacancy_id": 5
+        },
+        {
+            "application_id": 4,
+            "application_date": "2025-08-23 09:05:00",
+            "status": "pending",
+            "ai_reason": "Cloud and infra collaboration experience",
+            "candidate_id": 1,
+            "vacancy_id": 6
+        },
+        {
+            "application_id": 5,
+            "application_date": "2025-08-23 09:10:00",
+            "status": "interview",
+            "ai_reason": "Data modeling and dashboards match the position",
+            "candidate_id": 2,
+            "vacancy_id": 11
+        },
+        {
+            "application_id": 6,
+            "application_date": "2025-08-23 09:15:00",
+            "status": "pending",
+            "ai_reason": "Statistical background suited to ML pipelines",
+            "candidate_id": 2,
+            "vacancy_id": 10
+        },
+        {
+            "application_id": 7,
+            "application_date": "2025-08-23 09:20:00",
+            "status": "pending",
+            "ai_reason": "Security awareness complements electronics profile",
+            "candidate_id": 4,
+            "vacancy_id": 9
+        },
+        {
+            "application_id": 8,
+            "application_date": "2025-08-23 09:25:00",
+            "status": "pending",
+            "ai_reason": "QA approach aligns with attention to detail",
+            "candidate_id": 3,
+            "vacancy_id": 7
+        },
+        {
+            "application_id": 9,
+            "application_date": "2025-08-23 09:30:00",
+            "status": "rejected",
+            "ai_reason": "Profile not aligned with UX design requirements",
+            "candidate_id": 3,
+            "vacancy_id": 4
+        },
+        {
+            "application_id": 10,
+            "application_date": "2025-08-23 09:35:00",
+            "status": "pending",
+            "ai_reason": "Electronics + infra fit systems engineering tasks",
+            "candidate_id": 4,
+            "vacancy_id": 6
+        },
+        {
+            "application_id": 11,
+            "application_date": "2025-08-23 09:40:00",
+            "status": "offered",
+            "ai_reason": "Backend strengths match Software Engineer needs",
+            "candidate_id": 1,
+            "vacancy_id": 1
+        },
+        {
+            "application_id": 12,
+            "application_date": "2025-08-23 09:45:00",
+            "status": "pending",
+            "ai_reason": "Experience with dashboards suits product analytics",
+            "candidate_id": 2,
+            "vacancy_id": 12
         }
     ]
 }

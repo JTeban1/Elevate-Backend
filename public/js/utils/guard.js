@@ -7,7 +7,7 @@
  * @returns {boolean} true si hay sesión activa
  */
 export function isLoggedIn() {
-    return !!localStorage.getItem("user");
+    return !!localStorage.getItem("currentUser");
 }
 
 /**
@@ -16,7 +16,7 @@ export function isLoggedIn() {
  */
 export function getUser() {
     try {
-        const userData = localStorage.getItem("user");
+        const userData = localStorage.getItem("currentUser");
         return userData ? JSON.parse(userData) : null;
     } catch (error) {
         console.error("Error parsing user data:", error);
@@ -30,7 +30,7 @@ export function getUser() {
  */
 export function setUser(userData) {
     try {
-        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("currentUser", JSON.stringify(userData));
     } catch (error) {
         console.error("Error saving user data:", error);
     }
@@ -40,7 +40,7 @@ export function setUser(userData) {
  * Cierra la sesión del usuario
  */
 export function logout() {
-    localStorage.removeItem("user");
+    localStorage.removeItem("currentUser");
     window.location.href = "index.html";
 }
 
@@ -50,6 +50,19 @@ export function logout() {
  */
 export function guard(currentPage) {
     const logged = isLoggedIn();
+    const user = getUser();
+
+    console.log('🛡️ GUARD:', {
+        currentPage,
+        isLoggedIn: logged,
+        user: user?.name || 'None',
+        localStorage: localStorage.getItem('currentUser') ? '✅ Has data' : '❌ Empty'
+    });
+
+    // Guardar la página actual para redirigir después del login
+    if (logged && !currentPage.includes('login.html')) {
+        localStorage.setItem('returnUrl', currentPage);
+    }
 
     // Páginas que requieren autenticación
     const protectedPages = [
@@ -62,23 +75,24 @@ export function guard(currentPage) {
         'vacancie.html'
     ];
 
-    // Páginas públicas (no requieren autenticación)
-    const publicPages = [
-        'index.html',
-        'login.html'
-    ];
-
     // Si está en una página protegida y no está logueado
     if (protectedPages.some(page => currentPage.includes(page)) && !logged) {
+        console.log('🚫 Access denied - redirecting to login');
         window.location.href = "login.html";
         return;
     }
 
     // Si está en login y ya está logueado
     if (currentPage.includes('login.html') && logged) {
-        window.location.href = "dashboard.html";
+        console.log('✅ Already logged in - redirecting back');
+        // Verificar si hay una página anterior guardada
+        const returnUrl = localStorage.getItem('returnUrl') || 'dashboard.html';
+        localStorage.removeItem('returnUrl'); // Limpiar después de usar
+        window.location.href = returnUrl;
         return;
     }
+
+    console.log('✅ Guard passed - access allowed');
 }
 
 /**

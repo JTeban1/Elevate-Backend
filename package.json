@@ -1,4 +1,7 @@
 {
+  "devDependencies": {
+    "json-server": "^1.0.0-beta.3"
+  },
   "name": "project",
   "version": "1.0.0",
   "main": "cv.js",
@@ -6,7 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
-    "dev": "node --watch ./app.js"
+    "dev": "node --watch ./app.js",
+    "server": "json-server --watch db.json --port 8000"
   },
   "keywords": [],
   "author": "",
