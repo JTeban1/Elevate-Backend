@@ -100,7 +100,7 @@ function createPrompt(cvs, vacancy, filters) {
       }
 
       Rules:
-      name: Full name of the person correctly
+      name: Full name of the person correctly For example Juan David Barrera Fernandez
       email: Person’s email
       date_of_birth: Person’s date of birth
       phone_number: Person’s phone number
@@ -160,6 +160,8 @@ export const processUploadedCVsController = async (req, res) => {
     let parsedResponse;
     try {
       parsedResponse = JSON.parse(aiResponse);
+      console.log(parsedResponse);
+
     } catch (err) {
       parsedResponse = aiResponse;
     }
@@ -211,7 +213,10 @@ export const processUploadedCVsController = async (req, res) => {
       created.push({ candidate, application });
     }
 
-    return res.status(200).json({ cvs: parsedResponse, created });
+    return res.status(201).json({
+      success: true,
+      message: "CV successfully registered"
+    });
 
   } catch (error) {
     console.error("Error processing CVs:", error);

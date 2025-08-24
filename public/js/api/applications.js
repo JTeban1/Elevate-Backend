@@ -1,6 +1,6 @@
 import { fetchData, createData, updateData, deleteData } from "./api.js";
 
-const ENDPOINT = "applications";
+const ENDPOINT = "api/applications";
 
 export function getApplications() {
     return fetchData(ENDPOINT);

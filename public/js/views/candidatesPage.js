@@ -1,6 +1,7 @@
-import { guard } from '../utils/guard.js';
+// import { guard } from '../utils/guard.js';
 import { getCandidates } from '../api/candidates.js';
-import { fetchData } from '../api/api.js';
+import { getApplications } from '../api/applications.js';
+
 
 // Estado global de la aplicacion
 let candidates = [];
@@ -19,7 +20,7 @@ const itemsPerPage = 4;
 async function loadCandidates() {
     try {
         candidates = await getCandidates();
-        applications = await fetchData('applications');
+        applications = await getApplications();
 
         renderCandidatesCards();
         updateStats();
@@ -528,7 +529,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log(`=� Protecting page: ${currentPage}`);
 
     // Ejecutar guard para proteger la p�gina
-    guard(currentPage);
+    // guard(currentPage);
 
     console.log(`=e Initializing candidates view for: ${currentPage}`);
 
