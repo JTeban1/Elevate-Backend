@@ -48,3 +48,5 @@ export const getAllCandidates = async () => {
         throw error;
     }
 };
+
+// Test placeholder
