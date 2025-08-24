@@ -735,16 +735,62 @@ function showMessage(message, type = 'info') {
 }
 
 /**
+ * Configurar dropdown del usuario
+ */
+function setupUserDropdown() {
+    const userAvatar = document.getElementById('user-avatar');
+    const userDropdown = document.getElementById('user-dropdown');
+
+    if (userAvatar) {
+        userAvatar.addEventListener('click', function () {
+            userDropdown?.classList.toggle('hidden');
+        });
+    }
+
+    document.addEventListener('click', function (event) {
+        if (!userAvatar?.contains(event.target) && !userDropdown?.contains(event.target)) {
+            userDropdown?.classList.add('hidden');
+        }
+    });
+
+    const loggedUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const userName = loggedUser.name || 'Usuario';
+    const userEmail = loggedUser.email || 'usuario@example.com';
+    const initials = userName.split(' ').map(name => name.charAt(0)).join('');
+
+    const userInitialsElement = document.getElementById('user-initials');
+    const userNameElement = document.getElementById('user-name');
+    const userEmailElement = document.getElementById('user-email');
+
+    if (userInitialsElement) userInitialsElement.textContent = initials;
+    if (userNameElement) userNameElement.textContent = userName;
+    if (userEmailElement) userEmailElement.textContent = userEmail;
+
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('returnUrl');
+            window.location.href = 'index.html';
+        });
+    }
+}
+
+/**
  * Inicialización cuando el DOM está listo
  */
 document.addEventListener("DOMContentLoaded", () => {
-    const currentPage = window.location.pathname.split('/').pop() || 'vacancies.html';
+    const currentPage = window.location.pathname.split('/').pop() || 'vacanciesPage.html';
     console.log(`🛡️ Protecting page: ${currentPage}`);
 
     // Ejecutar guard para proteger la página
     guard(currentPage);
 
     console.log(`📋 Initializing vacancies CRUD for: ${currentPage}`);
+
+    // Configurar dropdown del usuario
+    setupUserDropdown();
 
     // Cargar vacantes al iniciar
     loadVacancies();
