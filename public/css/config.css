@@ -138,17 +138,21 @@
     --border-radius-2xl: 1rem;
     /* 16px */
 
-    /* Sombras Sutiles y Profesionales */
-    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    /* Sombras Profesionales Ultra-refinadas */
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.03);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08);
     --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --shadow-glow: 0 0 0 1px rgb(59 130 246 / 0.05), 0 1px 3px 0 rgb(59 130 246 / 0.1);
+    --shadow-focus: 0 0 0 3px rgb(59 130 246 / 0.12);
 
-    /* === TRANSICIONES PROFESIONALES === */
-    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    /* === TRANSICIONES PROFESIONALES MEJORADAS === */
+    --transition-fast: 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --transition-normal: 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --transition-slow: 500ms cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-bouncy: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    --transition-smooth: 600ms cubic-bezier(0.16, 1, 0.3, 1);
 
     /* === Z-INDEX === */
     --z-dropdown: 1000;
@@ -197,8 +201,8 @@
 }
 
 .card-professional:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
     border-color: var(--color-gray-300);
 }
 
@@ -267,55 +271,101 @@
     color: var(--color-info);
 }
 
-/* Hover Effects Sutiles */
+/* Hover Effects Ultra-sutiles */
 .hover-lift {
     transition: all var(--transition-normal);
 }
 
 .hover-lift:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
 }
 
-/* Animaciones Profesionales */
+.hover-scale {
+    transition: all var(--transition-normal);
+}
+
+.hover-scale:hover {
+    transform: scale(1.02);
+}
+
+.hover-glow {
+    transition: all var(--transition-normal);
+}
+
+.hover-glow:hover {
+    box-shadow: var(--shadow-glow);
+}
+
+/* Animaciones Profesionales - Mejoradas */
 .animate-fade-in {
-    animation: fadeIn 0.6s ease-out;
+    animation: fadeInImproved 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
 .animate-slide-up {
-    animation: slideUp 0.6s ease-out;
+    animation: slideUpImproved 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
-@keyframes fadeIn {
-    from {
+/* Animación fade-in más sutil y profesional */
+@keyframes fadeInImproved {
+    0% {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(8px) scale(0.98);
     }
 
-    to {
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes slideUpImproved {
+    0% {
+        opacity: 0;
+        transform: translateY(12px) scale(0.97);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Animación ultra-sutil para elementos delicados */
+.animate-fade-in-subtle {
+    animation: fadeInSubtle 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fadeInSubtle {
+    0% {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    100% {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* Delays escalonados más naturales */
+.animate-delay-100 {
+    animation-delay: 0.1s;
 }
 
-/* Delays para animaciones */
 .animate-delay-200 {
     animation-delay: 0.2s;
 }
 
+.animate-delay-300 {
+    animation-delay: 0.3s;
+}
+
 .animate-delay-400 {
     animation-delay: 0.4s;
+}
+
+.animate-delay-500 {
+    animation-delay: 0.5s;
 }
 
 /* Glass Effect Sutil */
@@ -444,11 +494,82 @@
     transition: opacity var(--transition-normal);
 }
 
-/* Focus states profesionales */
+/* Estados Interactivos Mejorados */
 .focus-professional:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+    box-shadow: var(--shadow-focus);
     border-color: var(--color-primary);
+    transform: translateY(-0.5px);
+}
+
+/* Estados de botones mejorados */
+.btn-primary:active {
+    transform: translateY(0px) scale(0.98);
+    transition: all 100ms ease;
+}
+
+.btn-secondary:active {
+    transform: translateY(0px) scale(0.98);
+    transition: all 100ms ease;
+}
+
+/* Micro-interacciones para enlaces */
+.link-hover {
+    position: relative;
+    transition: all var(--transition-normal);
+}
+
+.link-hover:hover {
+    color: var(--color-primary);
+}
+
+.link-hover::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--color-primary);
+    transition: width var(--transition-normal);
+}
+
+.link-hover:hover::after {
+    width: 100%;
+}
+
+/* Loading states sutiles */
+.loading-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Shimmer effect para loading */
+.shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
 }
 
 /* Utility classes para colores */

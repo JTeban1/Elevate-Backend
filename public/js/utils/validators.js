@@ -6,3 +6,7 @@ export function isEmailValid(email) {
 export function isEmpty(value) {
     return !value || value.trim() === "";
 }
+
+export function isPasswordValid(password) {
+    return !isEmpty(password) && password.length >= 4;
+}
