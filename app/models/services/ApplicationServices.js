@@ -1,6 +1,17 @@
+
 import Application from '../entities/ApplicationEntity.js';
 import Candidate from '../entities/CandidateEntity.js';
 import Vacancy from '../entities/VacanciesEntity.js';
+
+export const createApplication = async (applicationData) => {
+  try {
+    const newApplication = await Application.create(applicationData);
+    return newApplication;
+  } catch (error) {
+    console.error('Error creating application:', error);
+    throw error;
+  }
+};
 
 export const getApplications = async () => {
     try {

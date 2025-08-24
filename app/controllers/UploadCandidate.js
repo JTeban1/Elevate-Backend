@@ -100,7 +100,7 @@ function createPrompt(cvs, vacancy, filters) {
       }
 
       Rules:
-      name: Full name of the person
+      name: Full name of the person correctly
       email: Person’s email
       date_of_birth: Person’s date of birth
       phone_number: Person’s phone number
@@ -110,7 +110,7 @@ function createPrompt(cvs, vacancy, filters) {
       skills: Technical skills of the person according to their profession
       languages: Languages spoken by the person and their level
       education: Person’s education, starting with high school, technical, technologist, etc., and then the institution
-      status: Status to determine if the person meets the job requirements; if yes, “Approved”, otherwise “Not Approved”
+      status: Status to determine if the person meets the job requirements; if yes, "approved", otherwise "Rejected"
       ai_reason: Reason why the person is approved or not for the vacancy. If approved, explain why they would be a good addition to the company
       references: Personal references of the person with their information
 
@@ -128,33 +128,27 @@ function createPrompt(cvs, vacancy, filters) {
 export const processUploadedCVsController = async (req, res) => {
   try {
     const files = req.files;
-    const vacancy = req.body.vacancy;
+    const vacancy = req.body.vacancyTitle;
     const vacancyFilter = req.body.vacancy_filter;
-
-    console.log(vacancy, vacancyFilter);
+    const vacancyId = req.body.vacancy_id;
 
     if (!files || files.length === 0) {
-      return res.status(400).json({ error: "No se enviaron archivos" });
+      return res.status(400).json({ error: "No files sent" });
     }
 
     let cvsText = [];
-
     for (const file of files) {
       const pdfParser = new PDFParser();
-
       const pdfText = await new Promise((resolve, reject) => {
         pdfParser.on("pdfParser_dataError", err => reject(err.parserError));
         pdfParser.on("pdfParser_dataReady", pdfData => resolve(extractCleanText(pdfData)));
         pdfParser.parseBuffer(file.buffer);
       });
-
       cvsText.push(pdfText);
     }
 
     const prompt = createPrompt(cvsText, vacancy, vacancyFilter);
-
     const openai = new OpenAI({ apiKey: process.env.OPENAI_KEY });
-
     const result = await openai.chat.completions.create({
       model: 'gpt-4.1',
       messages: [{ role: 'user', content: prompt }],
@@ -162,18 +156,62 @@ export const processUploadedCVsController = async (req, res) => {
       temperature: 0.5,
     });
 
-
     let aiResponse = result.choices[0].message.content;
-
     let parsedResponse;
     try {
       parsedResponse = JSON.parse(aiResponse);
-
     } catch (err) {
       parsedResponse = aiResponse;
     }
 
-    return res.status(200).json({ cvs: parsedResponse });
+    // --- CREAR CANDIDATO Y APLICACIÓN ---
+    // Importar aquí para evitar ciclos si es necesario
+    const Candidate = (await import('../models/entities/CandidateEntity.js')).default;
+    const { createCandidate } = await import('../models/services/CandidateServices.js');
+    const { createApplication } = await import('../models/services/ApplicationServices.js');
+
+    // parsedResponse puede ser un array o un solo objeto
+    const candidates = Array.isArray(parsedResponse) ? parsedResponse : [parsedResponse];
+    const created = [];
+    for (const candidateData of candidates) {
+      // Buscar candidato por email
+      // Usar el servicio para crear o actualizar el candidato
+      const candidateId = await createCandidate({
+        name: candidateData.name,
+        email: candidateData.email,
+        phone: candidateData.phone_number || candidateData.phone || '',
+        date_of_birth: candidateData.date_of_birth,
+        occupation: candidateData.occupation,
+        summary: candidateData.summary,
+        experience: candidateData.experience || null,
+        skills: candidateData.skills || null,
+        languages: candidateData.languages || null,
+        education: candidateData.education || null,
+      });
+      // Obtener el objeto candidato completo
+      let candidate = await Candidate.findByPk(candidateId);
+      // Crear la aplicación usando el servicio (puedes manejar duplicados en el servicio si lo deseas)
+      let application;
+      try {
+        application = await createApplication({
+          candidate_id: candidate.candidate_id,
+          vacancy_id: vacancyId,
+          status: candidateData.status?.toLowerCase() || 'pending',
+          ai_reason: candidateData.ai_reason || '',
+        });
+      } catch (err) {
+        // Si hay error por duplicado, puedes buscar la existente
+        application = await (await import('../models/entities/ApplicationEntity.js')).default.findOne({
+          where: {
+            candidate_id: candidate.candidate_id,
+            vacancy_id: vacancyId,
+          }
+        });
+      }
+      created.push({ candidate, application });
+    }
+
+    return res.status(200).json({ cvs: parsedResponse, created });
 
   } catch (error) {
     console.error("Error processing CVs:", error);

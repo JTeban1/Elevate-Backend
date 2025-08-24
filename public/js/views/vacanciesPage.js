@@ -1,4 +1,4 @@
-import { guard } from '../utils/guard.js';
+// import { guard } from '../utils/guard.js';
 import { getVacancies, createVacancy as createVacancyAPI, updateVacancy as updateVacancyAPI, deleteVacancy as deleteVacancyAPI } from '../api/vacancies.js';
 
 // Estado global de la aplicación
@@ -595,6 +595,7 @@ function openEditModal(vacancyId) {
 
     // Llenar formulario con datos existentes
     form.querySelector('input[placeholder*="Senior Software Engineer"]').value = vacancy.title;
+    form.querySelector('input[placeholder*="80000"]').value = vacancy.salary;
     form.querySelector('textarea[placeholder*="principales responsabilidades"]').value = vacancy.description;
     form.querySelector('select[name="status"]')?.setAttribute('value', vacancy.status);
 
@@ -785,7 +786,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log(`🛡️ Protecting page: ${currentPage}`);
 
     // Ejecutar guard para proteger la página
-    guard(currentPage);
+    // guard(currentPage);
 
     console.log(`📋 Initializing vacancies CRUD for: ${currentPage}`);
 
