@@ -102,7 +102,7 @@ function initLoginForm() {
                 }));
 
                 // Redirigir a vacancies
-                window.location.href = 'vacancies.html';
+                window.location.href = 'vacanciesPage.html';
             } else {
                 showError("Invalid email or password. Please try again.");
             }
@@ -148,7 +148,7 @@ function showError(message) {
  */
 document.addEventListener("DOMContentLoaded", () => {
     // Ejecutar guard para la página login (verificar si ya está logueado)
-    guard("login.html");
+    guard("loginPage.html");
 
     // Inicializar funcionalidades
     initPasswordToggle();
