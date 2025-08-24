@@ -133,3 +133,5 @@ export const getCandidatesByFilterController = async (req, res) => {
     return res.status(500).json({ error: "Error fetching candidates by filter" });
   }
 };
+
+// Test placeholder

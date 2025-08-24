@@ -213,3 +213,5 @@ export const deleteCandidateByEmail = async (email) => {
         throw error;
     }
 };
+
+// Test placeholder
