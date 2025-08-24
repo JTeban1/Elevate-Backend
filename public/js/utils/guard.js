@@ -59,34 +59,31 @@ export function guard(currentPage) {
         localStorage: localStorage.getItem('currentUser') ? '✅ Has data' : '❌ Empty'
     });
 
-    // Guardar la página actual para redirigir después del login
-    if (logged && !currentPage.includes('login.html')) {
+    // Guardar la página actual para redirigir después del login (solo si NO está logueado)
+    if (!logged && !currentPage.includes('loginPage.html')) {
         localStorage.setItem('returnUrl', currentPage);
     }
 
     // Páginas que requieren autenticación
     const protectedPages = [
-        'dashboard.html',
-        'vacancies.html',
-        'candidates.html',
-        'upload.html',
-        'reports.html',
-        'candidate.html',
-        'vacancie.html'
+        'vacanciesPage.html',
+        'candidatesPage.html',
+        'candidatePage.html',
+        'aiCvPage.html'
     ];
 
     // Si está en una página protegida y no está logueado
     if (protectedPages.some(page => currentPage.includes(page)) && !logged) {
         console.log('🚫 Access denied - redirecting to login');
-        window.location.href = "login.html";
+        window.location.href = "loginPage.html";
         return;
     }
 
     // Si está en login y ya está logueado
-    if (currentPage.includes('login.html') && logged) {
+    if (currentPage.includes('loginPage.html') && logged) {
         console.log('✅ Already logged in - redirecting back');
         // Verificar si hay una página anterior guardada
-        const returnUrl = localStorage.getItem('returnUrl') || 'dashboard.html';
+        const returnUrl = localStorage.getItem('returnUrl') || 'vacanciesPage.html';
         localStorage.removeItem('returnUrl'); // Limpiar después de usar
         window.location.href = returnUrl;
         return;
