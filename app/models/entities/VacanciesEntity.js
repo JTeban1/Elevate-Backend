@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../../../config/db_conn.js';
 
-const Vacancie = sequelize.define('Vacancie', {
+const Vacancy = sequelize.define('Vacancy', {
     vacancy_id : {
         type : DataTypes.INTEGER,
         primaryKey : true,
@@ -40,4 +40,4 @@ Application.belongsTo(Vacancie, {
     targetId : 'vacancy_id' //the one in vacancies
 });*/
 
-export default Vacancie;
+export default Vacancy;
