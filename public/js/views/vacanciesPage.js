@@ -1,5 +1,5 @@
-import { guard } from '../utils/guard.js';
-import { getVacancies, createVacancy as createVacancyAPI, updateVacancy as updateVacancyAPI, deleteVacancy as deleteVacancyAPI } from '../api/vacancies.js';
+// import { guard } from '../utils/guard.js';
+import { getVacancies, createVacancy as createVacancyAPI, updateVacancy as updateVacancyAPI, deleteVacancy as deleteVacancyAPI, getAllVacanciesWithCount } from '../api/vacancies.js';
 import { getApplications } from '../api/applications.js';
 
 // Global application state
@@ -20,8 +20,12 @@ const itemsPerPage = 5;
  */
 async function loadVacancies() {
     try {
-        vacancies = await getVacancies();
+        vacancies = await getAllVacanciesWithCount();
+        console.log(vacancies);
+        
         applications = await getApplications();
+        console.log(applications);
+
         renderVacanciesTable();
         updateStats();
     } catch (error) {
@@ -115,6 +119,8 @@ function createVacancyRow(vacancy) {
     
     // Contar aplicaciones para esta vacante
     const vacancyApplications = applications.filter(app => app.vacancy_id === vacancy.vacancy_id).length;
+    console.log(vacancyApplications);
+    
 
     tr.innerHTML = `
         <td class="px-6 py-4 whitespace-nowrap">
@@ -138,7 +144,7 @@ function createVacancyRow(vacancy) {
         </td>
         <td class="hidden sm:table-cell px-6 py-4 whitespace-nowrap">
             <div class="flex items-center">
-                <span class="text-2xl font-bold text-blue-600">${vacancyApplications}</span>
+                <span class="text-2xl font-bold text-blue-600">${vacancy.applicationsCount}</span>
                 <span class="text-sm text-gray-500 ml-2">candidatos</span>
             </div>
         </td>
@@ -596,6 +602,7 @@ function openEditModal(vacancyId) {
 
     // Llenar formulario con datos existentes
     form.querySelector('input[placeholder*="Senior Software Engineer"]').value = vacancy.title;
+    form.querySelector('input[placeholder*="80000"]').value = vacancy.salary;
     form.querySelector('textarea[placeholder*="principales responsabilidades"]').value = vacancy.description;
     form.querySelector('select[name="status"]')?.setAttribute('value', vacancy.status);
 
@@ -783,7 +790,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log(`🛡️ Protecting page: ${currentPage}`);
 
     // Ejecutar guard para proteger la página
-    guard(currentPage);
+    // guard(currentPage);
 
     console.log(`📋 Initializing vacancies CRUD for: ${currentPage}`);
 

@@ -1,5 +1,6 @@
-import { guard } from '../utils/guard.js';
+// import { guard } from '../utils/guard.js';
 import { getCandidates } from '../api/candidates.js';
+import { getApplications } from '../api/applications.js'
 import { fetchData } from '../api/api.js';
 
 // Global state
@@ -30,10 +31,10 @@ async function loadCandidate() {
 
         // Load candidate and applications
         const candidates = await getCandidates();
-        applications = await fetchData('applications');
+        applications = await getApplications();
         
         candidate = candidates.find(c => c.candidate_id == params.id);
-        
+
         if (!candidate) {
             showError('Candidato no encontrado');
             return;
@@ -86,7 +87,7 @@ function renderSkills() {
     skillsContainer.innerHTML = '';
     
     try {
-        const skills = JSON.parse(candidate.skills || '[]');
+        const skills = candidate.skills || '[]';
         
         if (skills.length === 0) {
             skillsContainer.innerHTML = '<div class="text-gray-500 text-sm">No skills registered</div>';
@@ -112,7 +113,7 @@ function renderLanguages() {
     languagesContainer.innerHTML = '';
     
     try {
-        const languages = JSON.parse(candidate.languages || '[]');
+        const languages = candidate.languages || '[]';
         
         if (languages.length === 0) {
             languagesContainer.innerHTML = '<div class="text-gray-500 text-sm">No languages registered</div>';
@@ -122,7 +123,7 @@ function renderLanguages() {
         languages.forEach(language => {
             const languageElement = document.createElement('span');
             languageElement.className = 'bg-green-100 text-green-800 px-3 py-2 rounded-full text-sm font-medium';
-            languageElement.textContent = language;
+            languageElement.textContent = language.level + ' ' + language.language;
             languagesContainer.appendChild(languageElement);
         });
     } catch (error) {
@@ -138,7 +139,7 @@ function renderExperience() {
     experienceContainer.innerHTML = '';
     
     try {
-        const experience = JSON.parse(candidate.experience || '[]');
+        const experience = candidate.experience || '[]';
         
         if (experience.length === 0) {
             experienceContainer.innerHTML = '<p class="text-gray-500">No hay experiencia registrada</p>';
@@ -189,7 +190,9 @@ function renderEducation() {
     educationContainer.innerHTML = '';
     
     try {
-        const education = JSON.parse(candidate.education || '[]');
+        const education = candidate.education || '[]';
+        console.log(education);
+        
         
         if (education.length === 0) {
             educationContainer.innerHTML = '<p class="text-gray-500">No hay educacion registrada</p>';
@@ -200,7 +203,9 @@ function renderEducation() {
             const eduElement = document.createElement('div');
             eduElement.className = 'p-4 border border-gray-200 rounded-lg bg-gray-50';
             eduElement.innerHTML = `
-                <p class="font-medium text-gray-900">${edu}</p>
+                <p class="font-semibold text-gray-900">${edu.degree}</p>
+                <p class="font-medium text-blue-600">${edu.institution}</p>
+                <p class="font-medium text-gray-900">${edu.years}</p>
             `;
             educationContainer.appendChild(eduElement);
         });
@@ -291,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Ejecutar guard para proteger la pagina
     const currentPage = window.location.pathname.split('/').pop();
-    guard(currentPage);
+    // guard(currentPage);
     
     // Si llegamos aqui es que el guard paso exitosamente
     loadCandidate();

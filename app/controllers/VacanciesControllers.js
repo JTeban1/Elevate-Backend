@@ -3,7 +3,6 @@ import * as vacanciesModel from '../models/services/VacanciesServices.js';
 export const getAllVacanciesController = async (req, res) => {
     try {
         const allVacancies = await vacanciesModel.getAllVacancies();
-        console.log('Vacancies =', allVacancies);
         return res.status(200).json(allVacancies);
     } catch (error) {
         console.error('Error fetching vacancies:', error);
@@ -67,74 +66,33 @@ export const upsertVacancyController = async (req, res) => {
             error: error.message
         });
     }
+}
+
+export const getAllVacanciesWithCount = async (req, res) => {
+  try {
+    const allVacancies = await vacanciesModel.getAllVacanciesWithCount();
+    return res.status(200).json(allVacancies);
+  } catch (error) {
+    console.error("Error fetching vacancies with count:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching vacancies",
+      error: error.message
+    });
+  }
 };
 
-export const updateVacancyController = async (req, res) => {
-    try {
-        const { vacancy_id } = req.body;
-        console.log(vacancy_id);
-        if (!vacancy_id) {
-            return res.status(400).json({
-                success: false,
-                message: "vacancy_id is required"
-            });
-        }
-
-        const updatedVacancy = await vacanciesModel.updateVacancy(req.body);
-
-        if (!updatedVacancy) {
-            return res.status(404).json({
-                success: false,
-                message: 'Vacancy not found',
-            });
-        };
-
-        return res.status(200).json({
-            success: true,
-            message: 'Vacancy succesfully updated',
-            data: updatedVacancy
-        });
-    } catch (error) {
-        console.error('Error updating vacancy:', error);
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-            error: error.message
-        });
-    }
-};
-
-export const deleteVacancyController = async (req, res) => {
-    try {
-        const { vacancy_id } = req.body;
-        console.log(vacancy_id);
-        if (!vacancy_id) {
-            return res.status(400).json({
-                success: false,
-                message: "vacancy_id is required"
-            });
-        }
-
-        const deletedVacancy = await vacanciesModel.deleteVacancy(req.body);
-
-        if (!deletedVacancy) {
-            return res.status(404).json({
-                success: false,
-                message: 'Vacancy not found',
-            });
-        };
-
-        return res.status(200).json({
-            success: true,
-            message: 'Vacancy succesfully deleted',
-            data: deletedVacancy
-        });
-    } catch (error) {
-        console.error('Error deleting vacancy:', error);
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-            error: error.message
-        });
-    }
+export const getApplicationsByVacancyIdController = async (req, res) => {
+  try {
+    const vacancyId = req.params.id;
+    const applications = await vacanciesModel.getApplicationsByVacancyId(vacancyId);
+    return res.status(200).json(applications);
+  } catch (error) {
+    console.error("Error fetching applications by vacancy:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching applications by vacancy",
+      error: error.message
+    });
+  }
 };

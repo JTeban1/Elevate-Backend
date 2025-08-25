@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8000";
+const API_URL = "http://localhost:9000";
 
 // GET (read data)
 export async function fetchData(endpoint) {
