@@ -82,3 +82,17 @@ export const getApplicationsForVacancyIdAndStatus = async (reqVacancy_id, status
     return [];
   }
 };
+
+
+export const updateApplication = async (applicationId, updates) => {
+  try {
+    const [updatedRowsCount] = await Application.update(updates, {
+      where: { application_id: applicationId },
+    });
+
+    return updatedRowsCount > 0; // true si se actualizó al menos una fila
+  } catch (error) {
+    console.error("Error updating application:", error);
+    throw error;
+  }
+};

@@ -67,3 +67,32 @@ export const upsertVacancyController = async (req, res) => {
         });
     }
 }
+
+export const getAllVacanciesWithCount = async (req, res) => {
+  try {
+    const allVacancies = await vacanciesModel.getAllVacanciesWithCount();
+    return res.status(200).json(allVacancies);
+  } catch (error) {
+    console.error("Error fetching vacancies with count:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching vacancies",
+      error: error.message
+    });
+  }
+};
+
+export const getApplicationsByVacancyIdController = async (req, res) => {
+  try {
+    const vacancyId = req.params.id;
+    const applications = await vacanciesModel.getApplicationsByVacancyId(vacancyId);
+    return res.status(200).json(applications);
+  } catch (error) {
+    console.error("Error fetching applications by vacancy:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching applications by vacancy",
+      error: error.message
+    });
+  }
+};

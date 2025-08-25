@@ -57,4 +57,6 @@ Application.belongsTo(Vacancy, { foreignKey: 'vacancy_id' });
 Candidate.hasMany(Application, { foreignKey: 'candidate_id' });
 Vacancy.hasMany(Application, { foreignKey: 'vacancy_id' });
 
+
+
 export default Application;
