@@ -1,18 +1,18 @@
 // ========================================
-// GUARD.JS - Control de Sesión y Acceso
+// GUARD.JS - Session Control and Access
 // ========================================
 
 /**
- * Verifica si hay una sesión activa en LocalStorage
- * @returns {boolean} true si hay sesión activa
+ * Checks if there's an active session in LocalStorage
+ * @returns {boolean} true if there's an active session
  */
 export function isLoggedIn() {
     return !!localStorage.getItem("currentUser");
 }
 
 /**
- * Obtiene los datos del usuario logueado
- * @returns {Object|null} Datos del usuario o null si no hay sesión
+ * Gets logged user data
+ * @returns {Object|null} User data or null if no session
  */
 export function getUser() {
     try {
@@ -25,8 +25,8 @@ export function getUser() {
 }
 
 /**
- * Guarda los datos del usuario en LocalStorage
- * @param {Object} userData - Datos del usuario a guardar
+ * Saves user data in LocalStorage
+ * @param {Object} userData - User data to save
  */
 export function setUser(userData) {
     try {
@@ -37,7 +37,7 @@ export function setUser(userData) {
 }
 
 /**
- * Cierra la sesión del usuario
+ * Logs out the user
  */
 export function logout() {
     localStorage.removeItem("currentUser");
@@ -45,8 +45,8 @@ export function logout() {
 }
 
 /**
- * Redirige según las reglas de acceso de cada página
- * @param {string} currentPage - Página actual para aplicar las reglas
+ * Redirects according to access rules for each page
+ * @param {string} currentPage - Current page to apply rules
  */
 export function guard(currentPage) {
     const logged = isLoggedIn();
@@ -59,12 +59,12 @@ export function guard(currentPage) {
         localStorage: localStorage.getItem('currentUser') ? '✅ Has data' : '❌ Empty'
     });
 
-    // Guardar la página actual para redirigir después del login (solo si NO está logueado)
+    // Save current page to redirect after login (only if NOT logged in)
     if (!logged && !currentPage.includes('loginPage.html')) {
         localStorage.setItem('returnUrl', currentPage);
     }
 
-    // Páginas que requieren autenticación
+    // Pages that require authentication
     const protectedPages = [
         'vacanciesPage.html',
         'candidatesPage.html',
@@ -72,19 +72,19 @@ export function guard(currentPage) {
         'aiCvPage.html'
     ];
 
-    // Si está en una página protegida y no está logueado
+    // If on a protected page and not logged in
     if (protectedPages.some(page => currentPage.includes(page)) && !logged) {
         console.log('🚫 Access denied - redirecting to login');
         window.location.href = "loginPage.html";
         return;
     }
 
-    // Si está en login y ya está logueado
+    // If on login page and already logged in
     if (currentPage.includes('loginPage.html') && logged) {
         console.log('✅ Already logged in - redirecting back');
-        // Verificar si hay una página anterior guardada
+        // Check if there's a saved previous page
         const returnUrl = localStorage.getItem('returnUrl') || 'vacanciesPage.html';
-        localStorage.removeItem('returnUrl'); // Limpiar después de usar
+        localStorage.removeItem('returnUrl'); // Clean up after use
         window.location.href = returnUrl;
         return;
     }
@@ -93,8 +93,8 @@ export function guard(currentPage) {
 }
 
 /**
- * Protege una página específica requiriendo autenticación
- * @param {string} redirectTo - URL a la que redirigir si no está autenticado
+ * Protects a specific page requiring authentication
+ * @param {string} redirectTo - URL to redirect to if not authenticated
  */
 export function requireAuth(redirectTo = "login.html") {
     if (!isLoggedIn()) {
@@ -103,7 +103,7 @@ export function requireAuth(redirectTo = "login.html") {
 }
 
 /**
- * Aplica el guard automáticamente basado en la URL actual
+ * Applies guard automatically based on current URL
  */
 export function autoGuard() {
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
@@ -111,13 +111,13 @@ export function autoGuard() {
 }
 
 /**
- * Inicializa el sistema de autenticación
+ * Initializes the authentication system
  */
 export function initAuth() {
-    // Aplicar guard automático
+    // Apply automatic guard
     autoGuard();
 
-    // Exponer funciones de logout globalmente para uso en navbar
+    // Expose logout functions globally for navbar use
     window.AuthGuard = {
         logout,
         isLoggedIn,

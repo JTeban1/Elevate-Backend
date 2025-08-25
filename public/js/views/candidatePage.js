@@ -2,7 +2,7 @@ import { guard } from '../utils/guard.js';
 import { getCandidates } from '../api/candidates.js';
 import { fetchData } from '../api/api.js';
 
-// Estado global
+// Global state
 let candidate = null;
 let applications = [];
 
@@ -28,7 +28,7 @@ async function loadCandidate() {
             return;
         }
 
-        // Cargar candidato y aplicaciones
+        // Load candidate and applications
         const candidates = await getCandidates();
         applications = await fetchData('applications');
         
@@ -52,10 +52,6 @@ async function loadCandidate() {
  * Renderizar informacion del candidato
  */
 function renderCandidate() {
-    // Header information
-    document.getElementById('candidate-title').textContent = `Candidato: ${candidate.name}`;
-    document.getElementById('candidate-occupation').textContent = candidate.occupation;
-    
     // Profile section
     const initials = candidate.name.split(' ').map(name => name.charAt(0)).join('');
     document.getElementById('candidate-initials').textContent = initials;
@@ -63,16 +59,11 @@ function renderCandidate() {
     document.getElementById('candidate-job').textContent = candidate.occupation;
     document.getElementById('candidate-email').textContent = candidate.email;
     
-    // Contact info
-    document.getElementById('contact-email').textContent = candidate.email;
-    document.getElementById('contact-phone').textContent = 'No proporcionado'; // Los datos no incluyen telefono
-    
-    // Applications count
+    // Applications count (for reference but not displayed on this page)
     const candidateApplications = applications.filter(app => app.candidate_id === candidate.candidate_id);
-    document.getElementById('candidate-applications').textContent = candidateApplications.length;
     
     // Summary
-    document.getElementById('candidate-summary').textContent = candidate.summary || 'No hay resumen disponible';
+    document.getElementById('candidate-summary').textContent = candidate.summary || 'No professional summary available';
     
     // Skills
     renderSkills();
@@ -98,18 +89,18 @@ function renderSkills() {
         const skills = JSON.parse(candidate.skills || '[]');
         
         if (skills.length === 0) {
-            skillsContainer.innerHTML = '<span class="text-gray-500">No hay habilidades registradas</span>';
+            skillsContainer.innerHTML = '<div class="text-gray-500 text-sm">No skills registered</div>';
             return;
         }
         
         skills.forEach(skill => {
             const skillElement = document.createElement('span');
-            skillElement.className = 'bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium';
+            skillElement.className = 'bg-blue-100 text-blue-800 px-3 py-2 rounded-full text-sm font-medium';
             skillElement.textContent = skill;
             skillsContainer.appendChild(skillElement);
         });
     } catch (error) {
-        skillsContainer.innerHTML = '<span class="text-red-500">Error al cargar habilidades</span>';
+        skillsContainer.innerHTML = '<div class="text-red-500 text-sm">Error loading skills</div>';
     }
 }
 
@@ -124,18 +115,18 @@ function renderLanguages() {
         const languages = JSON.parse(candidate.languages || '[]');
         
         if (languages.length === 0) {
-            languagesContainer.innerHTML = '<span class="text-gray-500">No hay idiomas registrados</span>';
+            languagesContainer.innerHTML = '<div class="text-gray-500 text-sm">No languages registered</div>';
             return;
         }
         
         languages.forEach(language => {
             const languageElement = document.createElement('span');
-            languageElement.className = 'bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium';
+            languageElement.className = 'bg-green-100 text-green-800 px-3 py-2 rounded-full text-sm font-medium';
             languageElement.textContent = language;
             languagesContainer.appendChild(languageElement);
         });
     } catch (error) {
-        languagesContainer.innerHTML = '<span class="text-red-500">Error al cargar idiomas</span>';
+        languagesContainer.innerHTML = '<div class="text-red-500 text-sm">Error loading languages</div>';
     }
 }
 
@@ -156,15 +147,31 @@ function renderExperience() {
         
         experience.forEach(exp => {
             const expElement = document.createElement('div');
-            expElement.className = 'flex gap-4 bg-gray-50 px-4 py-3 rounded-lg border border-gray-200';
+            expElement.className = 'p-4 border border-gray-200 rounded-lg bg-gray-50';
+            
+            // Handle both object and string formats
+            let title = '';
+            let description = '';
+            let company = '';
+            
+            if (typeof exp === 'object' && exp !== null) {
+                // Object format with company, position, description
+                company = exp.company || 'Company not specified';
+                title = exp.position || 'Position not specified';
+                description = exp.description || '';
+                if (exp.years) {
+                    company += ` (${exp.years} year${exp.years > 1 ? 's' : ''})`;
+                }
+            } else {
+                // Simple string format
+                title = exp || 'Experience';
+            }
+            
             expElement.innerHTML = `
-                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 256 256">
-                        <path d="M216,56H176V48a24,24,0,0,0-24-24H104A24,24,0,0,0,80,48v8H40A16,16,0,0,0,24,72V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V72A16,16,0,0,0,216,56ZM96,48a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96ZM216,72v41.61A184,184,0,0,1,128,136a184.07,184.07,0,0,1-88-22.38V72Zm0,128H40V131.64A200.19,200.19,0,0,0,128,152a200.25,200.25,0,0,0,88-20.37V200Z"/>
-                    </svg>
-                </div>
-                <div class="flex-1">
-                    <p class="text-gray-800 font-medium">${exp}</p>
+                <div>
+                    ${company ? `<p class="font-semibold text-gray-900">${company}</p>` : ''}
+                    <p class="font-medium text-blue-600">${title}</p>
+                    ${description ? `<p class="text-gray-600 text-sm mt-1">${description}</p>` : ''}
                 </div>
             `;
             experienceContainer.appendChild(expElement);
@@ -191,16 +198,9 @@ function renderEducation() {
         
         education.forEach(edu => {
             const eduElement = document.createElement('div');
-            eduElement.className = 'flex gap-4 bg-gray-50 px-4 py-3 rounded-lg border border-gray-200';
+            eduElement.className = 'p-4 border border-gray-200 rounded-lg bg-gray-50';
             eduElement.innerHTML = `
-                <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <svg class="w-5 h-5 text-indigo-600" fill="currentColor" viewBox="0 0 256 256">
-                        <path d="M251.76,88.94l-120-64a8,8,0,0,0-7.52,0l-120,64a8,8,0,0,0,0,14.12L32,117.87v48.42a15.91,15.91,0,0,0,4.06,10.65C49.16,191.53,78.51,216,128,216a130,130,0,0,0,48-8.76V240a8,8,0,0,0,16,0V199.51a115.63,115.63,0,0,0,27.94-22.57A15.91,15.91,0,0,0,224,166.29V117.87l27.76-14.81a8,8,0,0,0,0-14.12ZM128,200c-43.27,0-68.72-21.14-80-33.71V126.4l76.24,40.66a8,8,0,0,0,7.52,0L176,143.47v46.34C163.4,195.69,147.52,200,128,200Zm80-33.75a97.83,97.83,0,0,1-16,14.25V134.93l16-8.53ZM188,118.94l-.22-.13-56-29.87a8,8,0,0,0-7.52,14.12L171,128l-43,22.93L25,96,128,41.07,231,96Z"/>
-                    </svg>
-                </div>
-                <div class="flex-1">
-                    <p class="text-gray-800 font-medium">${edu}</p>
-                </div>
+                <p class="font-medium text-gray-900">${edu}</p>
             `;
             educationContainer.appendChild(eduElement);
         });
@@ -215,14 +215,14 @@ function renderEducation() {
 function showError(message) {
     const loadingElement = document.getElementById('loading-candidate');
     loadingElement.innerHTML = `
-        <div class="flex flex-col items-center justify-center py-12">
-            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex flex-col items-center gap-3">
+            <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"></path>
                 </svg>
             </div>
-            <p class="text-red-600 font-medium mb-2">${message}</p>
-            <a href="candidates-page.html" class="text-blue-600 hover:text-blue-800 underline">Volver a candidatos</a>
+            <p class="font-medium text-red-600">${message}</p>
+            <a href="candidatesPage.html" class="text-blue-600 hover:text-blue-800 underline text-sm">Back to Candidates</a>
         </div>
     `;
 }
