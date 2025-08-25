@@ -13,7 +13,15 @@ let currentFilters = {
     status: ''
 };
 let currentPage = 1;
-const itemsPerPage = 8;
+const itemsPerPage = 5;
+
+// Modal state
+let pendingStatusChange = {
+    applicationId: null,
+    newStatus: null,
+    candidateName: null,
+    currentStatus: null
+};
 
 /**
  * Get URL parameters
@@ -190,8 +198,11 @@ function createCandidateCard(candidate, application) {
                     <div class="flex items-center gap-3">
                         <h3 class="font-semibold text-gray-900 truncate">${candidate.name}</h3>
                         <a href="candidatePage.html?id=${candidate.candidate_id}" 
-                           class="text-blue-600 hover:text-blue-800 text-sm font-medium hover:underline flex-shrink-0">
-                            View Profile
+                           class="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-800 text-sm font-medium hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-all duration-200 flex-shrink-0 group">
+                            <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            Ver Perfil
                         </a>
                     </div>
                     <p class="text-sm text-gray-600 truncate">${candidate.occupation}</p>
@@ -208,36 +219,15 @@ function createCandidateCard(candidate, application) {
                     <span class="text-xs text-gray-500">Applied: ${applicationDate}</span>
                 </div>
                 
-                <!-- Status Change Dropdown -->
+                <!-- Status Change Button -->
                 <div class="relative">
                     <button type="button" data-application-id="${application.id}" 
-                            class="status-dropdown-btn flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        Change Status
+                            class="status-change-btn flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+                        Cambiar Estado
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                         </svg>
                     </button>
-                    
-                    <!-- Dropdown Menu -->
-                    <div class="status-dropdown-menu hidden absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
-                        <div class="py-1">
-                            <button data-status="pending" class="status-option block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
-                                🟡 Pending
-                            </button>
-                            <button data-status="interview" class="status-option block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
-                                🔵 Interview
-                            </button>
-                            <button data-status="offered" class="status-option block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
-                                🟣 Offered
-                            </button>
-                            <button data-status="accepted" class="status-option block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
-                                🟢 Accepted
-                            </button>
-                            <button data-status="rejected" class="status-option block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
-                                🔴 Rejected
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -275,40 +265,141 @@ function applyFilters(applicationsList) {
 }
 
 /**
- * Update application status
+ * Show status change modal
+ */
+function showStatusChangeModal(applicationId) {
+    const application = applications.find(app => app.id == applicationId); // Use == for type coercion
+    if (!application) {
+        console.error('Application not found with ID:', applicationId);
+        showError('No se pudo encontrar la aplicación');
+        return;
+    }
+    
+    const candidate = candidates.find(c => c.candidate_id === application.candidate_id);
+    if (!candidate) {
+        console.error('Candidate not found with ID:', application.candidate_id);
+        showError('No se pudo encontrar el candidato');
+        return;
+    }
+
+    // Store pending change data (without newStatus since user will select it)
+    pendingStatusChange = {
+        applicationId: applicationId,
+        newStatus: null,
+        candidateName: candidate.name,
+        currentStatus: application.status
+    };
+
+    // Update modal content
+    document.getElementById('modal-candidate-name').textContent = candidate.name;
+    
+    // Current status
+    const currentStatusConfig = getApplicationStatusConfig(application.status);
+    const currentStatusElement = document.getElementById('modal-current-status');
+    currentStatusElement.textContent = currentStatusConfig.label;
+    currentStatusElement.className = `px-2 py-1 rounded-full text-xs font-medium ${currentStatusConfig.bgColor} ${currentStatusConfig.textColor}`;
+    
+    // Configure select options - disable current status but keep it visible
+    const statusSelect = document.getElementById('modal-status-select');
+    const options = statusSelect.querySelectorAll('option');
+    
+    // Reset all options first
+    options.forEach(option => {
+        option.disabled = false;
+        option.style.color = '';
+        option.style.backgroundColor = '';
+        // Clean any previous "(Estado Actual)" text
+        if (option.textContent.includes(' (Estado Actual)')) {
+            option.textContent = option.textContent.replace(' (Estado Actual)', '');
+        }
+    });
+    
+    // Find and disable the current status option
+    const currentOption = statusSelect.querySelector(`option[value="${application.status}"]`);
+    if (currentOption) {
+        currentOption.disabled = true;
+        currentOption.style.color = '#9CA3AF'; // text-gray-400
+        currentOption.style.backgroundColor = '#F9FAFB'; // bg-gray-50
+        currentOption.textContent = currentOption.textContent + ' (Estado Actual)';
+    }
+    
+    // Set select to first available option (not current status)
+    const availableOptions = Array.from(options).filter(opt => !opt.disabled);
+    if (availableOptions.length > 0) {
+        statusSelect.value = availableOptions[0].value;
+    } else {
+        // Fallback if no options available
+        statusSelect.selectedIndex = 0;
+    }
+    
+    // Show modal
+    document.getElementById('status-change-modal').classList.remove('hidden');
+}
+
+/**
+ * Hide status change modal
+ */
+function hideStatusChangeModal() {
+    // Clean up select options (remove "(Estado Actual)" text and reset states)
+    const statusSelect = document.getElementById('modal-status-select');
+    if (statusSelect) {
+        const options = statusSelect.querySelectorAll('option');
+        
+        options.forEach(option => {
+            option.disabled = false;
+            option.style.color = '';
+            option.style.backgroundColor = '';
+            // Remove "(Estado Actual)" text if present
+            if (option.textContent.includes(' (Estado Actual)')) {
+                option.textContent = option.textContent.replace(' (Estado Actual)', '');
+            }
+        });
+    }
+    
+    document.getElementById('status-change-modal').classList.add('hidden');
+    pendingStatusChange = {
+        applicationId: null,
+        newStatus: null,
+        candidateName: null,
+        currentStatus: null
+    };
+}
+
+/**
+ * Update application status (after confirmation)
  */
 async function updateApplicationStatus(applicationId, newStatus) {
     try {
-        const application = applications.find(app => app.id === applicationId);
+        const application = applications.find(app => app.id == applicationId); // Use == for type coercion
         if (!application) return;
 
-        // Actualizar en la API
+        // Update in API
         const updatedApplication = await updateApplication(applicationId, {
             ...application,
             status: newStatus
         });
 
-        // Actualizar en el estado local
-        const index = applications.findIndex(app => app.id === applicationId);
+        // Update local state
+        const index = applications.findIndex(app => app.id == applicationId);
         if (index !== -1) {
             applications[index] = updatedApplication;
         }
 
         // Update filteredApplications as well
-        const filteredIndex = filteredApplications.findIndex(app => app.id === applicationId);
+        const filteredIndex = filteredApplications.findIndex(app => app.id == applicationId);
         if (filteredIndex !== -1) {
             filteredApplications[filteredIndex] = updatedApplication;
         }
 
-        // Re-renderizar
+        // Re-render
         renderStats();
         renderCandidates();
         
-        showSuccess(`Application status updated to ${newStatus}`);
+        showSuccess(`Estado actualizado a ${getApplicationStatusConfig(newStatus).label}`);
 
     } catch (error) {
         console.error('Error updating application status:', error);
-        showError('Error updating application status');
+        showError('Error al actualizar el estado de la aplicación');
     }
 }
 
@@ -342,27 +433,27 @@ function getStatusConfig(status) {
 function getApplicationStatusConfig(status) {
     const configs = {
         'pending': {
-            label: 'Pending',
+            label: 'Pendiente',
             bgColor: 'bg-yellow-100',
             textColor: 'text-yellow-800'
         },
         'interview': {
-            label: 'Interview',
+            label: 'Entrevista',
             bgColor: 'bg-blue-100',
             textColor: 'text-blue-800'
         },
         'offered': {
-            label: 'Offered',
+            label: 'Ofrecido',
             bgColor: 'bg-purple-100',
             textColor: 'text-purple-800'
         },
         'accepted': {
-            label: 'Accepted',
+            label: 'Aceptado',
             bgColor: 'bg-green-100',
             textColor: 'text-green-800'
         },
         'rejected': {
-            label: 'Rejected',
+            label: 'Rechazado',
             bgColor: 'bg-red-100',
             textColor: 'text-red-800'
         }
@@ -649,43 +740,55 @@ function createPageButton(config) {
  * Setup event listeners
  */
 function setupEventListeners() {
-    // Event delegation for status dropdowns
+    // Event delegation for status change buttons
     document.addEventListener('click', function(event) {
-        // Toggle dropdown
-        if (event.target.closest('.status-dropdown-btn')) {
-            const btn = event.target.closest('.status-dropdown-btn');
-            const menu = btn.nextElementSibling;
+        // Handle status change button click (show modal)
+        if (event.target.closest('.status-change-btn')) {
+            const btn = event.target.closest('.status-change-btn');
+            const applicationId = btn.dataset.applicationId; // No parseInt - JSON Server IDs are strings
             
-            // Close all other dropdowns
-            document.querySelectorAll('.status-dropdown-menu').forEach(dropdown => {
-                if (dropdown !== menu) {
-                    dropdown.classList.add('hidden');
-                }
-            });
-            
-            // Toggle current dropdown
-            menu.classList.toggle('hidden');
+            // Show modal for status change
+            showStatusChangeModal(applicationId);
             return;
         }
+    });
 
-        // Handle status change
-        if (event.target.closest('.status-option')) {
-            const option = event.target.closest('.status-option');
-            const newStatus = option.dataset.status;
-            const menu = option.closest('.status-dropdown-menu');
-            const btn = menu.previousElementSibling;
-            const applicationId = parseInt(btn.dataset.applicationId);
-            
-            updateApplicationStatus(applicationId, newStatus);
-            menu.classList.add('hidden');
-            return;
+    // Modal event listeners
+    setupModalEventListeners();
+}
+
+/**
+ * Setup modal event listeners
+ */
+function setupModalEventListeners() {
+    // Close modal buttons
+    document.getElementById('close-modal')?.addEventListener('click', hideStatusChangeModal);
+    document.getElementById('cancel-status-change')?.addEventListener('click', hideStatusChangeModal);
+    
+    // Confirm status change
+    document.getElementById('confirm-status-change')?.addEventListener('click', async function() {
+        const statusSelect = document.getElementById('modal-status-select');
+        const newStatus = statusSelect.value;
+        
+        if (pendingStatusChange.applicationId && newStatus) {
+            await updateApplicationStatus(pendingStatusChange.applicationId, newStatus);
+            hideStatusChangeModal();
+        } else {
+            showError('Por favor selecciona un estado');
         }
-
-        // Close all dropdowns when clicking outside
-        if (!event.target.closest('.status-dropdown-btn') && !event.target.closest('.status-dropdown-menu')) {
-            document.querySelectorAll('.status-dropdown-menu').forEach(dropdown => {
-                dropdown.classList.add('hidden');
-            });
+    });
+    
+    // Close modal when clicking outside
+    document.getElementById('status-change-modal')?.addEventListener('click', function(event) {
+        if (event.target === this) {
+            hideStatusChangeModal();
+        }
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && !document.getElementById('status-change-modal').classList.contains('hidden')) {
+            hideStatusChangeModal();
         }
     });
 }

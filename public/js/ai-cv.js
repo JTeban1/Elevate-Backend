@@ -19,6 +19,63 @@ async function loadVacancies() {
 
 loadVacancies();
 
+// ============================================================================
+// HEADER FUNCTIONALITY - Added for project visual consistency
+// ============================================================================
+
+/**
+ * Setup user dropdown functionality in the header
+ */
+function setupUserDropdown() {
+  const userAvatar = document.getElementById('user-avatar');
+  const userDropdown = document.getElementById('user-dropdown');
+
+  if (userAvatar) {
+    userAvatar.addEventListener('click', function () {
+      userDropdown?.classList.toggle('hidden');
+    });
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function (event) {
+    if (!userAvatar?.contains(event.target) && !userDropdown?.contains(event.target)) {
+      userDropdown?.classList.add('hidden');
+    }
+  });
+
+  // Load user information from localStorage
+  const loggedUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  const userName = loggedUser.name || 'Usuario';
+  const userEmail = loggedUser.email || 'usuario@example.com';
+  const initials = userName.split(' ').map(name => name.charAt(0)).join('');
+
+  const userInitialsElement = document.getElementById('user-initials');
+  const userNameElement = document.getElementById('user-name');
+  const userEmailElement = document.getElementById('user-email');
+
+  if (userInitialsElement) userInitialsElement.textContent = initials;
+  if (userNameElement) userNameElement.textContent = userName;
+  if (userEmailElement) userEmailElement.textContent = userEmail;
+
+  // Logout functionality
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('returnUrl');
+      window.location.href = 'index.html';
+    });
+  }
+}
+
+// Initialize header functionality when page loads
+document.addEventListener('DOMContentLoaded', setupUserDropdown);
+
+// ============================================================================
+// ORIGINAL CV AI FUNCTIONALITY - Teammate's code
+// ============================================================================
+
 document.getElementById('cv_ai').addEventListener('submit', async function (e) {
   e.preventDefault();
 

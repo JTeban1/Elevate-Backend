@@ -27,11 +27,10 @@
         </div>
         <h2 class="text-xl md:text-2xl font-bold tracking-wide">TalentTrack</h2>
       </a>
-      <nav class="hidden md:flex gap-6 text-sm font-medium">
-        <a class="border-b-2 border-blue-100 pb-1 text-blue-100 font-bold" href="vacanciesPage.html">Vacantes</a>
-        <a class="hover:text-blue-100 transition-colors" href="candidatesPage.html">Candidatos</a>
-        <!-- <a class="hover:text-blue-100 transition-colors" href="reports.html">Reports</a> -->
-        <!-- <a class="hover:text-blue-100 transition-colors" href="upload.html">Upload CVs</a> -->
+      <nav class="hidden md:flex gap-8 text-base font-medium">
+        <a class="border-b-2 border-blue-100 pb-2 text-blue-100 font-bold px-3 py-2" href="vacanciesPage.html">Vacantes</a>
+        <a class="hover:text-blue-100 transition-colors px-3 py-2 rounded-lg hover:bg-white/10" href="candidatesPage.html">Candidatos</a>
+        <a class="hover:text-blue-100 transition-colors px-3 py-2 rounded-lg hover:bg-white/10" href="aiCvPage.html">Upload CVs</a>
       </nav>
       <div class="flex items-center gap-4">
         <!-- Avatar con Iniciales -->
@@ -192,9 +191,6 @@
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
                 <tr>
-                  <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                    <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                  </th>
                   <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Vacante</th>
                   <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Estado</th>
                   <th
@@ -210,7 +206,7 @@
               <tbody id="vacancies-tbody" class="bg-white divide-y divide-gray-100">
                 <!-- Loading state -->
                 <tr id="loading-row">
-                  <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                  <td colspan="6" class="px-6 py-8 text-center text-gray-500">
                     <div class="flex flex-col items-center gap-3">
                       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                       <p class="font-medium">Cargando vacantes...</p>
