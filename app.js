@@ -3,6 +3,12 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 
 import CvController from './app/routes/CandidatesRouter.js'
+<<<<<<< Updated upstream
+=======
+import vacanciesControllers from './app/routes/VacanciesRouter.js'
+import applicationsController from './app/routes/ApplicationsRouter.js'
+import  initDefaults  from '.app/models/services/usersServices.js'
+>>>>>>> Stashed changes
 
 // Load environment variables from .env file
 dotenv.config();
@@ -25,6 +31,14 @@ const PORT = process.env.PORT || 9000;
 
 // Raise the server and listen on the defined port
 
-app.listen(PORT, () => {
-    console.log(`Server running in http://localhost:${PORT}`);
+app.listen(PORT, async () => {
+    console.log(`✅ Server running at http://localhost:${PORT}`);
+
+    // Inicializar datos por defecto
+    try {
+        await initDefaults();
+        console.log("verified user");
+    } catch (err) {
+        console.error("vunverified user", err.message);
+    }
 });
