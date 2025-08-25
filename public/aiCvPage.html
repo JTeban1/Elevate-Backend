@@ -10,35 +10,104 @@
 
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
-        <h2 class="text-2xl font-semibold text-center text-gray-700 mb-6">Upload CV'S</h2>
+    <div
+        class="bg-white p-8 md:p-12 rounded-lg shadow-md max-w-full md:max-w-4xl w-full min-h-[500px] md:min-h-[650px] mx-auto mt-10 relative">
+        <h2 class="text-xl font-semibold mb-4 text-gray-700">Upload CV's</h2>
 
-        <form class="space-y-6" id="cv_ai" enctype="multipart/form-data">
-
+        <form id="cv_ai" class="space-y-4">
             <div>
-                <label for="vacancy" class="block text-sm font-medium text-gray-600 mb-2">Choose a vacancy</label>
-                <select id="vacancy" name="vacancy" class="block w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300">
-                    <option value="">Choose an option</option>
-                    <option value="desarrollador">Backend Developer</option>
-                    <option value="diseñador">Human Resources</option>
-                    <option value="gerente">Teacher</option>
+                <label for="vacancy" class="block text-sm font-medium text-gray-600 mb-1">Choose a vacancy</label>
+                <select id="vacancy" name="vacancy"
+                    class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none px-3 py-2">
+                    <option selected disabled>Select an option</option>
+
                 </select>
             </div>
 
             <div>
-                <label for="cv" class="block text-sm font-medium text-gray-600 mb-2">Sent cv's</label>
-                <input type="file" id="cv" name="cv[]"
-                    class="block w-full text-sm text-gray-700 py-2 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
-                    multiple required>
+                <label for="vacancy_filter" class="block text-sm font-medium text-gray-600 mb-1">Filter vacancy
+                    (optional)</label>
+                <input type="text" id="vacancy_filter" name="vacancy_filter"
+                    placeholder="Type keywords, e.g., Fullstack, Remote"
+                    class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none px-3 py-2">
+            </div>
+
+            <div>
+                <label for="cv" class="block text-sm font-medium text-gray-600 mb-1">Send CVs</label>
+                <input type="file" id="cv" name="cv[]" multiple
+                    class="block w-full text-sm text-gray-700 border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                    required>
             </div>
 
             <button type="submit"
-                class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                Sent
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-blue-400">
+                Send
             </button>
-
         </form>
+
+        <div class="max-w-4xl mx-auto mt-10 flex gap-6">
+
+            <div class="w-1/2 bg-white rounded shadow p-4 overflow-x-auto">
+                <h2 class="text-lg font-bold mb-4">Tabla Izquierda</h2>
+                <table class="min-w-full table-auto border border-gray-200">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border px-4 py-2"></th>
+                            <th class="border px-4 py-2">Nombre</th>
+                            <th class="border px-4 py-2">Edad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border px-4 py-2">1</td>
+                            <td class="border px-4 py-2">Juan</td>
+                            <td class="border px-4 py-2">25</td>
+                        </tr>
+                        <tr>
+                            <td class="border px-4 py-2">2</td>
+                            <td class="border px-4 py-2">María</td>
+                            <td class="border px-4 py-2">30</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="w-1/2 bg-white rounded shadow p-4 overflow-x-auto">
+                <h2 class="text-lg font-bold mb-4">Tabla Derecha</h2>
+                <table class="min-w-full table-auto border border-gray-200">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border px-4 py-2">ID</th>
+                            <th class="border px-4 py-2">Producto</th>
+                            <th class="border px-4 py-2">Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border px-4 py-2">1</td>
+                            <td class="border px-4 py-2">Laptop</td>
+                            <td class="border px-4 py-2">$1000</td>
+                        </tr>
+                        <tr>
+                            <td class="border px-4 py-2">2</td>
+                            <td class="border px-4 py-2">Celular</td>
+                            <td class="border px-4 py-2">$500</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <div id="loading"
+            class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center hidden rounded-lg">
+            <div class="flex flex-col items-center">
+                <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <p class="mt-2 text-white font-medium">Procesando CVs...</p>
+            </div>
+        </div>
     </div>
+
     <script type="module" src="./js/ai-cv.js"></script>
 </body>
 
