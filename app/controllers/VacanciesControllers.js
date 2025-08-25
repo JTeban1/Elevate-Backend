@@ -3,7 +3,6 @@ import * as vacanciesModel from '../models/services/VacanciesServices.js';
 export const getAllVacanciesController = async (req, res) => {
     try {
         const allVacancies = await vacanciesModel.getAllVacancies();
-        console.log('Vacancies =', allVacancies);
         return res.status(200).json(allVacancies);
     } catch (error) {
         console.error('Error fetching vacancies:', error);
