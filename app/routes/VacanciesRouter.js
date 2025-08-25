@@ -5,13 +5,13 @@ const router = Router ();
 
 router.get('/', vacanciesControllers.getAllVacanciesController);
 
+router.get('/count', vacanciesControllers.getAllVacanciesWithCount);
+
 router.get('/find', vacanciesControllers.getAllVacanciesByNameController);
 
-router.post('/upsert', vacanciesControllers.upsertVacancyController);
+router.get('/:id', vacanciesControllers.getApplicationsByVacancyIdController);
 
-router.put('/update', vacanciesControllers.updateVacancyController);
-
-router.delete('/delete', vacanciesControllers.deleteVacancyController);
+router.post('/', vacanciesControllers.upsertVacancyController);
 
 
 export default router;

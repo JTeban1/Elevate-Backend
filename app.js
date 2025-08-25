@@ -5,8 +5,12 @@ import cors from 'cors';
 import CvController from './app/routes/CandidatesRouter.js'
 import vacanciesControllers from './app/routes/VacanciesRouter.js'
 import applicationsController from './app/routes/ApplicationsRouter.js'
+<<<<<<< HEAD
 import  initDefaults  from '.app/models/services/usersServices.js'
 
+=======
+import candidatesController from './app/routes/CandidatesRouter.js'
+>>>>>>> ca79bb699aa4c389ed7ce6f914838463f3d9af5e
 
 // Load environment variables from .env file
 dotenv.config();
@@ -25,6 +29,7 @@ app.use(express.json());
 app.use('/api/aicv', CvController);
 app.use('/api/vacancies', vacanciesControllers);
 app.use('/api/applications', applicationsController);
+app.use('/api/candidates', candidatesController);
 
 // Configure the application port, taking the environment variable or the default value (3000)
 const PORT = process.env.PORT || 9000;

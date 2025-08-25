@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+  <link rel="stylesheet" as="style" onload="this.rel='stylesheet'"
+    href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" />
+  <title>TalentTrack - Vacancy Detail</title>
+  <link rel="stylesheet" href="css/config.css">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+</head>
+
+<body class="bg-gray-50 font-['Inter'] min-h-screen">
+  <div class="flex flex-col min-h-screen">
+    <!-- HEADER -->
+    <header class="flex items-center justify-between px-4 md:px-10 py-4 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 text-white shadow-lg">
+      <a href="index.html" class="flex items-center gap-3 hover:scale-105 transition-transform duration-300">
+        <div class="w-8 h-8 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/20">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <h2 class="text-xl md:text-2xl font-bold tracking-wide">TalentTrack</h2>
+      </a>
+      <nav class="hidden md:flex gap-8 text-base font-medium">
+        <a class="border-b-2 border-blue-100 pb-2 text-blue-100 font-bold px-3 py-2" href="vacanciesPage.html">Vacantes</a>
+        <a class="hover:text-blue-100 transition-colors px-3 py-2 rounded-lg hover:bg-white/10" href="candidatesPage.html">Candidatos</a>
+        <a class="hover:text-blue-100 transition-colors px-3 py-2 rounded-lg hover:bg-white/10" href="aiCvPage.html">Upload CVs</a>
+      </nav>
+      <div class="flex items-center gap-4">
+        <!-- Avatar con Iniciales -->
+        <div class="relative">
+          <div id="user-avatar" class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center ring-2 ring-white/30 shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
+            <span id="user-initials" class="text-white font-bold text-sm">JD</span>
+          </div>
+          
+          <!-- Dropdown del usuario (oculto por defecto) -->
+          <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+            <div class="px-4 py-3 border-b border-gray-200">
+              <p class="text-sm font-medium text-gray-900" id="user-name">John Doe</p>
+              <p class="text-xs text-gray-500" id="user-email">john@example.com</p>
+            </div>
+            <div class="py-1">
+              <a href="#" id="logout-btn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Cerrar Sesión</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="flex flex-col flex-1 px-4 md:px-10 py-6">
+      <div class="max-w-7xl w-full mx-auto">
+        
+        <!-- Loading State -->
+        <div id="loading-vacancy" class="px-6 py-8 text-center text-gray-500">
+          <div class="flex flex-col items-center gap-3">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p class="font-medium">Cargando detalles de la vacante...</p>
+          </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="vacancy-content" class="hidden">
+          
+          <!-- Breadcrumb -->
+          <div class="flex items-center gap-2 mb-6 text-sm">
+            <a href="vacanciesPage.html" class="text-blue-600 hover:text-blue-800 transition-colors font-medium">Vacantes</a>
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+            <span class="text-gray-600 font-medium">Detalle de Vacante</span>
+          </div>
+
+          <!-- Vacancy Header -->
+          <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200 mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-start gap-6">
+              
+              <!-- Vacancy Icon -->
+              <div class="flex-shrink-0">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <span id="vacancy-initials" class="text-2xl font-bold text-white">--</span>
+                </div>
+              </div>
+
+              <!-- Vacancy Info -->
+              <div class="flex-1">
+                <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
+                  <div>
+                    <h1 id="vacancy-title" class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Cargando...</h1>
+                    <div class="flex items-center gap-2 mb-3">
+                      <span id="vacancy-status" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-800">
+                        Cargando...
+                      </span>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-sm text-gray-600">Salary</p>
+                    <p id="vacancy-salary" class="text-xl font-bold text-green-600">Cargando...</p>
+                  </div>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+                  <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                      <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a4 4 0 118 0v4m-4 12v-4"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 7h12l-1 10H7L6 7z"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <p class="text-gray-500 text-sm font-medium">Fecha de Creación</p>
+                      <p id="vacancy-date" class="font-semibold text-gray-900 text-base">Cargando...</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                      <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <p class="text-gray-500 text-sm font-medium">Aplicaciones</p>
+                      <p id="total-applications" class="font-semibold text-blue-600 text-base">0</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center">
+                      <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <p class="text-gray-500 text-sm font-medium">ID de Vacante</p>
+                      <p id="vacancy-id" class="font-semibold text-gray-900 text-base">--</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Description -->
+            <div class="mt-6 pt-6 border-t border-gray-200">
+              <h3 class="text-lg font-semibold text-gray-900 mb-3">Descripción del Puesto</h3>
+              <p id="vacancy-description" class="text-gray-700 leading-relaxed">Cargando descripción...</p>
+            </div>
+          </div>
+
+          <!-- Stats Cards -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+            <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-200">
+              <div class="text-center">
+                <p class="text-2xl font-bold text-gray-900" id="stat-total">0</p>
+                <p class="text-xs text-gray-600 mt-1">Total</p>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-200">
+              <div class="text-center">
+                <p class="text-2xl font-bold text-yellow-600" id="stat-pending">0</p>
+                <p class="text-xs text-gray-600 mt-1">Pending</p>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-200">
+              <div class="text-center">
+                <p class="text-2xl font-bold text-blue-600" id="stat-interview">0</p>
+                <p class="text-xs text-gray-600 mt-1">Interview</p>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-200">
+              <div class="text-center">
+                <p class="text-2xl font-bold text-purple-600" id="stat-offered">0</p>
+                <p class="text-xs text-gray-600 mt-1">Offered</p>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-200">
+              <div class="text-center">
+                <p class="text-2xl font-bold text-green-600" id="stat-accepted">0</p>
+                <p class="text-xs text-gray-600 mt-1">Accepted</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filters -->
+          <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-200 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Buscar Candidatos</label>
+                <div class="relative">
+                  <input id="candidate-search" type="text" placeholder="Nombre, email..."
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"
+                    class="absolute left-3 top-2.5 text-gray-400">
+                    <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z" />
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Estado de Aplicación</label>
+                <select id="status-filter"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                  <option value="">Todos los Estados</option>
+                  <option value="pending">Pendiente</option>
+                  <option value="interview">Entrevista</option>
+                  <option value="offered">Ofrecido</option>
+                  <option value="accepted">Aceptado</option>
+                  <option value="rejected">Rechazado</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Candidates List -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+              <h2 class="text-xl font-bold text-gray-900">Candidatos</h2>
+            </div>
+            
+            <div class="divide-y divide-gray-100">
+              <div id="candidates-container">
+                <!-- Loading candidates -->
+                <div class="p-6 text-center text-gray-500">
+                  <div class="flex flex-col items-center gap-3">
+                    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                    <p class="text-sm">Cargando candidatos...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div class="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
+            <div class="text-sm text-gray-600">
+              Mostrando <span class="font-semibold text-gray-900" id="pagination-start">0</span> a <span
+                class="font-semibold text-gray-900" id="pagination-end">0</span> de <span
+                class="font-semibold text-gray-900" id="pagination-total">0</span> candidatos
+            </div>
+            <div class="flex items-center space-x-2" id="pagination-controls">
+              <!-- Pagination buttons will be generated here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal de Confirmación -->
+  <div id="status-change-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+    <div class="relative mx-auto p-5 border w-96 shadow-lg rounded-xl bg-white">
+      <div class="mt-3">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">Cambiar Estado de Aplicación</h3>
+          <button id="close-modal" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Content -->
+        <div class="mb-6">
+          <p class="text-sm text-gray-600 mb-4">Cambiar el estado de la aplicación de <span id="modal-candidate-name" class="font-semibold text-gray-900"></span></p>
+          
+          <div class="bg-gray-50 p-3 rounded-lg mb-4">
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-gray-600">Estado actual:</span>
+              <span id="modal-current-status" class="px-2 py-1 rounded-full text-xs font-medium"></span>
+            </div>
+          </div>
+          
+          <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Seleccionar nuevo estado:</label>
+            <select id="modal-status-select" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+              <option value="pending">🟡 Pendiente</option>
+              <option value="interview">🔵 Entrevista</option>
+              <option value="offered">🟣 Ofrecido</option>
+              <option value="accepted">🟢 Aceptado</option>
+              <option value="rejected">🔴 Rechazado</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="flex items-center gap-3">
+          <button id="confirm-status-change" class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+            Confirmar Cambio
+          </button>
+          <button id="cancel-status-change" class="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-200 transition-colors">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="js/views/vacanciePage.js"></script>
+</body>
+
+</html>
