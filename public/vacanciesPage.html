@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+  <link rel="stylesheet" as="style" onload="this.rel='stylesheet'"
+    href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" />
+  <title>TalentTrack Vacancies - CRUD</title>
+  <link rel="stylesheet" href="css/config.css">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+</head>
+
+<body class="bg-gray-50 font-['Inter'] min-h-screen">
+  <div class="flex flex-col min-h-screen">
+    <!-- HEADER -->
+    <header
+      class="flex items-center justify-between px-4 md:px-10 py-4 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 text-white shadow-lg">
+      <a href="index.html" class="flex items-center gap-3 hover:scale-105 transition-transform duration-300">
+        <div
+          class="w-8 h-8 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/20">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+            </path>
+          </svg>
+        </div>
+        <h2 class="text-xl md:text-2xl font-bold tracking-wide">TalentTrack</h2>
+      </a>
+      <nav class="hidden md:flex gap-6 text-sm font-medium">
+        <a class="border-b-2 border-blue-100 pb-1 text-blue-100 font-bold" href="vacanciesPage.html">Vacancies</a>
+        <a class="hover:text-blue-100 transition-colors" href="candidatesPage.html">Candidates</a>
+        <!-- <a class="hover:text-blue-100 transition-colors" href="reports.html">Reports</a> -->
+        <!-- <a class="hover:text-blue-100 transition-colors" href="upload.html">Upload CVs</a> -->
+      </nav>
+      <div class="flex items-center gap-4">
+        <!-- Avatar con Iniciales -->
+        <div class="relative">
+          <div id="user-avatar"
+            class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center ring-2 ring-white/30 shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
+            <span id="user-initials" class="text-white font-bold text-sm">JD</span>
+          </div>
+
+          <!-- Dropdown del usuario (oculto por defecto) -->
+          <div id="user-dropdown"
+            class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+            <div class="px-4 py-3 border-b border-gray-200">
+              <p class="text-sm font-medium text-gray-900" id="user-name">John Doe</p>
+              <p class="text-xs text-gray-500" id="user-email">john@example.com</p>
+            </div>
+            <div class="py-1">
+              <a href="#" id="logout-btn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Cerrar
+                Sesión</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="flex flex-col flex-1 px-4 md:px-10 py-6">
+      <div class="max-w-7xl w-full mx-auto">
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
+          <div>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Gestión de Vacantes</h1>
+            <p class="text-gray-600">Administra todas las posiciones disponibles en tu empresa</p>
+          </div>
+          <button id="create-vacancy-btn"
+            class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 w-full md:w-auto">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256">
+              <path
+                d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z" />
+            </svg>
+            Nueva Vacante
+          </button>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+          <div
+            class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-200 hover:shadow-lg hover:scale-105 transition-all duration-300">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-600 text-sm font-medium">Total Vacantes</p>
+                <p id="total-vacancies" class="text-2xl font-bold text-gray-900">0</p>
+              </div>
+              <div class="bg-blue-50 p-3 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256"
+                  class="text-blue-600">
+                  <path
+                    d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-200 hover:shadow-lg hover:scale-105 transition-all duration-300">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-600 text-sm font-medium">Vacantes Abiertas</p>
+                <p id="open-vacancies" class="text-2xl font-bold text-green-600">0</p>
+              </div>
+              <div class="bg-green-50 p-3 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256"
+                  class="text-green-600">
+                  <path
+                    d="M228.24,76.24l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,216.92,67.76a8,8,0,0,1,11.32,11.32Z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-200 hover:shadow-lg hover:scale-105 transition-all duration-300">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-600 text-sm font-medium">Aplicaciones</p>
+                <p id="total-applications" class="text-2xl font-bold text-blue-600">0</p>
+              </div>
+              <div class="bg-blue-50 p-3 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256"
+                  class="text-blue-600">
+                  <path
+                    d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm0,144H32V64H224V192Z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-200 hover:shadow-lg hover:scale-105 transition-all duration-300">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-600 text-sm font-medium">Tiempo Promedio</p>
+                <p id="average-time" class="text-2xl font-bold text-indigo-600">0 días</p>
+              </div>
+              <div class="bg-indigo-50 p-3 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256"
+                  class="text-indigo-600">
+                  <path
+                    d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtros y Búsqueda -->
+        <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-200 mb-6 md:mb-8">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Buscar</label>
+              <div class="relative">
+                <input id="search-input" type="text" placeholder="Título, empresa, ubicación..."
+                  class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"
+                  class="absolute left-3 top-2.5 text-gray-400">
+                  <path
+                    d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z" />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Estado</label>
+              <select id="status-filter"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                <option value="">Todos los estados</option>
+                <option value="open">Abierta</option>
+                <option value="closed">Cerrada</option>
+                <option value="paused">Pausada</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <button id="apply-filters"
+              class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex-1 sm:flex-none">
+              Aplicar Filtros
+            </button>
+            <button id="clear-filters"
+              class="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-200 transition-colors flex-1 sm:flex-none">
+              Limpiar
+            </button>
+          </div>
+        </div>
+
+        <!-- Pestañas mejoradas -->
+        <div class="flex flex-wrap gap-4 md:gap-8 border-b border-gray-200 mb-6 overflow-x-auto">
+          <button id="tab-all"
+            class="border-b-4 border-blue-600 text-blue-600 font-bold pb-3 transition-all hover:border-blue-700 whitespace-nowrap">
+            Todas (<span id="tab-all-count">0</span>)
+          </button>
+          <button id="tab-open"
+            class="border-b-4 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 pb-3 transition-all whitespace-nowrap">
+            Abiertas (<span id="tab-open-count">0</span>)
+          </button>
+          <button id="tab-closed"
+            class="border-b-4 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 pb-3 transition-all whitespace-nowrap">
+            Cerradas (<span id="tab-closed-count">0</span>)
+          </button>
+          <button id="tab-paused"
+            class="border-b-4 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 pb-3 transition-all whitespace-nowrap">
+            Pausadas (<span id="tab-paused-count">0</span>)
+          </button>
+        </div>
+
+        <!-- Tabla de Vacantes Mejorada -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                  </th>
+                  <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Vacante</th>
+                  <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Estado</th>
+                  <th
+                    class="hidden sm:table-cell px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    Aplicaciones</th>
+                  <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Salario</th>
+                  <th
+                    class="hidden lg:table-cell px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    Fecha Límite</th>
+                  <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="vacancies-tbody" class="bg-white divide-y divide-gray-100">
+                <!-- Loading state -->
+                <tr id="loading-row">
+                  <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                    <div class="flex flex-col items-center gap-3">
+                      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                      <p class="font-medium">Cargando vacantes...</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Paginación -->
+        <div class="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
+          <div class="text-sm text-gray-600">
+            Mostrando <span class="font-semibold text-gray-900" id="pagination-start">0</span> a <span
+              class="font-semibold text-gray-900" id="pagination-end">0</span> de <span
+              class="font-semibold text-gray-900" id="pagination-total">0</span> vacantes
+          </div>
+          <div class="flex items-center space-x-2">
+            <button
+              class="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              Anterior
+            </button>
+            <button
+              class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+              1
+            </button>
+            <button
+              class="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              Siguiente
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal para Crear/Editar Vacante -->
+  <div id="vacancyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div class="p-6 border-b border-slate-200">
+        <div class="flex items-center justify-between">
+          <h3 id="modalTitle" class="text-xl font-bold text-gray-900">Nueva Vacante</h3>
+          <button id="close-modal-btn"
+            class="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-lg transition-all hover:scale-105">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256">
+              <path
+                d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <form class="p-6 space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Información Básica -->
+          <div class="md:col-span-2">
+            <h4 class="text-lg font-semibold text-gray-900 mb-4">Información Básica</h4>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Título del Puesto*</label>
+            <input type="text" required
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              placeholder="ej: Senior Software Engineer">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Salario*</label>
+            <input type="number" required
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              placeholder="ej: 80000">
+          </div>
+
+          <!-- Descripción -->
+          <div class="md:col-span-2 mt-6">
+            <h4 class="text-lg font-semibold text-gray-900 mb-4">Detalles del Puesto</h4>
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Descripción del Puesto*</label>
+            <textarea required rows="4"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              placeholder="Describe las principales responsabilidades y funciones del puesto..."></textarea>
+          </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div
+          class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-200">
+          <button type="button" id="cancel-modal-btn"
+            class="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-200 transition-colors">
+            Cancelar
+          </button>
+          <button type="submit"
+            class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+            Guardar Vacante
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmación de Eliminación -->
+  <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+      <div class="p-6">
+        <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256"
+            class="text-red-600">
+            <path
+              d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-bold text-center text-gray-900 mb-2">Eliminar Vacante</h3>
+        <p class="text-center text-gray-600 mb-6">¿Estás seguro de que quieres eliminar esta vacante? Esta acción no se
+          puede deshacer.</p>
+        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+          <button id="cancel-delete-btn"
+            class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-200 transition-colors flex-1">
+            Cancelar
+          </button>
+          <button id="confirm-delete-btn"
+            class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium flex-1">
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts modularizados -->
+  <script type="module" src="js/views/vacanciesPage.js"></script>
+</body>
+
+</html>

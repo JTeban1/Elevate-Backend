@@ -1,0 +1,190 @@
+<html>
+
+<head>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link rel="stylesheet" as="style" onload="this.rel='stylesheet'"
+        href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" />
+
+    <title>TalentTrack Reports</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+</head>
+
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen font-[Inter]">
+    <div class="flex flex-col min-h-screen">
+        <!-- HEADER -->
+        <header
+            class="flex items-center justify-between px-10 py-4 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 text-white shadow-lg">
+            <div class="flex items-center gap-3">
+                <div class="size-6 text-yellow-300 animate-pulse">
+                    <svg viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M24 8.18L33.41 11.57L24 15.2L14.58 11.57L24 8.18Z"></path>
+                        <path d="M9 15.85L21 20.48V37.63L9 32.99V15.85Z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-bold tracking-tight">TalentTrack</h2>
+            </div>
+            <nav class="flex gap-6 text-sm font-medium">
+                <a class="hover:text-yellow-300 transition" href="dashboard.html">Dashboard</a>
+                <a class="hover:text-yellow-300 transition" href="vacancies.html">Vacancies</a>
+                <a class="hover:text-yellow-300 transition" href="candidates.html">Candidates</a>
+                <a class="hover:text-yellow-300 transition" href="reports.html">Reports</a>
+                <a class="hover:text-yellow-300 transition border-b-4 border-blue-500 pb-3 font-bold text-yellow-300"
+                    href="upload.html">Upload CVs</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <button class="bg-white/20 hover:bg-white/30 p-2 rounded-full transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 256 256">
+                        <path
+                            d="M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216Z" />
+                    </svg>
+                </button>
+                <div class="bg-center bg-cover rounded-full size-10 ring-2 ring-yellow-300 shadow-md"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBenUYlHfJ8Qx6vaXpjSbO26A7JpBDJ2dxGVHKSLdm5cZI9noW7OIhnf7qyi2RmcnTi9ItEV9QfeHuaRGM69B4cbkXmxa1hKYIwc0jC1ZaAH_M5Q8_RdrQznGwhFb3C8k4Jip-yqvm5FNQHjiE5Pa03OZDEvQ868_1eGXsLqrmxAfsnffj1k8K7I0DNzCxGsNavUj5zOjPknab1nsDEE-I4faYoYsnPhW3W5jizPID8x1wH_9N2noMWMbHUMjaEW0vf9QItoFMf8BBy");'>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <main class="flex flex-col flex-1 px-10 py-6">
+            <div class="max-w-[960px] w-full mx-auto">
+                <h1 class="text-3xl font-bold text-slate-800">Reports</h1>
+                <p class="text-slate-600 mb-6">Generate detailed reports on your recruitment process</p>
+
+                <!-- Tabs -->
+                <div class="flex gap-6 border-b border-slate-300 mb-6">
+                    <a class="border-b-4 border-blue-500 text-blue-600 font-bold pb-3 transition">Vacancy
+                        Performance</a>
+                    <a class="border-b-4 border-transparent text-slate-500 hover:text-slate-700 pb-3 transition">Team
+                        Efficiency</a>
+                    <a class="border-b-4 border-transparent text-slate-500 hover:text-slate-700 pb-3 transition">AI
+                        Automation Impact</a>
+                </div>
+
+                <!-- KPI CARDS -->
+                <div class="grid md:grid-cols-2 gap-6 mb-10">
+                    <!-- Applications Received -->
+                    <div class="p-6 rounded-xl shadow-md bg-gradient-to-br from-blue-50 to-blue-100 
+                        border border-blue-200 hover:scale-105 transition-transform duration-300">
+                        <p class="text-blue-700 font-medium">Applications Received</p>
+                        <p class="text-blue-900 text-4xl font-extrabold">120</p>
+                        <p class="text-blue-600 text-sm mb-4">Last 30 Days</p>
+                        <div class="grid grid-cols-4 gap-3 items-end h-40">
+                            <div class="bg-blue-400 rounded-t-md animate-[grow_1s_ease-in-out] h-[90%]"></div>
+                            <div class="bg-blue-400 rounded-t-md animate-[grow_1.2s_ease-in-out] h-[70%]"></div>
+                            <div class="bg-blue-400 rounded-t-md animate-[grow_1.4s_ease-in-out] h-[70%]"></div>
+                            <div class="bg-blue-400 rounded-t-md animate-[grow_1.6s_ease-in-out] h-[40%]"></div>
+                        </div>
+                        <div class="flex justify-between text-blue-600 text-xs font-bold mt-2">
+                            <span>W1</span><span>W2</span><span>W3</span><span>W4</span>
+                        </div>
+                    </div>
+
+                    <!-- Time to Fill -->
+                    <div class="p-6 rounded-xl shadow-md bg-gradient-to-br from-green-50 to-green-100 
+                        border border-green-200 hover:scale-105 transition-transform duration-300">
+                        <p class="text-green-700 font-medium">Time to Fill</p>
+                        <p class="text-green-900 text-4xl font-extrabold">25 days</p>
+                        <p class="text-green-600 text-sm mb-4">Last 30 Days</p>
+                        <div class="h-36 flex items-end">
+                            <div
+                                class="w-full h-full bg-gradient-to-t from-green-200 to-transparent rounded-lg relative overflow-hidden">
+                                <svg class="absolute bottom-0 left-0 w-full h-full" viewBox="0 0 472 150"
+                                    preserveAspectRatio="none">
+                                    <path
+                                        d="M0 109C18 109 18 21 36 21C54 21 54 41 72 41C90 41 90 93 108 93C127 93 127 33 145 33C163 33 163 101 181 101C199 101 199 61 217 61C236 61 236 45 254 45C272 45 272 121 290 121C308 121 308 149 326 149C344 149 344 1 363 1C381 1 381 81 399 81C417 81 417 129 435 129C453 129 453 25 472 25V150H0V109Z"
+                                        fill="url(#grad)" />
+                                    <defs>
+                                        <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+                                            <stop stop-color="#22c55e" stop-opacity="0.3" offset="0" />
+                                            <stop stop-color="#22c55e" stop-opacity="0" offset="1" />
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex justify-between text-green-600 text-xs font-bold mt-2">
+                            <span>W1</span><span>W2</span><span>W3</span><span>W4</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Candidate Funnel -->
+                <h2 class="text-2xl font-bold text-slate-800 mb-4">Candidate Funnel</h2>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between">
+                            <p class="font-medium text-slate-700">Applications Received</p>
+                            <p class="text-sm font-bold text-blue-600">20%</p>
+                        </div>
+                        <div class="w-full bg-slate-300 rounded h-3 overflow-hidden">
+                            <div class="bg-blue-500 h-3 rounded animate-[growBar_1s_ease-in-out] w-[20%]"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between">
+                            <p class="font-medium text-slate-700">Screening</p>
+                            <p class="text-sm font-bold text-indigo-600">15%</p>
+                        </div>
+                        <div class="w-full bg-slate-300 rounded h-3 overflow-hidden">
+                            <div class="bg-indigo-500 h-3 rounded animate-[growBar_1s_ease-in-out] w-[15%]"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between">
+                            <p class="font-medium text-slate-700">Interviews</p>
+                            <p class="text-sm font-bold text-purple-600">10%</p>
+                        </div>
+                        <div class="w-full bg-slate-300 rounded h-3 overflow-hidden">
+                            <div class="bg-purple-500 h-3 rounded animate-[growBar_1s_ease-in-out] w-[10%]"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between">
+                            <p class="font-medium text-slate-700">Offers</p>
+                            <p class="text-sm font-bold text-orange-600">5%</p>
+                        </div>
+                        <div class="w-full bg-slate-300 rounded h-3 overflow-hidden">
+                            <div class="bg-orange-500 h-3 rounded animate-[growBar_1s_ease-in-out] w-[5%]"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between">
+                            <p class="font-medium text-slate-700">Hires</p>
+                            <p class="text-sm font-bold text-green-600">2%</p>
+                        </div>
+                        <div class="w-full bg-slate-300 rounded h-3 overflow-hidden">
+                            <div class="bg-green-500 h-3 rounded animate-[growBar_1s_ease-in-out] w-[2%]"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Tailwind custom animations -->
+    <style>
+        @keyframes grow {
+            from {
+                height: 0;
+            }
+
+            to {
+                height: var(--tw-grow-height, 100%);
+            }
+        }
+
+        @keyframes growBar {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: var(--tw-grow-width, 100%);
+            }
+        }
+    </style>
+</body>
+
+</html>
