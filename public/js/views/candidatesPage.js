@@ -130,7 +130,7 @@ function renderCandidatesCards() {
  */
 function createCandidateCard(candidate) {
     const div = document.createElement('div');
-    div.className = 'p-6 hover:bg-gray-50 transition-colors cursor-pointer';
+    div.className = 'p-6 hover:bg-gray-50 transition-colors';
 
     // Parsear skills y languages
     let skills = [];
@@ -149,23 +149,12 @@ function createCandidateCard(candidate) {
     // Generar iniciales para avatar
     const initials = candidate.name.split(' ').map(word => word.charAt(0)).join('').substring(0, 2).toUpperCase();
 
-    // Colores de avatar basados en el ID
-    const avatarColors = [
-        'from-blue-500 to-blue-600',
-        'from-green-500 to-green-600',
-        'from-purple-500 to-purple-600',
-        'from-orange-500 to-orange-600',
-        'from-red-500 to-red-600',
-        'from-indigo-500 to-indigo-600'
-    ];
-    const colorClass = avatarColors[candidate.candidate_id % avatarColors.length];
-
     div.innerHTML = `
         <div class="flex items-center gap-6">
             <!-- Avatar -->
             <div class="flex-shrink-0">
-                <div class="w-16 h-16 bg-gradient-to-br ${colorClass} rounded-full flex items-center justify-center shadow-lg">
-                    <span class="text-white font-bold text-lg">${initials}</span>
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-sm">
+                    <span class="text-white font-bold text-sm">${initials}</span>
                 </div>
             </div>
             
@@ -224,8 +213,11 @@ function createCandidateCard(candidate) {
         </div>
     `;
 
-    // Agregar evento click para ver detalles
-    div.addEventListener('click', () => viewCandidate(candidate.candidate_id));
+    // Agregar evento click solo al botón de ver detalles
+    const viewButton = div.querySelector('.view-candidate-btn');
+    if (viewButton) {
+        viewButton.addEventListener('click', () => viewCandidate(candidate.candidate_id));
+    }
 
     return div;
 }
