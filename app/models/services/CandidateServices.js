@@ -129,6 +129,7 @@ export const createCandidate = async (candidate) => {
     const {
         name,
         email,
+        phone,
         date_of_birth,
         occupation,
         summary,
@@ -143,6 +144,7 @@ export const createCandidate = async (candidate) => {
         const [candidateInstance, created] = await Candidate.upsert({
             name: name || null,
             email: email || null,
+            phone: phone || null,
             date_of_birth: date_of_birth || null,
             occupation: occupation || null,
             summary: summary || null,
