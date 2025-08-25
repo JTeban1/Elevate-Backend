@@ -1,5 +1,5 @@
 import { guard } from '../utils/guard.js';
-import { getVacancies } from '../api/vacancies.js';
+import { getVacancies, getApplicationsByVacancyIdController } from '../api/vacancies.js';
 import { getCandidates } from '../api/candidates.js';
 import { getApplications, updateApplication } from '../api/applications.js';
 
@@ -8,6 +8,7 @@ let vacancy = null;
 let candidates = [];
 let applications = [];
 let filteredApplications = [];
+let applicationJoin = [];
 let currentFilters = {
     search: '',
     status: ''
@@ -46,12 +47,14 @@ async function loadVacancyData() {
         }
 
         // Load data in parallel
-        const [vacanciesData, candidatesData, applicationsData] = await Promise.all([
+        const [vacanciesData, candidatesData, applicationsData, applicationJoinData] = await Promise.all([
             getVacancies(),
             getCandidates(),
-            getApplications()
+            getApplications(),
+            getApplicationsByVacancyIdController(params.id)
         ]);
-
+        applicationJoin = applicationJoinData;
+        
         // Find specific vacancy
         vacancy = vacanciesData.find(v => v.vacancy_id === params.id);
         
@@ -62,6 +65,7 @@ async function loadVacancyData() {
 
         candidates = candidatesData;
         applications = applicationsData;
+        
 
         // Filter applications for this vacancy
         filteredApplications = applications.filter(app => app.vacancy_id === params.id);
@@ -133,7 +137,7 @@ function renderCandidates() {
     container.innerHTML = '';
 
     // Aplicar filtros
-    let applicationsToShow = applyFilters(filteredApplications);
+    let applicationsToShow = applyFilters(applicationJoin);
 
     if (applicationsToShow.length === 0) {
         container.innerHTML = `
@@ -159,7 +163,7 @@ function renderCandidates() {
 
     // Crear card para cada candidato
     paginatedApplications.forEach(application => {
-        const candidate = candidates.find(c => c.candidate_id === application.candidate_id);
+        const candidate = application.Candidate;
         if (candidate) {
             const candidateCard = createCandidateCard(candidate, application);
             container.appendChild(candidateCard);
@@ -176,7 +180,7 @@ function renderCandidates() {
 function createCandidateCard(candidate, application) {
     const div = document.createElement('div');
     div.className = 'p-6 hover:bg-gray-50 transition-colors';
-
+    
     const initials = candidate.name.split(' ').map(name => name.charAt(0)).join('').substring(0, 2);
     const statusConfig = getApplicationStatusConfig(application.status);
     const applicationDate = new Date(application.application_date).toLocaleDateString('es-ES', {
@@ -221,7 +225,7 @@ function createCandidateCard(candidate, application) {
                 
                 <!-- Status Change Button -->
                 <div class="relative">
-                    <button type="button" data-application-id="${application.id}" 
+                    <button type="button" data-application-id="${application.application_id}" 
                             class="status-change-btn flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
                         Cambiar Estado
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -239,9 +243,9 @@ function createCandidateCard(candidate, application) {
 /**
  * Apply filters
  */
-function applyFilters(applicationsList) {
-    return applicationsList.filter(application => {
-        const candidate = candidates.find(c => c.candidate_id === application.candidate_id);
+function applyFilters(applicationJoin) {
+    return applicationJoin.filter(application => {
+        const candidate = application.Candidate;
         if (!candidate) return false;
 
         // Search filter by name or email
@@ -268,7 +272,9 @@ function applyFilters(applicationsList) {
  * Show status change modal
  */
 function showStatusChangeModal(applicationId) {
-    const application = applications.find(app => app.id == applicationId); // Use == for type coercion
+    
+    const application = applicationJoin.find(app => app.application_id == applicationId); // Use == for type coercion
+    
     if (!application) {
         console.error('Application not found with ID:', applicationId);
         showError('No se pudo encontrar la aplicación');
@@ -370,7 +376,7 @@ function hideStatusChangeModal() {
  */
 async function updateApplicationStatus(applicationId, newStatus) {
     try {
-        const application = applications.find(app => app.id == applicationId); // Use == for type coercion
+        const application = applications.find(app => app.application_id == applicationId); // Use == for type coercion
         if (!application) return;
 
         // Update in API
@@ -380,13 +386,13 @@ async function updateApplicationStatus(applicationId, newStatus) {
         });
 
         // Update local state
-        const index = applications.findIndex(app => app.id == applicationId);
+        const index = applications.findIndex(app => app.application_id == applicationId);
         if (index !== -1) {
             applications[index] = updatedApplication;
         }
 
         // Update filteredApplications as well
-        const filteredIndex = filteredApplications.findIndex(app => app.id == applicationId);
+        const filteredIndex = filteredApplications.findIndex(app => app.application_id == applicationId);
         if (filteredIndex !== -1) {
             filteredApplications[filteredIndex] = updatedApplication;
         }

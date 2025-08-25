@@ -1,5 +1,7 @@
 import { where } from 'sequelize';
 import Vacancy from '../entities/VacanciesEntity.js';
+import Application from '../entities/ApplicationEntity.js';
+import Candidate from '../entities/CandidateEntity.js';
 import { Op } from 'sequelize';
 import sequelize from '../../../config/db_conn.js';
 
@@ -92,5 +94,54 @@ export const deleteVacancy = async (vacancy) => {
         throw error;
     }
 };
+
+export const getAllVacanciesWithCount = async () => {
+  try {
+    const vacancies = await Vacancy.findAll({
+      attributes: {
+        include: [
+          [
+            sequelize.fn('COUNT', sequelize.col('Applications.application_id')),
+            'applicationsCount'
+          ]
+        ]
+      },
+      include: [
+        {
+          model: Application,
+          attributes: [] // no necesitamos traer todos los datos de la aplicación
+        }
+      ],
+      group: ['Vacancy.vacancy_id'],
+      order: [['vacancy_id', 'DESC']]
+    });
+
+    return vacancies;
+  } catch (error) {
+    console.error('Error fetching all vacancies with count:', error);
+    throw error;
+  }
+};
+
+
+export const getApplicationsByVacancyId = async (vacancyId) => {
+  try {
+    const applications = await Application.findAll({
+      where: { vacancy_id: vacancyId },
+      include: [
+        { model: Candidate },
+        { model: Vacancy }
+      ]
+    });
+
+    return applications;
+  } catch (error) {
+    console.error('Error fetching applications by vacancy:', error);
+    throw error;
+  }
+};
+
+
+
 
 

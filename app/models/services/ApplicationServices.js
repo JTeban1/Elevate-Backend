@@ -1,6 +1,17 @@
+
 import Application from '../entities/ApplicationEntity.js';
 import Candidate from '../entities/CandidateEntity.js';
 import Vacancy from '../entities/VacanciesEntity.js';
+
+export const createApplication = async (applicationData) => {
+  try {
+    const newApplication = await Application.create(applicationData);
+    return newApplication;
+  } catch (error) {
+    console.error('Error creating application:', error);
+    throw error;
+  }
+};
 
 export const getApplications = async () => {
     try {
@@ -69,5 +80,19 @@ export const getApplicationsForVacancyIdAndStatus = async (reqVacancy_id, status
   } catch (error) {
     console.error('Error fetching applications:', error);
     return [];
+  }
+};
+
+
+export const updateApplication = async (applicationId, updates) => {
+  try {
+    const [updatedRowsCount] = await Application.update(updates, {
+      where: { application_id: applicationId },
+    });
+
+    return updatedRowsCount > 0; // true si se actualizó al menos una fila
+  } catch (error) {
+    console.error("Error updating application:", error);
+    throw error;
   }
 };
