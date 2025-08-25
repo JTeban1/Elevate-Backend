@@ -1,8 +1,10 @@
 import { guard } from '../utils/guard.js';
 import { getVacancies, createVacancy as createVacancyAPI, updateVacancy as updateVacancyAPI, deleteVacancy as deleteVacancyAPI } from '../api/vacancies.js';
+import { getApplications } from '../api/applications.js';
 
-// Estado global de la aplicación
+// Global application state
 let vacancies = [];
+let applications = [];
 let currentEditingId = null;
 let currentTab = 'all';
 let currentVacancyToDelete = null;
@@ -19,6 +21,7 @@ const itemsPerPage = 5;
 async function loadVacancies() {
     try {
         vacancies = await getVacancies();
+        applications = await getApplications();
         renderVacanciesTable();
         updateStats();
     } catch (error) {
@@ -39,12 +42,12 @@ function renderVacanciesTable() {
     // Aplicar filtros
     let vacanciesToShow = applyFilters(vacancies);
 
-    // Filtrar vacantes según la pestaña actual
+    // Filter vacancies according to current tab
     if (currentTab !== 'all') {
         vacanciesToShow = vacanciesToShow.filter(v => v.status === currentTab);
     }
 
-    // Aplicar paginación
+    // Apply pagination
     const totalItems = vacanciesToShow.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -56,7 +59,7 @@ function renderVacanciesTable() {
         // Determinar el mensaje apropiado
         let message = 'No hay vacantes disponibles';
 
-        // Si hay filtros activos, mostrar mensaje específico
+        // If there are active filters, show specific message
         const hasActiveFilters = currentFilters.search || currentFilters.status;
         const hasActiveTab = currentTab !== 'all';
 
@@ -96,7 +99,7 @@ function renderVacanciesTable() {
         tbody.appendChild(row);
     });
 
-    // Actualizar paginación
+    // Update pagination
     updatePagination(totalItems, totalPages);
 }
 
@@ -109,6 +112,9 @@ function createVacancyRow(vacancy) {
 
     const statusConfig = getStatusConfig(vacancy.status);
     const initials = vacancy.title.split(' ').map(word => word.charAt(0)).join('').substring(0, 2).toUpperCase();
+    
+    // Contar aplicaciones para esta vacante
+    const vacancyApplications = applications.filter(app => app.vacancy_id === vacancy.vacancy_id).length;
 
     tr.innerHTML = `
         <td class="px-6 py-4 whitespace-nowrap">
@@ -135,7 +141,7 @@ function createVacancyRow(vacancy) {
         </td>
         <td class="hidden sm:table-cell px-6 py-4 whitespace-nowrap">
             <div class="flex items-center">
-                <span class="text-2xl font-bold text-blue-600">0</span>
+                <span class="text-2xl font-bold text-blue-600">${vacancyApplications}</span>
                 <span class="text-sm text-gray-500 ml-2">candidatos</span>
             </div>
         </td>
@@ -213,7 +219,7 @@ function formatDate(dateString) {
  */
 function applyFilters(vacanciesList) {
     return vacanciesList.filter(vacancy => {
-        // Filtro de búsqueda por texto
+        // Text search filter
         if (currentFilters.search) {
             const searchTerm = currentFilters.search.toLowerCase();
             const titleMatch = vacancy.title.toLowerCase().includes(searchTerm);
@@ -242,16 +248,14 @@ function updateStats() {
     const closedVacancies = vacancies.filter(v => v.status === 'closed').length;
     const pausedVacancies = vacancies.filter(v => v.status === 'paused').length;
 
-    // Actualizar cards de estadísticas
+    // Update statistics cards
     const totalCard = document.getElementById('total-vacancies');
     const openCard = document.getElementById('open-vacancies');
     const applicationsCard = document.getElementById('total-applications');
-    const averageTimeCard = document.getElementById('average-time');
 
     if (totalCard) totalCard.textContent = totalVacancies;
     if (openCard) openCard.textContent = openVacancies;
-    if (applicationsCard) applicationsCard.textContent = '0'; // Por ahora 0, se calculará con applications
-    if (averageTimeCard) averageTimeCard.textContent = '0 días';
+    if (applicationsCard) applicationsCard.textContent = applications.length;
 
     // Actualizar contadores de pestañas
     const tabAllCount = document.getElementById('tab-all-count');
@@ -280,7 +284,7 @@ function updatePagination(totalItems, totalPages) {
     if (paginationEnd) paginationEnd.textContent = endItem.toString();
     if (paginationTotal) paginationTotal.textContent = totalItems.toString();
 
-    // Actualizar botones de paginación
+    // Update pagination buttons
     updatePaginationButtons(totalPages);
 }
 
@@ -288,14 +292,14 @@ function updatePagination(totalItems, totalPages) {
  * Actualizar botones de paginación
  */
 function updatePaginationButtons(totalPages) {
-    // Selector específico para la sección de paginación (no las acciones de las filas)
+    // Specific selector for pagination section (not row actions)
     const paginationSection = document.querySelector('.flex.flex-col.sm\\:flex-row.items-center.justify-between.mt-6');
     if (!paginationSection) return;
 
     const paginationContainer = paginationSection.querySelector('.flex.items-center.space-x-2');
     if (!paginationContainer) return;
 
-    // Crear estructura de paginación limpia
+    // Create clean pagination structure
     paginationContainer.innerHTML = '';
 
     // Botón Anterior
@@ -614,11 +618,8 @@ function closeModal() {
  * Ver detalles de una vacante
  */
 function viewVacancy(vacancyId) {
-    const vacancy = vacancies.find(v => v.vacancy_id === vacancyId);
-    if (vacancy) {
-        console.log('Viewing vacancy:', vacancy);
-        // Aquí podrías abrir un modal de detalles o redirigir a una página específica
-    }
+    // Redirigir a la página de detalle de vacante
+    window.location.href = `vacanciePage.html?id=${vacancyId}`;
 }
 
 /**

@@ -176,6 +176,102 @@
             "skills": "[\"Agile\", \"Scrum\", \"PMP\", \"Stakeholder Management\", \"Risk Management\", \"Budgeting\", \"Microsoft Project\", \"Jira\", \"Leadership\"]",
             "languages": "[\"Spanish\", \"English\", \"French\"]",
             "education": "[\"Industrial Engineering - Universidad Nacional\", \"PMP Certification\", \"Scrum Master Certification\"]"
+        },
+        {
+            "candidate_id": 13,
+            "name": "Santiago Morales",
+            "email": "santiago.morales@dev.com",
+            "date_of_birth": "1997-05-18",
+            "occupation": "Junior Software Developer",
+            "summary": "Recent computer science graduate with strong programming fundamentals and eagerness to learn.",
+            "experience": "[\"Intern at TechStart (2023)\", \"Freelance projects (2023-2024)\"]",
+            "skills": "[\"Java\", \"Python\", \"JavaScript\", \"Git\", \"MySQL\"]",
+            "languages": "[\"Spanish\", \"English\"]",
+            "education": "[\"Computer Science - Universidad Nacional\"]"
+        },
+        {
+            "candidate_id": 14,
+            "name": "Isabella Rodriguez",
+            "email": "isabella.rod@backend.com",
+            "date_of_birth": "1994-09-12",
+            "occupation": "Backend Developer",
+            "summary": "Backend specialist with expertise in Python frameworks and API development.",
+            "experience": "[\"Backend Developer at DataSoft (2019-2022)\", \"Senior Dev at CloudTech (2022-2024)\"]",
+            "skills": "[\"Python\", \"Django\", \"FastAPI\", \"PostgreSQL\", \"Docker\", \"AWS\"]",
+            "languages": "[\"Spanish\", \"English\"]",
+            "education": "[\"Software Engineering - Universidad de los Andes\"]"
+        },
+        {
+            "candidate_id": 15,
+            "name": "Andrés Felipe Castro",
+            "email": "andres.castro@fullstack.com",
+            "date_of_birth": "1992-12-03",
+            "occupation": "Full Stack Developer",
+            "summary": "Versatile full-stack developer with experience in modern web technologies.",
+            "experience": "[\"Full Stack at WebCorp (2017-2020)\", \"Lead Developer at DigitalFlow (2020-2024)\"]",
+            "skills": "[\"JavaScript\", \"React\", \"Node.js\", \"MongoDB\", \"TypeScript\", \"GraphQL\"]",
+            "languages": "[\"Spanish\", \"English\"]",
+            "education": "[\"Systems Engineering - Universidad Javeriana\"]"
+        },
+        {
+            "candidate_id": 16,
+            "name": "Valentina Herrera",
+            "email": "valentina.herrera@senior.com",
+            "date_of_birth": "1988-02-28",
+            "occupation": "Senior Software Engineer",
+            "summary": "Senior engineer with team leadership experience and expertise in scalable systems.",
+            "experience": "[\"Software Engineer at BigTech (2012-2018)\", \"Senior Engineer at ScaleSoft (2018-2024)\"]",
+            "skills": "[\"Java\", \"Spring Boot\", \"Microservices\", \"Kubernetes\", \"Team Leadership\", \"System Design\"]",
+            "languages": "[\"Spanish\", \"English\", \"Portuguese\"]",
+            "education": "[\"Computer Engineering - Universidad Nacional\", \"MBA - EAFIT\"]"
+        },
+        {
+            "candidate_id": 17,
+            "name": "Diego Alejandro Vargas",
+            "email": "diego.vargas@fullstack.dev",
+            "date_of_birth": "1995-08-14",
+            "occupation": "Full Stack Engineer",
+            "summary": "Experienced full-stack engineer with capabilities in both frontend and backend development.",
+            "experience": "[\"Full Stack at StartupHub (2018-2021)\", \"Senior Full Stack at TechFlow (2021-2024)\"]",
+            "skills": "[\"React\", \"Vue.js\", \"Node.js\", \"Python\", \"PostgreSQL\", \"Redis\"]",
+            "languages": "[\"Spanish\", \"English\"]",
+            "education": "[\"Software Engineering - Universidad EAFIT\"]"
+        },
+        {
+            "candidate_id": 18,
+            "name": "Camila Sophia Mendoza",
+            "email": "camila.mendoza@api.dev",
+            "date_of_birth": "1993-11-07",
+            "occupation": "API Developer",
+            "summary": "Specialist in API development and integration with focus on scalable backend systems.",
+            "experience": "[\"API Developer at DataFlow (2017-2020)\", \"Senior API Engineer at CloudSoft (2020-2024)\"]",
+            "skills": "[\"REST APIs\", \"GraphQL\", \"Node.js\", \"Express\", \"MongoDB\", \"API Security\"]",
+            "languages": "[\"Spanish\", \"English\"]",
+            "education": "[\"Computer Science - Universidad del Norte\"]"
+        },
+        {
+            "candidate_id": 19,
+            "name": "Miguel Angel Torres",
+            "email": "miguel.torres@rejected.com",
+            "date_of_birth": "1996-04-20",
+            "occupation": "Junior Developer",
+            "summary": "Junior developer with potential but needs improvement in technical skills.",
+            "experience": "[\"Internship at LocalTech (2023)\", \"Junior Dev at SmallCorp (2023-2024)\"]",
+            "skills": "[\"JavaScript\", \"HTML\", \"CSS\", \"Basic React\"]",
+            "languages": "[\"Spanish\"]",
+            "education": "[\"Systems Technology - SENA\"]"
+        },
+        {
+            "candidate_id": 20,
+            "name": "Lucia Fernanda Silva",
+            "email": "lucia.silva@accepted.com",
+            "date_of_birth": "1990-10-15",
+            "occupation": "Senior Software Developer",
+            "summary": "Excellent cultural fit with strong technical skills and proven track record.",
+            "experience": "[\"Software Developer at TechCorp (2015-2019)\", \"Senior Developer at InnovateLab (2019-2024)\"]",
+            "skills": "[\"Java\", \"Spring\", \"Angular\", \"TypeScript\", \"PostgreSQL\", \"Team Collaboration\"]",
+            "languages": "[\"Spanish\", \"English\", \"French\"]",
+            "education": "[\"Software Engineering - Universidad Pontificia Bolivariana\", \"Scrum Master Certification\"]"
         }
     ],
     "vacancies": [
@@ -500,6 +596,70 @@
             "ai_reason": "Cross-platform skills match development needs",
             "candidate_id": 12,
             "vacancy_id": 3
+        },
+        {
+            "application_id": 29,
+            "application_date": "2025-08-23 11:20:00",
+            "status": "pending",
+            "ai_reason": "Fresh graduate with strong programming fundamentals",
+            "candidate_id": 13,
+            "vacancy_id": 1
+        },
+        {
+            "application_id": 30,
+            "application_date": "2025-08-23 11:25:00",
+            "status": "interview",
+            "ai_reason": "Strong Python skills for backend development",
+            "candidate_id": 14,
+            "vacancy_id": 1
+        },
+        {
+            "application_id": 31,
+            "application_date": "2025-08-23 11:30:00",
+            "status": "pending",
+            "ai_reason": "JavaScript expertise matches full-stack requirements",
+            "candidate_id": 15,
+            "vacancy_id": 1
+        },
+        {
+            "application_id": 32,
+            "application_date": "2025-08-23 11:35:00",
+            "status": "offered",
+            "ai_reason": "Senior developer with team leadership experience",
+            "candidate_id": 16,
+            "vacancy_id": 1
+        },
+        {
+            "application_id": 33,
+            "application_date": "2025-08-23 11:40:00",
+            "status": "interview",
+            "ai_reason": "Full-stack capabilities perfect for versatile development",
+            "candidate_id": 17,
+            "vacancy_id": 1
+        },
+        {
+            "application_id": 34,
+            "application_date": "2025-08-23 11:45:00",
+            "status": "pending",
+            "ai_reason": "API development experience matches backend focus",
+            "candidate_id": 18,
+            "vacancy_id": 1
+        },
+        {
+            "application_id": 35,
+            "application_date": "2025-08-23 11:50:00",
+            "status": "rejected",
+            "ai_reason": "Initially promising but failed technical assessment",
+            "candidate_id": 19,
+            "vacancy_id": 1
+        },
+        {
+            "application_id": 36,
+            "application_date": "2025-08-23 11:55:00",
+            "status": "accepted",
+            "ai_reason": "Excellent cultural fit with strong technical skills",
+            "candidate_id": 20,
+            "vacancy_id": 1
         }
     ]
 }
