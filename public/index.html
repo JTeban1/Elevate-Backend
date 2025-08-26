@@ -52,15 +52,17 @@
                         </h1>
                     </div>
 
-                    <div class="flex items-center space-x-2">
-                        <!-- Botones idioma -->
-                        <button id="btn-en"
-                            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/10 border border-white/20 hover:bg-blue-500/30">
-                            EN
-                        </button>
-                        <button id="btn-es"
-                            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/10 border border-white/20 hover:bg-blue-500/30">
-                            ES
+                    <div class="flex items-center space-x-3">
+                        <!-- Single language toggle button -->
+                        <button id="language-toggle"
+                            class="px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 bg-white/10 text-blue-100 border border-white/20 hover:bg-blue-500/30 focus:ring-2 focus:ring-blue-400 focus:outline-none flex items-center space-x-2"
+                            aria-label="Cambiar idioma"
+                            title="Cambiar idioma">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+                            </svg>
+                            <span id="current-language">ES</span>
                         </button>
 
                         <!-- Login -->
