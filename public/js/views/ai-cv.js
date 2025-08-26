@@ -71,7 +71,7 @@ function setupUserDropdown() {
       e.preventDefault();
       localStorage.removeItem('currentUser');
       localStorage.removeItem('returnUrl');
-      window.location.href = 'index.html';
+      window.location.href = '../index.html';
     });
   }
 }
