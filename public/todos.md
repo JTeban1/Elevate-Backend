@@ -183,5 +183,5 @@ public/
 │   └── views/              # Controladores por página
 ├── assets/img/             # Recursos estáticos
 ├── db.json                 # Base de datos JSON Server
-└── *.html                  # Páginas con sufijo "Page""
+└── *.html                  # Páginas con sufijo "Page"
 ```
