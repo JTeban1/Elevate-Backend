@@ -10,6 +10,16 @@ export const getAllApplications = async (req, res) => {
     }
 };
 
+export const getAllApplicationsColumn = async (req, res) => {
+    try {
+        const applications = await applicationsModel.getAllApplicationsColumn();
+        return res.status(200).json(applications);
+    } catch (error) {
+        console.error("Error fetching applications:", error);
+        return res.status(500).json({ error: "Error fetching applications" });
+    }
+};
+
 export const getApplicationsForVacancyId = async (req, res) => {
     try {
         const id = req.params.id;

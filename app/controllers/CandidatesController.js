@@ -1,6 +1,5 @@
 import * as candidatesModel from "../models/services/CandidateServices.js";
 
-
 export const getAllCandidatesController = async (req, res) => {
   try {
     const allCandidates = await candidatesModel.getAllCandidates();
@@ -10,7 +9,6 @@ export const getAllCandidatesController = async (req, res) => {
     return res.status(500).json({ error: "Error fetching candidates" });
   }
 };
-
 
 export const getCandidateByIdController = async (req, res) => {
   const { id } = req.params;
