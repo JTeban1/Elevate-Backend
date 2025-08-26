@@ -1,3 +1,5 @@
+import { guard } from '../utils/guard.js';
+
 const vacancySelect = document.getElementById('vacancy');
 const form = document.getElementById('cv_ai');
 const loadingDiv = document.getElementById('loading');
@@ -7,7 +9,7 @@ async function loadVacancies() {
     const response = await fetch('http://localhost:9000/api/vacancies');
     const data = await response.json();
 
-    // Llena el select con id y title
+    // Fill in the select with id and title
     vacancySelect.innerHTML = '<option disabled selected>Select a vacancy</option>';
     data.forEach(v => {
       vacancySelect.innerHTML += `
@@ -75,7 +77,15 @@ function setupUserDropdown() {
 }
 
 // Initialize header functionality when page loads
-document.addEventListener('DOMContentLoaded', setupUserDropdown);
+document.addEventListener('DOMContentLoaded', () => {
+    const currentPage = window.location.pathname.split('/').pop() || 'aiCvPage.html';
+    
+    // Run guard to protect the page (DISABLED - waiting for users endpoint)
+    // guard(currentPage);
+    
+    // Setup user dropdown
+    setupUserDropdown();
+});
 
 // ============================================================================
 // ORIGINAL CV AI FUNCTIONALITY - Teammate's code
