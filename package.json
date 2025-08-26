@@ -6,11 +6,16 @@
   "version": "1.0.0",
   "main": "cv.js",
   "type": "module",
+
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
+
     "dev": "node --watch ./app.js",
-    "server": "json-server --watch public/db.json --port 8000"
+    "server": "json-server --watch db.json --port 8000",
+    "seed:users": "node scripts/seed-users.mjs"
+
+
   },
   "keywords": [],
   "author": "",
