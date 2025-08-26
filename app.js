@@ -33,6 +33,14 @@ const PORT = process.env.PORT || 9000;
 
 // Raise the server and listen on the defined port
 
-app.listen(PORT, () => {
-    console.log(`Server running in http://localhost:${PORT}`);
+app.listen(PORT, async () => {
+    console.log(`✅ Server running at http://localhost:${PORT}`);
+
+    // Inicializar datos por defecto
+    try {
+        await initDefaults();
+        console.log("verified user");
+    } catch (err) {
+        console.error("vunverified user", err.message);
+    }
 });

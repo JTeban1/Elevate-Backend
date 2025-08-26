@@ -47,6 +47,10 @@ const Candidate = sequelize.define('Candidate', {
     education: {
         type: DataTypes.JSON,
         allowNull: true
+    },
+    notes: {
+        type: DataTypes.TEXT,
+        allowNull: true
     }
 }, {
     tableName: 'candidates',

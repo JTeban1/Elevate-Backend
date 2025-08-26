@@ -1,9 +1,11 @@
-// import { guard } from '../utils/guard.js';
+import { guard } from '../utils/guard.js';
 import { getCandidates } from '../api/candidates.js';
 import { getApplications } from '../api/applications.js';
+import { renderNavbar } from '../components/ui/navbar.js';
+import { updatePagination } from '../components/ui/pagination.js';
 
 
-// Estado global de la aplicacion
+// Global application status
 let candidates = [];
 let applications = [];
 let currentFilters = {
@@ -15,7 +17,7 @@ let currentPage = 1;
 const itemsPerPage = 4;
 
 /**
- * Cargar todos los candidatos desde JSON Server
+ * Load all candidates
  */
 async function loadCandidates() {
     try {
@@ -27,15 +29,15 @@ async function loadCandidates() {
         setupFilters();
     } catch (error) {
         console.error('Error loading candidates:', error);
-        // Mostrar error en consola, el usuario vera que no cargan los datos
+        // Show error in console, the user will see that the data is not loaded
     }
 }
 
 /**
- * Configurar opciones de filtros dinamicamente
+ * Configure filter options dynamically
  */
 function setupFilters() {
-    // Ocupaciones unicas
+    // Unique occupations
     const occupations = [...new Set(candidates.map(c => c.occupation))];
     const occupationFilter = document.getElementById('occupation-filter');
     if (occupationFilter) {
@@ -48,7 +50,7 @@ function setupFilters() {
         });
     }
 
-    // Skills unicos
+    // Unique skills 
     const allSkills = candidates.flatMap(c => {
         try {
             return JSON.parse(c.skills);
@@ -70,13 +72,13 @@ function setupFilters() {
 }
 
 /**
- * Renderizar las cards de candidatos
+ * Rendering candidate cards
  */
 function renderCandidatesCards() {
     const container = document.getElementById('candidates-container');
     if (!container) return;
 
-    // Ocultar loading
+    // Hide loading
     const loadingElement = document.getElementById('loading-candidates');
     if (loadingElement) {
         loadingElement.style.display = 'none';
@@ -84,10 +86,10 @@ function renderCandidatesCards() {
 
     container.innerHTML = '';
 
-    // Aplicar filtros
+    // Apply filters
     let candidatesToShow = applyFilters(candidates);
 
-    // Aplicar paginacion
+    // Apply pagination
     const totalItems = candidatesToShow.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -96,7 +98,7 @@ function renderCandidatesCards() {
     candidatesToShow = candidatesToShow.slice(startIndex, endIndex);
 
     if (candidatesToShow.length === 0) {
-        // Mostrar mensaje de no hay candidatos
+        // Show no candidates message
         const hasActiveFilters = currentFilters.search || currentFilters.occupation || currentFilters.skill;
         const message = hasActiveFilters
             ? 'No hay candidatos que coincidan con los filtros aplicados'
@@ -121,18 +123,21 @@ function renderCandidatesCards() {
         container.appendChild(card);
     });
 
-    // Actualizar paginacion
-    updatePagination(totalItems, totalPages);
+    // Update pagination
+    updatePagination(currentPage, totalItems, itemsPerPage, 'pagination-controls', (newPage) => {
+        currentPage = newPage;
+        renderCandidatesCards();
+    });
 }
 
 /**
- * Crear card de candidato
+ * Create candidate card
  */
 function createCandidateCard(candidate) {
     const div = document.createElement('div');
     div.className = 'p-6 hover:bg-gray-50 transition-colors';
 
-    // Parsear skills y languages
+    // Parsear skills and languages
     let skills = [];
     let languages = [];
     try {
@@ -142,11 +147,11 @@ function createCandidateCard(candidate) {
         console.warn('Error parsing skills/languages for candidate:', candidate.candidate_id);
     }
 
-    // Obtener aplicaciones del candidato
+    // Get applications from the candidate
     const candidateApplications = applications.filter(app => app.candidate_id === candidate.candidate_id);
     const applicationCount = candidateApplications.length;
 
-    // Generar iniciales para avatar
+    // Generate Avatar Initials
     const initials = candidate.name.split(' ').map(word => word.charAt(0)).join('').substring(0, 2).toUpperCase();
 
     div.innerHTML = `
@@ -158,7 +163,7 @@ function createCandidateCard(candidate) {
                 </div>
             </div>
             
-            <!-- Informacion principal -->
+            <!-- Main information -->
             <div class="flex-1 min-w-0">
                 <div class="flex items-start justify-between mb-2">
                     <div>
@@ -174,7 +179,7 @@ function createCandidateCard(candidate) {
                 
                 <p class="text-sm text-gray-600 mb-3 line-clamp-2">${candidate.summary}</p>
                 
-                <!-- Skills y Languages -->
+                <!-- Skills and Languages -->
                 <div class="flex flex-wrap gap-2 mb-3">
                     ${skills.slice(0, 3).map(skill =>
         `<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800">${skill}</span>`
@@ -182,7 +187,7 @@ function createCandidateCard(candidate) {
                     ${skills.length > 3 ? `<span class="text-xs text-gray-500">+${skills.length - 3} mas</span>` : ''}
                 </div>
                 
-                <!-- Informacion adicional -->
+                <!-- Additional information -->
                 <div class="flex items-center gap-4 text-xs text-gray-500">
                     <span class="flex items-center gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 256 256">
@@ -199,7 +204,7 @@ function createCandidateCard(candidate) {
                 </div>
             </div>
             
-            <!-- Boton de accion -->
+            <!-- Action button -->
             <div class="flex-shrink-0">
                 <button 
                     class="view-candidate-btn p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all"
@@ -213,7 +218,7 @@ function createCandidateCard(candidate) {
         </div>
     `;
 
-    // Agregar evento click solo al botón de ver detalles
+    // Add event click only to view details button
     const viewButton = div.querySelector('.view-candidate-btn');
     if (viewButton) {
         viewButton.addEventListener('click', () => viewCandidate(candidate.candidate_id));
@@ -223,11 +228,11 @@ function createCandidateCard(candidate) {
 }
 
 /**
- * Aplicar filtros a los candidatos
+ * Apply filters to candidates
  */
 function applyFilters(candidatesList) {
     return candidatesList.filter(candidate => {
-        // Filtro de busqueda por texto
+        // Search filter by text
         if (currentFilters.search) {
             const searchTerm = currentFilters.search.toLowerCase();
             const nameMatch = candidate.name.toLowerCase().includes(searchTerm);
@@ -239,12 +244,12 @@ function applyFilters(candidatesList) {
             }
         }
 
-        // Filtro por ocupacion
+        // Filter by occupation
         if (currentFilters.occupation && candidate.occupation !== currentFilters.occupation) {
             return false;
         }
 
-        // Filtro por skill
+        // Filter by skill
         if (currentFilters.skill) {
             try {
                 const candidateSkills = JSON.parse(candidate.skills);
@@ -261,7 +266,7 @@ function applyFilters(candidatesList) {
 }
 
 /**
- * Actualizar estadisticas
+ * Update statistics
  */
 function updateStats() {
     const totalCandidates = candidates.length;
@@ -280,7 +285,7 @@ function updateStats() {
     });
     const uniqueSkills = [...new Set(allSkills)].length;
 
-    // Actualizar cards de estadisticas
+    // Update Stat Cards
     const totalCard = document.getElementById('total-candidates');
     const withAppsCard = document.getElementById('candidates-with-apps');
     const occupationsCard = document.getElementById('unique-occupations');
@@ -293,161 +298,17 @@ function updateStats() {
 }
 
 /**
- * Actualizar paginacion
- */
-function updatePagination(totalItems, totalPages) {
-    const paginationStart = document.getElementById('pagination-start');
-    const paginationEnd = document.getElementById('pagination-end');
-    const paginationTotal = document.getElementById('pagination-total');
-
-    const startItem = totalItems > 0 ? ((currentPage - 1) * itemsPerPage) + 1 : 0;
-    const endItem = Math.min(currentPage * itemsPerPage, totalItems);
-
-    if (paginationStart) paginationStart.textContent = startItem.toString();
-    if (paginationEnd) paginationEnd.textContent = endItem.toString();
-    if (paginationTotal) paginationTotal.textContent = totalItems.toString();
-
-    // Actualizar botones de paginacion
-    updatePaginationButtons(totalPages);
-}
-
-/**
- * Actualizar botones de paginacion
- */
-function updatePaginationButtons(totalPages) {
-    const paginationSection = document.querySelector('.flex.flex-col.sm\\:flex-row.items-center.justify-between.mt-6');
-    if (!paginationSection) return;
-
-    const paginationContainer = paginationSection.querySelector('.flex.items-center.space-x-1');
-    if (!paginationContainer) return;
-
-    paginationContainer.innerHTML = '';
-
-    // Boton Anterior
-    const prevButton = createPaginationButton('Anterior', currentPage === 1, () => {
-        if (currentPage > 1) {
-            currentPage--;
-            renderCandidatesCards();
-        }
-    });
-    paginationContainer.appendChild(prevButton);
-
-    // Botones de p�gina
-    const startPage = Math.max(1, currentPage - 2);
-    const endPage = Math.min(totalPages, startPage + 4);
-
-    for (let i = startPage; i <= endPage; i++) {
-        const button = createPageButton(i, i === currentPage);
-        paginationContainer.appendChild(button);
-    }
-
-    // Bot�n Siguiente
-    const nextButton = createPaginationButton('Siguiente', currentPage === totalPages || totalPages === 0, () => {
-        if (currentPage < totalPages && totalPages > 0) {
-            currentPage++;
-            renderCandidatesCards();
-        }
-    });
-    paginationContainer.appendChild(nextButton);
-}
-
-/**
- * Crear bot�n de paginaci�n
- */
-function createPaginationButton(text, disabled, clickHandler) {
-    const button = document.createElement('button');
-    button.className = `px-4 py-2 text-sm font-medium rounded-lg transition-colors ${disabled
-        ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
-        : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
-        }`;
-    button.textContent = text;
-    button.disabled = disabled;
-
-    if (!disabled) {
-        button.addEventListener('click', clickHandler);
-    }
-
-    return button;
-}
-
-/**
- * Crear bot�n de p�gina
- */
-function createPageButton(pageNum, isActive) {
-    const button = document.createElement('button');
-    button.className = `px-4 py-2 text-sm font-medium rounded-lg transition-colors ${isActive
-        ? 'text-white bg-blue-600 border border-blue-600 hover:bg-blue-700'
-        : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
-        }`;
-    button.textContent = pageNum.toString();
-
-    if (!isActive) {
-        button.addEventListener('click', () => {
-            currentPage = pageNum;
-            renderCandidatesCards();
-        });
-    }
-
-    return button;
-}
-
-/**
- * Ver detalles de un candidato
+ * View details of a candidate
  */
 function viewCandidate(candidateId) {
     const candidate = candidates.find(c => c.candidate_id === candidateId);
     if (candidate) {
-        console.log('Viewing candidate:', candidate);
         window.location.href = `candidatePage.html?id=${candidateId}`;
     }
 }
 
 /**
- * Configurar dropdown del usuario
- */
-function setupUserDropdown() {
-    const userAvatar = document.getElementById('user-avatar');
-    const userDropdown = document.getElementById('user-dropdown');
-
-    if (userAvatar) {
-        userAvatar.addEventListener('click', function () {
-            userDropdown?.classList.toggle('hidden');
-        });
-    }
-
-    document.addEventListener('click', function (event) {
-        if (!userAvatar?.contains(event.target) && !userDropdown?.contains(event.target)) {
-            userDropdown?.classList.add('hidden');
-        }
-    });
-
-    const loggedUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    const userName = loggedUser.name || 'Usuario';
-    const userEmail = loggedUser.email || 'usuario@example.com';
-    const initials = userName.split(' ').map(name => name.charAt(0)).join('');
-
-    const userInitialsElement = document.getElementById('user-initials');
-    const userNameElement = document.getElementById('user-name');
-    const userEmailElement = document.getElementById('user-email');
-
-    if (userInitialsElement) userInitialsElement.textContent = initials;
-    if (userNameElement) userNameElement.textContent = userName;
-    if (userEmailElement) userEmailElement.textContent = userEmail;
-
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            localStorage.removeItem('currentUser');
-            localStorage.removeItem('returnUrl');
-            window.location.href = 'index.html';
-        });
-    }
-}
-
-
-/**
- * Configurar event listeners para filtros
+ * Configure event listeners for filters
  */
 function setupEventListeners() {
     const searchInput = document.getElementById('search-input');
@@ -456,16 +317,16 @@ function setupEventListeners() {
     const applyButton = document.getElementById('apply-filters');
     const clearButton = document.getElementById('clear-filters');
 
-    // Buscar mientras escribes
+    // Search as you type
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
             currentFilters.search = e.target.value;
-            currentPage = 1; // Reset pagination cuando cambia filtro
+            currentPage = 1; // Reset pagination when you change filter
             renderCandidatesCards();
         });
     }
 
-    // Filtro por ocupaci�n
+    // Filter by occupation
     if (occupationFilter) {
         occupationFilter.addEventListener('change', (e) => {
             currentFilters.occupation = e.target.value;
@@ -474,7 +335,7 @@ function setupEventListeners() {
         });
     }
 
-    // Filtro por skill
+    // Filtre by skill
     if (skillFilter) {
         skillFilter.addEventListener('change', (e) => {
             currentFilters.skill = e.target.value;
@@ -483,54 +344,51 @@ function setupEventListeners() {
         });
     }
 
-    // Bot�n aplicar filtros
+    // Button apply filters
     if (applyButton) {
         applyButton.addEventListener('click', () => {
             renderCandidatesCards();
         });
     }
 
-    // Bot�n limpiar filtros
+    // Button to clear filters
     if (clearButton) {
         clearButton.addEventListener('click', () => {
-            // Limpiar filtros
+            // Clean filters
             currentFilters.search = '';
             currentFilters.occupation = '';
             currentFilters.skill = '';
             currentPage = 1;
 
-            // Limpiar campos del UI
+            // Clean UI fields
             if (searchInput) searchInput.value = '';
             if (occupationFilter) occupationFilter.value = '';
             if (skillFilter) skillFilter.value = '';
 
-            // Renderizar sin filtros
+            // Render without filters
             renderCandidatesCards();
         });
     }
 }
 
-// Exponer funci�n globalmente para los botones
+// Expose function globally for buttons
 window.viewCandidate = viewCandidate;
 
 /**
- * Inicializaci�n cuando el DOM est� listo
+ * Initialization when the DOM is ready
  */
 document.addEventListener("DOMContentLoaded", () => {
     const currentPage = window.location.pathname.split('/').pop() || 'candidates.html';
-    console.log(`=� Protecting page: ${currentPage}`);
 
-    // Ejecutar guard para proteger la p�gina
+    // Run guard to protect the page (DISABLED - waiting for users endpoint)
     // guard(currentPage);
 
-    console.log(`=e Initializing candidates view for: ${currentPage}`);
+    // Render navbar component
+    renderNavbar('navbar-container', 'candidates');
 
-    // Configurar dropdown del usuario
-    setupUserDropdown();
-
-    // Cargar candidatos al iniciar
+    // Load Leads at Startup
     loadCandidates();
 
-    // Configurar event listeners
+    // Configure event listeners
     setupEventListeners();
 });

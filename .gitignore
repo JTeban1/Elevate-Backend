@@ -1,5 +1,6 @@
 # Dependencias
 node_modules/
+.vscode/
 
 # Variables de entorno
 .env
@@ -26,3 +27,5 @@ build/
 .claude/
 todos.md
 progress.md
+
+.vscode/settings.json

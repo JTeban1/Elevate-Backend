@@ -2,6 +2,9 @@ import { guard } from '../utils/guard.js';
 import { getVacancies, getApplicationsByVacancyIdController } from '../api/vacancies.js';
 import { getCandidates } from '../api/candidates.js';
 import { getApplications, updateApplication } from '../api/applications.js';
+import { renderNavbar } from '../components/ui/navbar.js';
+import { showSuccess, showError } from '../components/ui/messageToast.js';
+import { updatePagination } from '../components/ui/pagination.js';
 
 // Global state
 let vacancy = null;
@@ -40,7 +43,7 @@ function getURLParams() {
 async function loadVacancyData() {
     try {
         const params = getURLParams();
-        
+
         if (!params.id) {
             showError('Vacancy ID not provided');
             return;
@@ -54,10 +57,10 @@ async function loadVacancyData() {
             getApplicationsByVacancyIdController(params.id)
         ]);
         applicationJoin = applicationJoinData;
-        
+
         // Find specific vacancy
         vacancy = vacanciesData.find(v => v.vacancy_id === params.id);
-        
+
         if (!vacancy) {
             showError('Vacancy not found');
             return;
@@ -65,7 +68,7 @@ async function loadVacancyData() {
 
         candidates = candidatesData;
         applications = applicationsData;
-        
+
 
         // Filter applications for this vacancy
         filteredApplications = applications.filter(app => app.vacancy_id === params.id);
@@ -89,13 +92,13 @@ function renderVacancy() {
     // Initials for vacancy icon
     const initials = vacancy.title.split(' ').map(word => word.charAt(0)).join('').substring(0, 2).toUpperCase();
     document.getElementById('vacancy-initials').textContent = initials;
-    
+
     // Basic info
     document.getElementById('vacancy-title').textContent = vacancy.title;
     document.getElementById('vacancy-description').textContent = vacancy.description;
     document.getElementById('vacancy-salary').textContent = `$${vacancy.salary.toLocaleString()}`;
     document.getElementById('vacancy-id').textContent = vacancy.vacancy_id;
-    
+
     // Format creation date
     const creationDate = new Date(vacancy.creation_date).toLocaleDateString('es-ES', {
         day: '2-digit',
@@ -103,7 +106,7 @@ function renderVacancy() {
         year: 'numeric'
     });
     document.getElementById('vacancy-date').textContent = creationDate;
-    
+
     // Status badge
     const statusBadge = document.getElementById('vacancy-status');
     const statusConfig = getStatusConfig(vacancy.status);
@@ -120,7 +123,7 @@ function renderStats() {
     const interview = filteredApplications.filter(app => app.status === 'interview').length;
     const offered = filteredApplications.filter(app => app.status === 'offered').length;
     const accepted = filteredApplications.filter(app => app.status === 'accepted').length;
-    
+
     document.getElementById('total-applications').textContent = total;
     document.getElementById('stat-total').textContent = total;
     document.getElementById('stat-pending').textContent = pending;
@@ -136,7 +139,7 @@ function renderCandidates() {
     const container = document.getElementById('candidates-container');
     container.innerHTML = '';
 
-    // Aplicar filtros
+    // Apply filters
     let applicationsToShow = applyFilters(applicationJoin);
 
     if (applicationsToShow.length === 0) {
@@ -149,7 +152,10 @@ function renderCandidates() {
                 <p class="text-sm text-gray-400 mt-1">Try adjusting your filters</p>
             </div>
         `;
-        updatePagination(0, 0);
+        updatePagination(1, 0, itemsPerPage, 'pagination-controls', (newPage) => {
+            currentPage = newPage;
+            renderApplicationsTable();
+        });
         return;
     }
 
@@ -161,7 +167,7 @@ function renderCandidates() {
 
     const paginatedApplications = applicationsToShow.slice(startIndex, endIndex);
 
-    // Crear card para cada candidato
+    // Create card for each candidate
     paginatedApplications.forEach(application => {
         const candidate = application.Candidate;
         if (candidate) {
@@ -171,7 +177,10 @@ function renderCandidates() {
     });
 
     // Update pagination
-    updatePagination(totalItems, totalPages);
+    updatePagination(currentPage, totalItems, itemsPerPage, 'pagination-controls', (newPage) => {
+        currentPage = newPage;
+        renderApplicationsTable();
+    });
 }
 
 /**
@@ -180,7 +189,7 @@ function renderCandidates() {
 function createCandidateCard(candidate, application) {
     const div = document.createElement('div');
     div.className = 'p-6 hover:bg-gray-50 transition-colors';
-    
+
     const initials = candidate.name.split(' ').map(name => name.charAt(0)).join('').substring(0, 2);
     const statusConfig = getApplicationStatusConfig(application.status);
     const applicationDate = new Date(application.application_date).toLocaleDateString('es-ES', {
@@ -272,15 +281,15 @@ function applyFilters(applicationJoin) {
  * Show status change modal
  */
 function showStatusChangeModal(applicationId) {
-    
+
     const application = applicationJoin.find(app => app.application_id == applicationId); // Use == for type coercion
-    
+
     if (!application) {
         console.error('Application not found with ID:', applicationId);
         showError('No se pudo encontrar la aplicación');
         return;
     }
-    
+
     const candidate = candidates.find(c => c.candidate_id === application.candidate_id);
     if (!candidate) {
         console.error('Candidate not found with ID:', application.candidate_id);
@@ -298,17 +307,17 @@ function showStatusChangeModal(applicationId) {
 
     // Update modal content
     document.getElementById('modal-candidate-name').textContent = candidate.name;
-    
+
     // Current status
     const currentStatusConfig = getApplicationStatusConfig(application.status);
     const currentStatusElement = document.getElementById('modal-current-status');
     currentStatusElement.textContent = currentStatusConfig.label;
     currentStatusElement.className = `px-2 py-1 rounded-full text-xs font-medium ${currentStatusConfig.bgColor} ${currentStatusConfig.textColor}`;
-    
+
     // Configure select options - disable current status but keep it visible
     const statusSelect = document.getElementById('modal-status-select');
     const options = statusSelect.querySelectorAll('option');
-    
+
     // Reset all options first
     options.forEach(option => {
         option.disabled = false;
@@ -319,7 +328,7 @@ function showStatusChangeModal(applicationId) {
             option.textContent = option.textContent.replace(' (Estado Actual)', '');
         }
     });
-    
+
     // Find and disable the current status option
     const currentOption = statusSelect.querySelector(`option[value="${application.status}"]`);
     if (currentOption) {
@@ -328,7 +337,7 @@ function showStatusChangeModal(applicationId) {
         currentOption.style.backgroundColor = '#F9FAFB'; // bg-gray-50
         currentOption.textContent = currentOption.textContent + ' (Estado Actual)';
     }
-    
+
     // Set select to first available option (not current status)
     const availableOptions = Array.from(options).filter(opt => !opt.disabled);
     if (availableOptions.length > 0) {
@@ -337,7 +346,7 @@ function showStatusChangeModal(applicationId) {
         // Fallback if no options available
         statusSelect.selectedIndex = 0;
     }
-    
+
     // Show modal
     document.getElementById('status-change-modal').classList.remove('hidden');
 }
@@ -350,7 +359,7 @@ function hideStatusChangeModal() {
     const statusSelect = document.getElementById('modal-status-select');
     if (statusSelect) {
         const options = statusSelect.querySelectorAll('option');
-        
+
         options.forEach(option => {
             option.disabled = false;
             option.style.color = '';
@@ -361,7 +370,7 @@ function hideStatusChangeModal() {
             }
         });
     }
-    
+
     document.getElementById('status-change-modal').classList.add('hidden');
     pendingStatusChange = {
         applicationId: null,
@@ -400,7 +409,7 @@ async function updateApplicationStatus(applicationId, newStatus) {
         // Re-render
         renderStats();
         renderCandidates();
-        
+
         showSuccess(`Estado actualizado a ${getApplicationStatusConfig(newStatus).label}`);
 
     } catch (error) {
@@ -468,63 +477,6 @@ function getApplicationStatusConfig(status) {
 }
 
 /**
- * Show error
- */
-function showError(message) {
-    const loadingElement = document.getElementById('loading-vacancy');
-    loadingElement.innerHTML = `
-        <div class="flex flex-col items-center gap-3">
-            <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
-                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                </svg>
-            </div>
-            <p class="font-medium text-red-600">${message}</p>
-            <a href="vacanciesPage.html" class="text-blue-600 hover:text-blue-800 underline text-sm">Back to Vacancies</a>
-        </div>
-    `;
-}
-
-/**
- * Show success message
- */
-function showSuccess(message) {
-    showMessage(message, 'success');
-}
-
-/**
- * Show general message
- */
-function showMessage(message, type = 'info') {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full`;
-
-    if (type === 'success') {
-        messageDiv.className += ' bg-emerald-50 border border-emerald-200 text-emerald-700';
-    } else if (type === 'error') {
-        messageDiv.className += ' bg-red-50 border border-red-200 text-red-700';
-    }
-
-    messageDiv.textContent = message;
-    document.body.appendChild(messageDiv);
-
-    // Animar entrada
-    setTimeout(() => {
-        messageDiv.classList.remove('translate-x-full');
-    }, 100);
-
-    // Remove after 3 seconds
-    setTimeout(() => {
-        messageDiv.classList.add('translate-x-full');
-        setTimeout(() => {
-            if (document.body.contains(messageDiv)) {
-                document.body.removeChild(messageDiv);
-            }
-        }, 300);
-    }, 3000);
-}
-
-/**
  * Ocultar loading
  */
 function hideLoading() {
@@ -532,42 +484,6 @@ function hideLoading() {
     document.getElementById('vacancy-content').classList.remove('hidden');
 }
 
-/**
- * Setup user dropdown
- */
-function setupUserDropdown() {
-    const userAvatar = document.getElementById('user-avatar');
-    const userDropdown = document.getElementById('user-dropdown');
-
-    userAvatar?.addEventListener('click', function() {
-        userDropdown?.classList.toggle('hidden');
-    });
-
-    document.addEventListener('click', function(event) {
-        if (!userAvatar?.contains(event.target) && !userDropdown?.contains(event.target)) {
-            userDropdown?.classList.add('hidden');
-        }
-    });
-
-    const loggedUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    const userName = loggedUser.name || 'Usuario';
-    const userEmail = loggedUser.email || 'usuario@example.com';
-    const initials = userName.split(' ').map(name => name.charAt(0)).join('');
-    
-    document.getElementById('user-initials').textContent = initials;
-    document.getElementById('user-name').textContent = userName;
-    document.getElementById('user-email').textContent = userEmail;
-
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            localStorage.removeItem('currentUser');
-            localStorage.removeItem('returnUrl');
-            window.location.href = 'index.html';
-        });
-    }
-}
 
 /**
  * Setup filters
@@ -595,164 +511,18 @@ function setupFilters() {
     }
 }
 
-/**
- * Update pagination
- */
-function updatePagination(totalItems, totalPages) {
-    const paginationStart = document.getElementById('pagination-start');
-    const paginationEnd = document.getElementById('pagination-end');
-    const paginationTotal = document.getElementById('pagination-total');
-    const paginationControls = document.getElementById('pagination-controls');
-
-    const startItem = totalItems > 0 ? ((currentPage - 1) * itemsPerPage) + 1 : 0;
-    const endItem = Math.min(currentPage * itemsPerPage, totalItems);
-
-    if (paginationStart) paginationStart.textContent = startItem.toString();
-    if (paginationEnd) paginationEnd.textContent = endItem.toString();
-    if (paginationTotal) paginationTotal.textContent = totalItems.toString();
-
-    // Update pagination controls
-    updatePaginationControls(totalPages);
-}
-
-/**
- * Update pagination controls
- */
-function updatePaginationControls(totalPages) {
-    const paginationControls = document.getElementById('pagination-controls');
-    if (!paginationControls) return;
-
-    paginationControls.innerHTML = '';
-    
-    if (totalPages <= 1) return;
-
-    // Previous button
-    const prevButton = createPaginationButton('Previous', currentPage === 1, () => {
-        if (currentPage > 1) {
-            currentPage--;
-            renderCandidates();
-        }
-    });
-    paginationControls.appendChild(prevButton);
-
-    // Page buttons
-    const pageButtons = generatePageButtons(currentPage, totalPages);
-    pageButtons.forEach(buttonConfig => {
-        const button = createPageButton(buttonConfig);
-        paginationControls.appendChild(button);
-    });
-
-    // Next button
-    const nextButton = createPaginationButton('Next', currentPage === totalPages, () => {
-        if (currentPage < totalPages) {
-            currentPage++;
-            renderCandidates();
-        }
-    });
-    paginationControls.appendChild(nextButton);
-}
-
-/**
- * Create pagination button
- */
-function createPaginationButton(text, disabled, clickHandler) {
-    const button = document.createElement('button');
-    button.className = `px-3 py-2 text-sm font-medium rounded-lg transition-colors ${disabled
-            ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
-            : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
-        }`;
-    button.textContent = text;
-    button.disabled = disabled;
-
-    if (!disabled) {
-        button.addEventListener('click', clickHandler);
-    }
-
-    return button;
-}
-
-/**
- * Generar configuración de botones de página
- */
-function generatePageButtons(current, total) {
-    const buttons = [];
-
-    if (total <= 7) {
-        // Show all pages
-        for (let i = 1; i <= total; i++) {
-            buttons.push({ page: i, text: i.toString(), active: i === current });
-        }
-    } else {
-        if (current <= 4) {
-            // Inicio: 1 2 3 4 5 ... total
-            for (let i = 1; i <= 5; i++) {
-                buttons.push({ page: i, text: i.toString(), active: i === current });
-            }
-            buttons.push({ page: null, text: '...', active: false });
-            buttons.push({ page: total, text: total.toString(), active: false });
-        } else if (current >= total - 3) {
-            // Final: 1 ... total-4 total-3 total-2 total-1 total
-            buttons.push({ page: 1, text: '1', active: false });
-            buttons.push({ page: null, text: '...', active: false });
-            for (let i = total - 4; i <= total; i++) {
-                buttons.push({ page: i, text: i.toString(), active: i === current });
-            }
-        } else {
-            // Medio: 1 ... current-1 current current+1 ... total
-            buttons.push({ page: 1, text: '1', active: false });
-            buttons.push({ page: null, text: '...', active: false });
-            for (let i = current - 1; i <= current + 1; i++) {
-                buttons.push({ page: i, text: i.toString(), active: i === current });
-            }
-            buttons.push({ page: null, text: '...', active: false });
-            buttons.push({ page: total, text: total.toString(), active: false });
-        }
-    }
-
-    return buttons;
-}
-
-/**
- * Create individual page button
- */
-function createPageButton(config) {
-    const button = document.createElement('button');
-
-    if (config.page === null) {
-        // Ellipsis button
-        button.className = 'px-3 py-2 text-sm font-medium text-gray-400 cursor-default';
-        button.textContent = config.text;
-        button.disabled = true;
-    } else {
-        // Normal page button
-        button.className = `px-3 py-2 text-sm font-medium rounded-lg transition-colors ${config.active
-                ? 'text-white bg-blue-600 border border-blue-600 hover:bg-blue-700'
-                : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
-            }`;
-        button.textContent = config.text;
-
-        if (!config.active) {
-            button.addEventListener('click', () => {
-                currentPage = config.page;
-                renderCandidates();
-            });
-        }
-    }
-
-    return button;
-}
 
 /**
  * Setup event listeners
  */
 function setupEventListeners() {
     // Event delegation for status change buttons
-    document.addEventListener('click', function(event) {
+    document.addEventListener('click', function (event) {
         // Handle status change button click (show modal)
         if (event.target.closest('.status-change-btn')) {
             const btn = event.target.closest('.status-change-btn');
-            const applicationId = btn.dataset.applicationId; // No parseInt - JSON Server IDs are strings
-            
+            const applicationId = btn.dataset.applicationId;
+
             // Show modal for status change
             showStatusChangeModal(applicationId);
             return;
@@ -770,12 +540,12 @@ function setupModalEventListeners() {
     // Close modal buttons
     document.getElementById('close-modal')?.addEventListener('click', hideStatusChangeModal);
     document.getElementById('cancel-status-change')?.addEventListener('click', hideStatusChangeModal);
-    
+
     // Confirm status change
-    document.getElementById('confirm-status-change')?.addEventListener('click', async function() {
+    document.getElementById('confirm-status-change')?.addEventListener('click', async function () {
         const statusSelect = document.getElementById('modal-status-select');
         const newStatus = statusSelect.value;
-        
+
         if (pendingStatusChange.applicationId && newStatus) {
             await updateApplicationStatus(pendingStatusChange.applicationId, newStatus);
             hideStatusChangeModal();
@@ -783,16 +553,16 @@ function setupModalEventListeners() {
             showError('Por favor selecciona un estado');
         }
     });
-    
+
     // Close modal when clicking outside
-    document.getElementById('status-change-modal')?.addEventListener('click', function(event) {
+    document.getElementById('status-change-modal')?.addEventListener('click', function (event) {
         if (event.target === this) {
             hideStatusChangeModal();
         }
     });
-    
+
     // Close modal with Escape key
-    document.addEventListener('keydown', function(event) {
+    document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape' && !document.getElementById('status-change-modal').classList.contains('hidden')) {
             hideStatusChangeModal();
         }
@@ -802,16 +572,17 @@ function setupModalEventListeners() {
 /**
  * Initialization when DOM is ready
  */
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('=== Protecting vacancy detail page');
-    
-    setupUserDropdown();
-    
-    const currentPage = window.location.pathname.split('/').pop();
-    guard(currentPage);
-    
+document.addEventListener('DOMContentLoaded', function () {
+
+    // Render navbar component
+    renderNavbar('navbar-container', 'vacancies');
+
+    // Guard disabled - waiting for users endpoint
+    // const currentPage = window.location.pathname.split('/').pop();
+    // guard(currentPage);
+
     setupFilters();
     setupEventListeners();
-    
+
     loadVacancyData();
 });
