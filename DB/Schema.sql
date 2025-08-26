@@ -51,5 +51,22 @@ CREATE TABLE IF NOT EXISTS applications (
     UNIQUE (candidate_id, vacancy_id)
 );
 
-CREATE TABLE IF NOT EXISTS shared_candidates();
-CREATE TABLE IF NOT EXISTS  
+CREATE TABLE IF NOT EXISTS candidate_shares (
+    share_id INT AUTO_INCREMENT PRIMARY KEY,
+    candidate_id INT,
+    sender_id INT,
+    receiver_id INT,
+    status ENUM('pending','accepted','rejected') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (candidate_id) REFERENCES candidates(candidate_id) ON DELETE SET NULL,
+    FOREIGN KEY (sender_id) REFERENCES users(user_id) ON DELETE SET NULL,
+    FOREIGN KEY (receiver_id) REFERENCES users(user_id) ON DELETE SET NULL
+);
+
+sender_id      (FK -> users.user_id)     -- quién compartió
+receiver_id    (FK -> users.user_id)     -- quién recibe
+status         (enum: "pending", "accepted", "rejected") 
+created_at
+updated_at
+
