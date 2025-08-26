@@ -534,4 +534,3 @@ document.addEventListener("DOMContentLoaded", () => {
     // Configurar event listeners
     setupEventListeners();
 });
-
