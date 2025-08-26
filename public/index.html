@@ -47,32 +47,46 @@
                                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
-                        <h1 class="text-xl md:text-2xl font-bold tracking-wide hover-scale">
+                        <h1 id="brandTitle" class="text-xl md:text-2xl font-bold tracking-wide hover-scale">
                             TalentTrack
                         </h1>
                     </div>
-                    <a href="loginPage.html"
-                        class="px-5 py-2.5 md:px-6 md:py-3 rounded-xl font-semibold text-white text-sm md:text-base bg-white/10 backdrop-blur-lg border border-white/20 hover:bg-blue-500/30 hover:border-blue-300/50 inline-block text-center hover-lift hover-glow">
-                        Log In
-                    </a>
+
+                    <div class="flex items-center space-x-2">
+                        <!-- Botones idioma -->
+                        <button id="btn-en"
+                            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/10 border border-white/20 hover:bg-blue-500/30">
+                            EN
+                        </button>
+                        <button id="btn-es"
+                            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/10 border border-white/20 hover:bg-blue-500/30">
+                            ES
+                        </button>
+
+                        <!-- Login -->
+                        <a id="loginBtn" href="loginPage.html"
+                            class="px-5 py-2.5 md:px-6 md:py-3 rounded-xl font-semibold text-white text-sm md:text-base bg-white/10 backdrop-blur-lg border border-white/20 hover:bg-blue-500/30 hover:border-blue-300/50 inline-block text-center hover-lift hover-glow">
+                            Log In
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Hero texto -->
                 <div class="animate-fade-in animate-delay-200">
-                    <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-5 md:mb-6 text-white">
+                    <h2 id= "heroTitle" class="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-5 md:mb-6 text-white">
                         Build exceptional teams with
                         <span class="text-blue-100">
                             intelligent recruitment
                         </span>
                     </h2>
-                    <p class="text-blue-100/80 text-base md:text-lg leading-relaxed">
+                    <p id= "heroSubtitle"class="text-blue-100/80 text-base md:text-lg leading-relaxed">
                         Modern recruitment platform designed for scaling companies who value quality over quantity.
                     </p>
                 </div>
 
                 <!-- Features aside -->
                 <div class="animate-fade-in animate-delay-400">
-                    <h3 class="text-lg md:text-xl font-semibold mb-8 lg:mb-10 text-white">
+                    <h3 id="featuresAside" class="text-lg md:text-xl font-semibold mb-8 lg:mb-10 text-white">
                         Features for Employers
                     </h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
@@ -88,7 +102,7 @@
                                 </svg>
                             </div>
                             <p
-                                class="text-sm font-medium text-blue-50 group-hover:text-white transition-colors duration-300">
+                                 id= "paragraphAside" class="text-sm font-medium text-blue-50 group-hover:text-white transition-colors duration-300">
                                 Company Branding</p>
                         </div>
                         <div
@@ -103,7 +117,7 @@
                                 </svg>
                             </div>
                             <p
-                                class="text-sm font-medium text-blue-50 group-hover:text-white transition-colors duration-300">
+                                id= "paragraphAside_2"class="text-sm font-medium text-blue-50 group-hover:text-white transition-colors duration-300">
                                 Team Collaboration</p>
                         </div>
                         <div
@@ -118,7 +132,7 @@
                                 </svg>
                             </div>
                             <p
-                                class="text-sm font-medium text-blue-50 group-hover:text-white transition-colors duration-300">
+                              id= "paragraphAside_3"class="text-sm font-medium text-blue-50 group-hover:text-white transition-colors duration-300">
                                 ATS Integration</p>
                         </div>
                     </div>
@@ -157,19 +171,19 @@
 
                 <div
                     class="absolute bottom-3 right-3 md:bottom-4 md:right-4 bg-white/70 backdrop-blur-sm p-2 md:p-3 rounded-lg max-w-[170px] md:max-w-[200px] shadow-lg">
-                    <p class="text-gray-900 font-bold text-xs md:text-sm mb-1">
+                    <p id="imgText" class="text-gray-900 font-bold text-xs md:text-sm mb-1">
                         "Reduced our time-to-hire by 60%"
                     </p>
-                    <p class="text-gray-700 text-xs font-medium">— Sarah Chen, Head of Talent</p>
+                    <p id="imgText_2" class="text-gray-700 text-xs font-medium">— Sarah Chen, Head of Talent</p>
                 </div>
             </div>
 
             <!-- Intro texto -->
             <div class="text-center mb-12 md:mb-16 lg:mb-24 animate-fade-in animate-delay-200">
-                <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 md:mb-6">
+                <h2 id= "introTitle"class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 md:mb-6">
                     Trusted by forward-thinking companies
                 </h2>
-                <p class="text-base md:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed px-4">
+                <p id= "introSubtitle" class="text-base md:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed px-4">
                     Join industry leaders who rely on TalentTrack to build exceptional teams and scale their recruitment
                     processes efficiently.
                 </p>
@@ -187,7 +201,7 @@
                         </path>
                     </svg>
                     <span
-                        class="font-semibold text-gray-700 group-hover:text-blue-600 text-sm md:text-base transition-colors">InnovateCorp</span>
+                        id= "InnovateCorp"class="font-semibold text-gray-700 group-hover:text-blue-600 text-sm md:text-base transition-colors">InnovateCorp</span>
                 </div>
                 <div class="flex items-center justify-center space-x-2 md:space-x-3 cursor-pointer group hover-lift">
                     <!-- Heroicon: chart-bar -->
@@ -198,7 +212,7 @@
                         </path>
                     </svg>
                     <span
-                        class="font-semibold text-gray-700 group-hover:text-blue-600 text-sm md:text-base transition-colors">DataFlow</span>
+                        id= "DataFlow" class="font-semibold text-gray-700 group-hover:text-blue-600 text-sm md:text-base transition-colors">DataFlow</span>
                 </div>
                 <div class="flex items-center justify-center space-x-2 md:space-x-3 cursor-pointer group hover-lift">
                     <!-- Heroicon: cog -->
@@ -211,7 +225,7 @@
                         </path>
                     </svg>
                     <span
-                        class="font-semibold text-gray-700 group-hover:text-blue-600 text-sm md:text-base transition-colors">TechBuild</span>
+                        id= "TechBuild"class="font-semibold text-gray-700 group-hover:text-blue-600 text-sm md:text-base transition-colors">TechBuild</span>
                 </div>
                 <div class="flex items-center justify-center space-x-2 md:space-x-3 cursor-pointer group hover-lift">
                     <!-- Heroicon: globe -->
@@ -222,7 +236,7 @@
                         </path>
                     </svg>
                     <span
-                        class="font-semibold text-gray-700 group-hover:text-blue-600 text-sm md:text-base transition-colors">GlobalTech</span>
+                        id="GlobalTech" class="font-semibold text-gray-700 group-hover:text-blue-600 text-sm md:text-base transition-colors">GlobalTech</span>
                 </div>
                 <div class="flex items-center justify-center space-x-2 md:space-x-3 cursor-pointer group hover-lift">
                     <!-- Heroicon: light-bulb -->
@@ -233,17 +247,17 @@
                         </path>
                     </svg>
                     <span
-                        class="font-semibold text-gray-700 group-hover:text-blue-600 text-sm md:text-base transition-colors">Innovate</span>
+                        id="Innovate" class="font-semibold text-gray-700 group-hover:text-blue-600 text-sm md:text-base transition-colors">Innovate</span>
                 </div>
             </div>
 
             <!-- Features section con mejor espaciado -->
             <section id="features" class="py-10 md:py-16 lg:py-20 bg-white">
                 <div class="max-w-6xl mx-auto px-4 md:px-8 text-center">
-                    <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 md:mb-8">
+                    <h2 id="featureMain" class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 md:mb-8">
                         Platform capabilities
                     </h2>
-                    <p class="text-base md:text-lg text-gray-600 mb-8 md:mb-16 max-w-2xl mx-auto leading-relaxed">
+                    <p id="featureMain_2" class="text-base md:text-lg text-gray-600 mb-8 md:mb-16 max-w-2xl mx-auto leading-relaxed">
                         Everything you need to build exceptional teams and streamline your recruitment process.
                     </p>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 lg:gap-12">
@@ -258,8 +272,8 @@
                                     </path>
                                 </svg>
                             </div>
-                            <h3 class="text-lg font-semibold mb-3 text-gray-900">Brand Consistency</h3>
-                            <p class="text-gray-600 leading-relaxed text-sm">
+                            <h3 id = "BrandConsistency" class="text-lg font-semibold mb-3 text-gray-900">Brand Consistency</h3>
+                            <p id="paragraphMain" class="text-gray-600 leading-relaxed text-sm">
                                 Maintain your company's brand identity throughout the entire recruitment experience.
                             </p>
                         </div>
@@ -275,8 +289,8 @@
                                     </path>
                                 </svg>
                             </div>
-                            <h3 class="text-lg font-semibold mb-3 text-gray-900">Team Collaboration</h3>
-                            <p class="text-gray-600 leading-relaxed text-sm">
+                            <h3 id="TeamCollaboration" class="text-lg font-semibold mb-3 text-gray-900">Team Collaboration</h3>
+                            <p id="paragraphMain2" class="text-gray-600 leading-relaxed text-sm">
                                 Streamline communication and decision-making across your entire hiring team.
                             </p>
                         </div>
@@ -292,8 +306,8 @@
                                     </path>
                                 </svg>
                             </div>
-                            <h3 class="text-lg font-semibold mb-3 text-gray-900">Seamless Integration</h3>
-                            <p class="text-gray-600 leading-relaxed text-sm">
+                            <h3 id="SeamlessIntegration" class="text-lg font-semibold mb-3 text-gray-900">Seamless Integration</h3>
+                            <p id="paragraphMain3" class="text-gray-600 leading-relaxed text-sm">
                                 Connect with your existing tools and workflows without disruption.
                             </p>
                         </div>
@@ -312,7 +326,7 @@
                             class="rounded-2xl shadow-2xl hover-scale w-full aspect-video object-cover" />
                         <div
                             class="absolute bottom-3 right-3 md:bottom-4 md:right-4 bg-white/70 backdrop-blur-sm p-2 md:p-3 rounded-lg max-w-[180px] md:max-w-[220px] shadow-lg">
-                            <p class="text-gray-900 text-xs md:text-sm font-bold leading-snug mb-1">
+                            <p id="paragraphImg" class="text-gray-900 text-xs md:text-sm font-bold leading-snug mb-1">
                                 "Reduced our time-to-hire by 60% while improving candidate quality significantly."
                             </p>
                             <p class="text-gray-700 text-xs font-medium">— Alex C., HR Manager</p>
@@ -320,10 +334,10 @@
                     </div>
                     <!-- Texto -->
                     <div class="lg:w-1/2 space-y-4 md:space-y-6 lg:space-y-8">
-                        <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
+                        <h2 id="titleMain" class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
                             Empowering Recruiters and Hiring Managers
                         </h2>
-                        <p class="text-base md:text-lg text-gray-600 leading-relaxed">
+                        <p id="paragraphMain4" class="text-base md:text-lg text-gray-600 leading-relaxed">
                             Join leading companies that trust TalentTrack to streamline their hiring
                             workflow and discover top talent efficiently.
                         </p>
@@ -352,7 +366,7 @@
                                 <h4 class="text-2xl font-bold text-gray-900">
                                     TalentTrack</h4>
                             </div>
-                            <p class="text-gray-600 leading-relaxed max-w-lg mb-8 text-sm">
+                            <p id="paragraphFooter" class="text-gray-600 leading-relaxed max-w-lg mb-8 text-sm">
                                 Modern recruitment platform designed to help scaling companies build exceptional teams
                                 through intelligent candidate matching and data-driven insights.
                             </p>
@@ -386,7 +400,7 @@
 
                         <!-- Contact -->
                         <div>
-                            <h5 class="font-bold text-gray-900 mb-6 text-lg">Get in Touch</h5>
+                            <h5 id="GetItTouch" class="font-bold text-gray-900 mb-6 text-lg">Get in Touch</h5>
                             <div class="space-y-4">
                                 <div class="flex items-center space-x-3 group cursor-pointer">
                                     <div
@@ -424,7 +438,7 @@
                         <p>© 2025 TalentTrack. All rights reserved.</p>
                         <div class="flex items-center space-x-2 mt-4 md:mt-0">
                             <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <span class="text-xs">All systems operational</span>
+                            <span id="spanFooter" class="text-xs">All systems operational</span>
                         </div>
                     </div>
                 </div>
@@ -433,7 +447,8 @@
     </div>
 
     <!-- Scripts Modularizados -->
-    <script type="module" src="js/views/indexPage.js"></script>
+    <script type="module" src="js/views/index.js"></script>
+    <script src="js/views/translate.js"></script>
 </body>
 
 </html>
