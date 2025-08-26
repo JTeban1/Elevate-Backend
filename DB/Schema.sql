@@ -56,17 +56,13 @@ CREATE TABLE IF NOT EXISTS candidate_shares (
     candidate_id INT,
     sender_id INT,
     receiver_id INT,
+    application_id INT,
     status ENUM('pending','accepted','rejected') DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (candidate_id) REFERENCES candidates(candidate_id) ON DELETE SET NULL,
     FOREIGN KEY (sender_id) REFERENCES users(user_id) ON DELETE SET NULL,
-    FOREIGN KEY (receiver_id) REFERENCES users(user_id) ON DELETE SET NULL
+    FOREIGN KEY (receiver_id) REFERENCES users(user_id) ON DELETE SET NULL,
+    FOREIGN KEY (application_id) REFERENCES applications(application_id) ON DELETE SET NULL,
+    UNIQUE (candidate_id, sender_id, receiver_id, application_id)
 );
-
-sender_id      (FK -> users.user_id)     -- quién compartió
-receiver_id    (FK -> users.user_id)     -- quién recibe
-status         (enum: "pending", "accepted", "rejected") 
-created_at
-updated_at
-
