@@ -12,7 +12,7 @@
 export function createNavbar(activePage = '', options = {}) {
     const {
         showNavigation = true,
-        logoLink = 'index.html',
+        logoLink = '../index.html',
         logoText = 'TalentTrack'
     } = options;
 
@@ -128,7 +128,7 @@ function setupUserDropdown() {
             localStorage.removeItem('returnUrl');
             
             // Redirect to index
-            window.location.href = 'index.html';
+            window.location.href = '../index.html';
         });
     }
 }
