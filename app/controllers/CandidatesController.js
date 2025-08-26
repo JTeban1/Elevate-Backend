@@ -1,16 +1,14 @@
-import * as canditatesModel from "../models/services/CandidateServices.js";
-
+import * as candidatesModel from "../models/services/CandidateServices.js";
 
 export const getAllCandidatesController = async (req, res) => {
   try {
-    const allCandidates = await canditatesModel.getAllCandidates();
+    const allCandidates = await candidatesModel.getAllCandidates();
     return res.status(200).json(allCandidates);
   } catch (error) {
     console.error("Error fetching candidates:", error);
     return res.status(500).json({ error: "Error fetching candidates" });
   }
 };
-
 
 export const getCandidateByIdController = async (req, res) => {
   const { id } = req.params;

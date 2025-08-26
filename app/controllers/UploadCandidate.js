@@ -1,187 +1,167 @@
 import multer from "multer";
-import PDFParser from "pdf2json";
-import { OpenAI } from "openai";
+import pdf from "pdf-extraction";
+import OpenAI from "openai";
 
-// Multer en memoria
 const storage = multer.memoryStorage();
-export const uploadMiddleware = multer({ storage }).array("cv[]", 200);
+export const uploadMiddleware = multer({ storage }).array("cv[]", 50);
 
-// Funciones de limpieza de texto
-function fixBrokenWords(text) {
+const openai = new OpenAI({ apiKey: process.env.OPENAI_KEY });
+
+function cleanText(text) {
   return text
-    .replace(/([A-Z])\s+(?=[A-Z])/g, "$1")
-    .replace(/([a-z])\s+(?=[a-z])/g, "$1")
-    .replace(/(\d)\s+(?=\d)/g, "$1")
-    .replace(/\s*@\s*/g, "@")
-    .replace(/\s*\.\s*/g, ".")
-    .replace(/\s*-\s*/g, "-")
     .replace(/\s{2,}/g, " ")
+    .replace(/•|·/g, "-")
+    .replace(/\n{2,}/g, "\n")
     .trim();
 }
 
-function mergeBullets(paragraphs) {
-  let result = [];
-  for (let line of paragraphs) {
-    if (/^[-•·]/.test(line)) {
-      if (result.length > 0) {
-        result[result.length - 1] += "\n" + line.trim();
-      } else {
-        result.push(line.trim());
+async function extractTextFromPdf(buffer) {
+  const data = await pdf(buffer);
+  return cleanText(data.text);
+}
+
+function createPrompt(cvs, vacancy, filters) {
+  return `
+      You are an assistant that extracts structured data from resumes.  
+      Each CV is separated by ---CV---.  
+
+      Return ONLY a valid JSON array of objects, no text outside JSON.  
+
+      Schema for each candidate:
+      {
+        "name": "Full name (e.g., Juan David Barrera Fernandez)",
+        "email": "Email address",
+        "date_of_birth": "YYYY-MM-DD or empty if unknown",
+        "phone": "Phone number",
+        "occupation": "Current or main profession",
+        "summary": "large professional summary",
+        "experience": [
+          { "company": "", "position": "", "description": "", "years": YYYY-YYYY }
+        ],
+        "skills": ["Skill1", "Skill2"],
+        "languages": [{ "language": "", "level": "" }],
+        "education": [{ "degree": "", "institution": "", "years": "YYYY-YYYY" }],
+        "references": [{ "name": "", "occupation": "", "phone": "" }],
+        "general_experience": 0,
+        "status": "approved | rejected",
+        "ai_reason": "Reason why approved or rejected"
       }
-    } else {
-      result.push(line.trim());
-    }
+
+      Rules:
+      - Always return an array, even if there is only one CV.
+      - If years of experience are not explicit, estimate based on text.
+      - general_experience = sum of all experience.years.
+      - status = "approved" if the candidate meets vacancy requirements (${vacancy}) and has knowledge in ${filters}, else "rejected".
+      - ai_reason must justify the status clearly in 1–2 sentences.
+
+      Schema for each candidate (example below) don't use this data, it's just an example: 
+        [
+          {
+            "name": "Juan Guillermo Barrera Fernandez",
+            "email": "juan.barrera@gmail.com",
+            "date_of_birth": "1990-05-14",
+            "phone": "+57 3001234567",
+            "occupation": "Software Engineer",
+            "summary": "Software engineer with 8+ years of experience in full-stack web development...",
+            "experience": [
+              { "company": "Tech Solutions", "position": "Backend Developer", "description": "Developed APIs with Node.js", "years": "2015-2018" },
+              { "company": "GlobalSoft", "position": "Senior Engineer", "description": "Led a team of 5 developers", "years": "2018-2023" }
+            ],
+            "skills": ["Node.js", "React", "SQL", "AWS"],
+            "languages": [{ "language": "Spanish", "level": "Native" }, { "language": "English", "level": "Advanced" }],
+            "education": [{ "degree": "BSc Computer Science", "institution": "Universidad de Medellín", "years": "2008-2012" }],
+            "references": [{ "name": "Carlos Perez", "occupation": "CTO", "phone": "+57 3109876543" }],
+            "general_experience": 8,
+            "status": "approved",
+            "ai_reason": "The candidate has over 8 years of experience in full-stack development and matches the vacancy requirements."
+          }
+        ]
+
+
+      CVs:
+      ${cvs.map((cv) => `---CV---\n${cv}`).join("\n")}
+`;
+}
+
+// Helper para dividir en lotes
+function chunkArray(array, size) {
+  const result = [];
+  for (let i = 0; i < array.length; i += size) {
+    result.push(array.slice(i, i + size));
   }
   return result;
 }
 
-function extractCleanText(pdfData) {
-  let paragraphs = [];
-
-  pdfData.Pages.forEach(page => {
-    const sorted = page.Texts.sort((a, b) => {
-      if (Math.abs(a.y - b.y) < 0.5) return a.x - b.x;
-      return a.y - b.y;
-    });
-
-    let lastY = null;
-    let buffer = [];
-
-    for (const t of sorted) {
-      const text = decodeURIComponent(t.R[0].T).trim();
-      if (!text) continue;
-
-      if (lastY !== null && Math.abs(t.y - lastY) > 0.8) {
-        paragraphs.push(fixBrokenWords(buffer.join(" ")));
-        buffer = [];
-      }
-
-      buffer.push(text);
-      lastY = t.y;
-    }
-
-    if (buffer.length) paragraphs.push(fixBrokenWords(buffer.join(" ")));
-  });
-
-  paragraphs = mergeBullets(paragraphs);
-
-  return paragraphs
-    .map(p => p.replace(/\s([,.])/g, "$1").replace(/\( /g, "(").replace(/ \)/g, ")").trim())
-    .join("\n\n");
-}
-
-// Función para generar prompt para IA
-function createPrompt(cvs, vacancy, filters) {
-  return `
-      You are an assistant that extracts information from resumes.
-      Each CV is separated by ---CV---.
-
-      You must return an array of objects in JSON.
-      Return a JSON with the following structure for each candidate:
-      You are an assistant that **only returns valid JSON** following the specified structure. Do not add any extra text.
-
-      This is for a job vacancy of ${vacancy} that requires knowledge in ${filters}
-
-      {
-        "name": "",
-        "email": "",
-        "date_of_birth": "",
-        "phone_number": "",
-        "occupation": "",
-        "summary": "",
-        "experience": [],
-        "skills": [],
-        "languages": [],
-        "education": [],
-        "status": "",
-        "ai_reason": "",
-        "references": [],
-        "general_experience": ""
-      }
-
-      Rules:
-      name: Full name of the person correctly For example Juan David Barrera Fernandez
-      email: Person’s email
-      date_of_birth: Person’s date of birth
-      phone_number: Person’s phone number
-      occupation: Person’s profession
-      summary: A complete summary of the person
-      experience: Work experiences of the person, freelancer work also applies
-      skills: Technical skills of the person according to their profession
-      languages: Languages spoken by the person and their level
-      education: Person’s education, starting with high school, technical, technologist, etc., and then the institution
-      status: Status to determine if the person meets the job requirements; if yes, "approved", otherwise "Rejected"
-      ai_reason: Reason why the person is approved or not for the vacancy. If approved, explain why they would be a good addition to the company
-      references: Personal references of the person with their information
-
-      Important:
-      The experience must include a field “year”, where if explicit info is not provided, you should calculate how many years the person worked at the company.
-      Add up the work experiences and store the total in the key general_experience (integer number of years).
-
-
-    CVs:
-    ${cvs.map(cv => `---CV---\n${cv}`).join("\n")}
-    `;
-}
-
-// Controller completo
 export const processUploadedCVsController = async (req, res) => {
   try {
     const files = req.files;
     const vacancy = req.body.vacancyTitle;
-    const vacancyFilter = req.body.vacancy_filter;
+    const filters = req.body.vacancy_filter;
     const vacancyId = req.body.vacancy_id;
 
     if (!files || files.length === 0) {
-      return res.status(400).json({ error: "No files sent" });
+      return res.status(400).json({ error: "No se recibieron archivos" });
     }
 
-    let cvsText = [];
+    // 1. Extraer texto de todos los PDFs
+    const cvsText = [];
     for (const file of files) {
-      const pdfParser = new PDFParser();
-      const pdfText = await new Promise((resolve, reject) => {
-        pdfParser.on("pdfParser_dataError", err => reject(err.parserError));
-        pdfParser.on("pdfParser_dataReady", pdfData => resolve(extractCleanText(pdfData)));
-        pdfParser.parseBuffer(file.buffer);
+      const text = await extractTextFromPdf(file.buffer);
+      cvsText.push(text);
+    }
+
+    // 2. Procesar en lotes de 5
+    const chunks = chunkArray(cvsText, 5);
+    let allCandidates = [];
+
+    for (const chunk of chunks) {
+      const prompt = createPrompt(chunk, vacancy, filters);
+
+      const result = await openai.chat.completions.create({
+        model: "gpt-4.1",
+        messages: [{ role: "user", content: prompt }],
+        response_format: { type: "json_object" },
+        max_tokens: 5000,
+        temperature: 0,
       });
-      cvsText.push(pdfText);
+
+      let parsedResponse = JSON.parse(result.choices[0].message.content);
+
+      // Normalizar si GPT devuelve { candidates: [...] }
+      if (parsedResponse.candidates) {
+        parsedResponse = parsedResponse.candidates;
+      }
+
+      const candidates = Array.isArray(parsedResponse)
+        ? parsedResponse
+        : [parsedResponse];
+
+      allCandidates = allCandidates.concat(candidates);
     }
 
-    const prompt = createPrompt(cvsText, vacancy, vacancyFilter);
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_KEY });
-    const result = await openai.chat.completions.create({
-      model: 'gpt-4.1',
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: 3000,
-      temperature: 0.5,
-    });
+    // 3. Filtrar candidatos vacíos (sin nombre o email)
+    const validCandidates = allCandidates.filter((c) => c && c.name && c.email);
 
-    let aiResponse = result.choices[0].message.content;
-    let parsedResponse;
-    try {
-      parsedResponse = JSON.parse(aiResponse);
-      console.log(parsedResponse);
+    // 4. Guardar en la DB
+    const Candidate = (await import("../models/entities/CandidateEntity.js"))
+      .default;
+    const { createCandidate } = await import(
+      "../models/services/CandidateServices.js"
+    );
+    const { createApplication } = await import(
+      "../models/services/ApplicationServices.js"
+    );
+    const Application = (
+      await import("../models/entities/ApplicationEntity.js")
+    ).default;
 
-    } catch (err) {
-      parsedResponse = aiResponse;
-    }
-
-    // --- CREAR CANDIDATO Y APLICACIÓN ---
-    // Importar aquí para evitar ciclos si es necesario
-    const Candidate = (await import('../models/entities/CandidateEntity.js')).default;
-    const { createCandidate } = await import('../models/services/CandidateServices.js');
-    const { createApplication } = await import('../models/services/ApplicationServices.js');
-
-    // parsedResponse puede ser un array o un solo objeto
-    const candidates = Array.isArray(parsedResponse) ? parsedResponse : [parsedResponse];
     const created = [];
-    for (const candidateData of candidates) {
-      // Buscar candidato por email
-      // Usar el servicio para crear o actualizar el candidato
+
+    for (const candidateData of validCandidates) {
       const candidateId = await createCandidate({
         name: candidateData.name,
         email: candidateData.email,
-        phone: candidateData.phone_number || candidateData.phone || '',
+        phone: candidateData.phone_number || candidateData.phone || "",
         date_of_birth: candidateData.date_of_birth,
         occupation: candidateData.occupation,
         summary: candidateData.summary,
@@ -190,38 +170,45 @@ export const processUploadedCVsController = async (req, res) => {
         languages: candidateData.languages || null,
         education: candidateData.education || null,
       });
-      // Obtener el objeto candidato completo
-      let candidate = await Candidate.findByPk(candidateId);
-      // Crear la aplicación usando el servicio (puedes manejar duplicados en el servicio si lo deseas)
+
+      const candidate = await Candidate.findByPk(candidateId);
+
       let application;
       try {
         application = await createApplication({
           candidate_id: candidate.candidate_id,
           vacancy_id: vacancyId,
-          status: candidateData.status?.toLowerCase() || 'pending',
-          ai_reason: candidateData.ai_reason || '',
+          status: candidateData.status?.toLowerCase() || "pending",
+          ai_reason: candidateData.ai_reason || "",
         });
       } catch (err) {
-        // Si hay error por duplicado, puedes buscar la existente
-        application = await (await import('../models/entities/ApplicationEntity.js')).default.findOne({
+        application = await Application.findOne({
           where: {
             candidate_id: candidate.candidate_id,
             vacancy_id: vacancyId,
-          }
+          },
         });
       }
-      created.push({ candidate, application });
+
+      // Evitar duplicados en el array de respuesta
+      if (
+        !created.find(
+          (c) =>
+            c.candidate.email === candidate.email &&
+            c.application.vacancy_id === vacancyId
+        )
+      ) {
+        created.push({ candidate, application });
+      }
     }
 
     return res.status(201).json({
       success: true,
-      message: "CV successfully registered"
+      message: "CVs procesados en lotes y registrados en la base de datos",
+      data: created,
     });
-
   } catch (error) {
-    console.error("Error processing CVs:", error);
-    return res.status(500).json({ error: "Error processing CVs" });
+    console.error("Error procesando CVs:", error);
+    return res.status(500).json({ error: "Error procesando CVs" });
   }
 };
-
-

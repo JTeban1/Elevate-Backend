@@ -1,5 +1,6 @@
 import { isEmailValid, isPasswordValid } from "../utils/validators.js";
 import { guard } from "../utils/guard.js";
+import { getUsers } from "../api/users.js";
 
 /**
  * Initialize password toggle functionality
@@ -34,19 +35,13 @@ function initPasswordToggle() {
 }
 
 /**
- * Autentica usuario con JSON Server
+ * Authenticates user
  */
 async function authenticateUser(email, password) {
     try {
-        const response = await fetch('http://localhost:8000/users');
+        const users = await getUsers();
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const users = await response.json();
-
-        // Buscar usuario por email y password
+        // Search username by email and password
         const user = users.find(u => u.email === email && u.password === password);
 
         return user || null;
@@ -57,7 +52,7 @@ async function authenticateUser(email, password) {
 }
 
 /**
- * Inicializa el formulario de login
+ * Initialize the login form
  */
 function initLoginForm() {
     const loginForm = document.getElementById("loginForm");
@@ -70,7 +65,7 @@ function initLoginForm() {
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
 
-        // Validaciones
+        // Validations
         if (!isEmailValid(email)) {
             showError("Please enter a valid email address");
             return;
@@ -88,11 +83,11 @@ function initLoginForm() {
         submitButton.disabled = true;
 
         try {
-            // Autenticación real con JSON Server
+            // Authentication
             const user = await authenticateUser(email, password);
 
             if (user) {
-                // Guardar sesión
+                // Save Session
                 localStorage.setItem('currentUser', JSON.stringify({
                     user_id: user.user_id,
                     name: user.name,
@@ -101,7 +96,7 @@ function initLoginForm() {
                     loginTime: new Date().toISOString()
                 }));
 
-                // Redirigir a vacancies
+                // Redirect to vacancies
                 window.location.href = 'vacanciesPage.html';
             } else {
                 showError("Invalid email or password. Please try again.");
@@ -110,7 +105,7 @@ function initLoginForm() {
             console.error("Authentication error:", error);
             showError("Login failed. Please check your connection and try again.");
         } finally {
-            // Restaurar botón
+            // Restore button
             submitButton.textContent = originalText;
             submitButton.disabled = false;
         }
@@ -118,10 +113,10 @@ function initLoginForm() {
 }
 
 /**
- * Muestra mensaje de error temporal
+ * Displays temporary error message
  */
 function showError(message) {
-    // Crear o encontrar elemento de error
+    // Create or Find Error Item
     let errorDiv = document.getElementById('error-message');
 
     if (!errorDiv) {
@@ -135,7 +130,7 @@ function showError(message) {
 
     errorDiv.textContent = message;
 
-    // Ocultar después de 5 segundos
+    // Hide after 5 seconds
     setTimeout(() => {
         if (errorDiv) {
             errorDiv.remove();
@@ -144,13 +139,13 @@ function showError(message) {
 }
 
 /**
- * Inicialización cuando el DOM está listo
+ * Initialization when the DOM is ready
  */
 document.addEventListener("DOMContentLoaded", () => {
-    // Ejecutar guard para la página login (verificar si ya está logueado)
+    // Run save for the login page (check if you are already logged in)
     guard("loginPage.html");
 
-    // Inicializar funcionalidades
+    // Initialize functionalities
     initPasswordToggle();
     initLoginForm();
 });
