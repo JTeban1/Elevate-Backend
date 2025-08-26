@@ -1,6 +1,6 @@
 import { guard } from '../utils/guard.js';
 import { getCandidates } from '../api/candidates.js';
-import { getApplications } from '../api/applications.js';
+import { getApplications, getAllApplicationsColumn } from '../api/applications.js';
 import { renderNavbar } from '../components/ui/navbar.js';
 import { updatePagination } from '../components/ui/pagination.js';
 
@@ -8,6 +8,7 @@ import { updatePagination } from '../components/ui/pagination.js';
 // Global application status
 let candidates = [];
 let applications = [];
+let applicationsColumn = [];
 let currentFilters = {
     search: '',
     occupation: '',
@@ -23,7 +24,9 @@ async function loadCandidates() {
     try {
         candidates = await getCandidates();
         applications = await getApplications();
+        applicationsColumn = await getAllApplicationsColumn();
 
+        
         renderCandidatesCards();
         updateStats();
         setupFilters();
@@ -91,7 +94,6 @@ function renderCandidatesCards() {
 
     // Apply pagination
     const totalItems = candidatesToShow.length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
 
@@ -146,11 +148,11 @@ function createCandidateCard(candidate) {
     } catch (error) {
         console.warn('Error parsing skills/languages for candidate:', candidate.candidate_id);
     }
-
+    
     // Get applications from the candidate
-    const candidateApplications = applications.filter(app => app.candidate_id === candidate.candidate_id);
+    const candidateApplications = applicationsColumn.filter(app => app.candidate_id === candidate.candidate_id);
     const applicationCount = candidateApplications.length;
-
+    
     // Generate Avatar Initials
     const initials = candidate.name.split(' ').map(word => word.charAt(0)).join('').substring(0, 2).toUpperCase();
 
@@ -270,31 +272,21 @@ function applyFilters(candidatesList) {
  */
 function updateStats() {
     const totalCandidates = candidates.length;
+    
     const candidatesWithApps = candidates.filter(candidate =>
-        applications.some(app => app.candidate_id === candidate.candidate_id)
+        applicationsColumn.some(app => app.candidate_id === candidate.candidate_id)
     ).length;
 
     const uniqueOccupations = [...new Set(candidates.map(c => c.occupation))].length;
-
-    const allSkills = candidates.flatMap(c => {
-        try {
-            return JSON.parse(c.skills);
-        } catch (error) {
-            return [];
-        }
-    });
-    const uniqueSkills = [...new Set(allSkills)].length;
 
     // Update Stat Cards
     const totalCard = document.getElementById('total-candidates');
     const withAppsCard = document.getElementById('candidates-with-apps');
     const occupationsCard = document.getElementById('unique-occupations');
-    const skillsCard = document.getElementById('unique-skills');
 
     if (totalCard) totalCard.textContent = totalCandidates;
     if (withAppsCard) withAppsCard.textContent = candidatesWithApps;
     if (occupationsCard) occupationsCard.textContent = uniqueOccupations;
-    if (skillsCard) skillsCard.textContent = uniqueSkills;
 }
 
 /**
@@ -392,4 +384,3 @@ document.addEventListener("DOMContentLoaded", () => {
     // Configure event listeners
     setupEventListeners();
 });
-

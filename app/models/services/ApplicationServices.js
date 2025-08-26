@@ -14,24 +14,33 @@ export const createApplication = async (applicationData) => {
 };
 
 export const getApplications = async () => {
-    try {
-        const applications = await Application.findAll({
-            attributes: ['application_id', 'status', 'ai_reason'], // columnas de Application
-            include: [
-                {
-                    model: Candidate,
-                    attributes: ['name'], // columna de Candidate
-                },
-                {
-                    model: Vacancy,
-                    attributes: ['title'], // columna de Vacancy
-                },
-            ],
-        });
-        return applications;
-    } catch (error) {
-        console.error('Error fetching applications:', error);
-    }
+  try {
+    const applications = await Application.findAll({
+      attributes: ['application_id', 'status', 'ai_reason'], // columnas de Application
+      include: [
+        {
+          model: Candidate,
+          attributes: ['name'], // columna de Candidate
+        },
+        {
+          model: Vacancy,
+          attributes: ['title'], // columna de Vacancy
+        },
+      ],
+    });
+    return applications;
+  } catch (error) {
+    console.error('Error fetching applications:', error);
+  }
+}
+
+export const getAllApplicationsColumn = async () => {
+  try {
+    const applications = await Application.findAll();
+    return applications;
+  } catch (error) {
+    console.error('Error fetching applications:', error);
+  }
 }
 
 export const getApplicationsForVacancyId = async (reqVacancy_id) => {
