@@ -64,13 +64,13 @@ const CandidateShares = sequelize.define('CandidateShare', {
 });
 
 CandidateShares.belongsTo(Candidate, { foreignKey: 'candidate_id' });
-CandidateShares.belongsTo(User, { foreignKey: 'user_id' });
+CandidateShares.belongsTo(User, { foreignKey: 'sender_id' });
+CandidateShares.belongsTo(User, { foreignKey: 'receiver_id' });
 CandidateShares.belongsTo(Application, { foreignKey: 'application_id' });
 
 Candidate.hasMany(CandidateShares, { foreignKey: 'candidate_id' });
-User.hasMany(CandidateShares, { foreignKey: 'user_id' });
-Application.hasMany(CandidateShares, { foreignKey: 'application_id'});
-
-
+User.hasMany(CandidateShares, { foreignKey: 'sender_id' });
+User.hasMany(CandidateShares, { foreignKey: 'receiver_id' });
+Application.hasMany(CandidateShares, { foreignKey: 'application_id' });
 
 export default CandidateShares;
