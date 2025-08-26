@@ -21,10 +21,12 @@ Thumbs.db
 # Build outputs
 dist/
 build/
+backup-files/
 
 
 
 .claude/
-
+todos.md
+progress.md
 
 .vscode/settings.json
