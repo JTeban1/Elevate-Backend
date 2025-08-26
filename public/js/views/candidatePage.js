@@ -1,14 +1,14 @@
-// import { guard } from '../utils/guard.js';
+import { guard } from '../utils/guard.js';
 import { getCandidates } from '../api/candidates.js';
 import { getApplications } from '../api/applications.js'
-import { fetchData } from '../api/api.js';
+import { renderNavbar } from '../components/ui/navbar.js';
 
 // Global state
 let candidate = null;
 let applications = [];
 
 /**
- * Obtener parametros de la URL
+ * Get URL parameters
  */
 function getURLParams() {
     const params = new URLSearchParams(window.location.search);
@@ -18,25 +18,25 @@ function getURLParams() {
 }
 
 /**
- * Cargar candidato especifico
+ * Load specific candidate
  */
 async function loadCandidate() {
     try {
         const params = getURLParams();
-        
+
         if (!params.id) {
-            showError('ID de candidato no proporcionado');
+            showLoadingError('ID de candidato no proporcionado');
             return;
         }
 
         // Load candidate and applications
         const candidates = await getCandidates();
         applications = await getApplications();
-        
+
         candidate = candidates.find(c => c.candidate_id == params.id);
 
         if (!candidate) {
-            showError('Candidato no encontrado');
+            showLoadingError('Candidato no encontrado');
             return;
         }
 
@@ -45,12 +45,12 @@ async function loadCandidate() {
 
     } catch (error) {
         console.error('Error loading candidate:', error);
-        showError('Error al cargar la informacion del candidato');
+        showLoadingError('Error al cargar la informacion del candidato');
     }
 }
 
 /**
- * Renderizar informacion del candidato
+ * Render candidate information
  */
 function renderCandidate() {
     // Profile section
@@ -59,41 +59,41 @@ function renderCandidate() {
     document.getElementById('candidate-name').textContent = candidate.name;
     document.getElementById('candidate-job').textContent = candidate.occupation;
     document.getElementById('candidate-email').textContent = candidate.email;
-    
+
     // Applications count (for reference but not displayed on this page)
     const candidateApplications = applications.filter(app => app.candidate_id === candidate.candidate_id);
-    
+
     // Summary
     document.getElementById('candidate-summary').textContent = candidate.summary || 'No professional summary available';
-    
+
     // Skills
     renderSkills();
-    
+
     // Languages
     renderLanguages();
-    
+
     // Experience
     renderExperience();
-    
+
     // Education
     renderEducation();
 }
 
 /**
- * Renderizar habilidades
+ * Render skills
  */
 function renderSkills() {
     const skillsContainer = document.getElementById('candidate-skills');
     skillsContainer.innerHTML = '';
-    
+
     try {
         const skills = candidate.skills || '[]';
-        
+
         if (skills.length === 0) {
             skillsContainer.innerHTML = '<div class="text-gray-500 text-sm">No skills registered</div>';
             return;
         }
-        
+
         skills.forEach(skill => {
             const skillElement = document.createElement('span');
             skillElement.className = 'bg-blue-100 text-blue-800 px-3 py-2 rounded-full text-sm font-medium';
@@ -106,20 +106,20 @@ function renderSkills() {
 }
 
 /**
- * Renderizar idiomas
+ * Render languages
  */
 function renderLanguages() {
     const languagesContainer = document.getElementById('candidate-languages');
     languagesContainer.innerHTML = '';
-    
+
     try {
         const languages = candidate.languages || '[]';
-        
+
         if (languages.length === 0) {
             languagesContainer.innerHTML = '<div class="text-gray-500 text-sm">No languages registered</div>';
             return;
         }
-        
+
         languages.forEach(language => {
             const languageElement = document.createElement('span');
             languageElement.className = 'bg-green-100 text-green-800 px-3 py-2 rounded-full text-sm font-medium';
@@ -132,29 +132,29 @@ function renderLanguages() {
 }
 
 /**
- * Renderizar experiencia
+ * Render Experience
  */
 function renderExperience() {
     const experienceContainer = document.getElementById('candidate-experience');
     experienceContainer.innerHTML = '';
-    
+
     try {
         const experience = candidate.experience || '[]';
-        
+
         if (experience.length === 0) {
             experienceContainer.innerHTML = '<p class="text-gray-500">No hay experiencia registrada</p>';
             return;
         }
-        
+
         experience.forEach(exp => {
             const expElement = document.createElement('div');
             expElement.className = 'p-4 border border-gray-200 rounded-lg bg-gray-50';
-            
+
             // Handle both object and string formats
             let title = '';
             let description = '';
             let company = '';
-            
+
             if (typeof exp === 'object' && exp !== null) {
                 // Object format with company, position, description
                 company = exp.company || 'Company not specified';
@@ -167,7 +167,7 @@ function renderExperience() {
                 // Simple string format
                 title = exp || 'Experience';
             }
-            
+
             expElement.innerHTML = `
                 <div>
                     ${company ? `<p class="font-semibold text-gray-900">${company}</p>` : ''}
@@ -183,22 +183,21 @@ function renderExperience() {
 }
 
 /**
- * Renderizar educacion
+ * Render Education
  */
 function renderEducation() {
     const educationContainer = document.getElementById('candidate-education');
     educationContainer.innerHTML = '';
-    
+
     try {
         const education = candidate.education || '[]';
-        console.log(education);
-        
-        
+
+
         if (education.length === 0) {
             educationContainer.innerHTML = '<p class="text-gray-500">No hay educacion registrada</p>';
             return;
         }
-        
+
         education.forEach(edu => {
             const eduElement = document.createElement('div');
             eduElement.className = 'p-4 border border-gray-200 rounded-lg bg-gray-50';
@@ -215,9 +214,9 @@ function renderEducation() {
 }
 
 /**
- * Mostrar error
+ * Show error in loading area
  */
-function showError(message) {
+function showLoadingError(message) {
     const loadingElement = document.getElementById('loading-candidate');
     loadingElement.innerHTML = `
         <div class="flex flex-col items-center gap-3">
@@ -233,71 +232,26 @@ function showError(message) {
 }
 
 /**
- * Ocultar loading
+ * Hide loading
  */
 function hideLoading() {
     document.getElementById('loading-candidate').classList.add('hidden');
     document.getElementById('candidate-content').classList.remove('hidden');
 }
 
-/**
- * Configurar dropdown del usuario
- */
-function setupUserDropdown() {
-    const userAvatar = document.getElementById('user-avatar');
-    const userDropdown = document.getElementById('user-dropdown');
-
-    // User dropdown functionality
-    userAvatar?.addEventListener('click', function() {
-        userDropdown?.classList.toggle('hidden');
-    });
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(event) {
-        if (!userAvatar?.contains(event.target) && !userDropdown?.contains(event.target)) {
-            userDropdown?.classList.add('hidden');
-        }
-    });
-
-    // Get logged user data (guard.js already validated it exists)
-    const loggedUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    const userName = loggedUser.name || 'Usuario';
-    const userEmail = loggedUser.email || 'usuario@example.com';
-    const initials = userName.split(' ').map(name => name.charAt(0)).join('');
-    
-    document.getElementById('user-initials').textContent = initials;
-    document.getElementById('user-name').textContent = userName;
-    document.getElementById('user-email').textContent = userEmail;
-
-    // Logout functionality
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Clear session data
-            localStorage.removeItem('currentUser');
-            localStorage.removeItem('returnUrl');
-            
-            // Redirect to index
-            window.location.href = 'index.html';
-        });
-    }
-}
 
 /**
- * Inicializacion cuando el DOM esta listo
+ * Initialization when the DOM is ready
  */
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('=== Protecting candidate detail page');
-    
-    // Configurar dropdown del usuario
-    setupUserDropdown();
-    
-    // Ejecutar guard para proteger la pagina
-    const currentPage = window.location.pathname.split('/').pop();
+document.addEventListener('DOMContentLoaded', function () {
+
+    // Render navbar component
+    renderNavbar('navbar-container');
+
+    // Run guard to protect the page (DISABLED - waiting for users endpoint)
+    // const currentPage = window.location.pathname.split('/').pop();
     // guard(currentPage);
-    
-    // Si llegamos aqui es que el guard paso exitosamente
+
+    // If we get here, it means that the guard passed successfully
     loadCandidate();
 });
