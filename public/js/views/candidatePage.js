@@ -243,10 +243,6 @@ function hideLoading() {
 }
 
 
-// ========================================
-// PERSONAL NOTES FUNCTIONALITY
-// ========================================
-
 /**
  * Get storage key for notes based on user and candidate
  */
