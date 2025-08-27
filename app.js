@@ -9,6 +9,7 @@ import candidatesController from './app/routes/CandidatesRouter.js'
 import usersController from './app/routes/UsersRouter.js'
 import candidateSharesController from './app/routes/CandidateSharesRouter.js'
 
+
 // Load environment variables from .env file
 dotenv.config();
 

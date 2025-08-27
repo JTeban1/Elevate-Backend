@@ -1,6 +1,17 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../../../config/db_conn.js';
+import Application from './ApplicationEntity.js';
 
+/**
+ * Vacancy model representing job postings in the system
+ * @typedef {Object} Vacancy
+ * @property {number} vacancy_id - Primary key, auto-incrementing unique identifier for the vacancy
+ * @property {string} title - Required title of the job vacancy
+ * @property {string} description - Detailed description of the job vacancy
+ * @property {number} salary - Salary offered for the position (decimal with 2 decimal places)
+ * @property {('open'|'closed'|'paused')} status - Current status of the vacancy, defaults to 'closed'
+ * @property {Date} creation_date - Date when the vacancy was created
+ */
 const Vacancy = sequelize.define('Vacancy', {
     vacancy_id : {
         type : DataTypes.INTEGER,
@@ -29,15 +40,14 @@ const Vacancy = sequelize.define('Vacancy', {
     timestamps: false
 });
 
-//For this to make sense we need applications entities!
-/*Vacancie.hasMany(Application, {
+Vacancy.hasMany(Application, {
     foreignKey : 'vacancy_id', //the one in applications
     sourceKey : 'vacancy_id' //the one in vacancies
 });
 
-Application.belongsTo(Vacancie, {
+Application.belongsTo(Vacancy, {
     foreignKey : 'vacancy_id', //the one in applications
     targetId : 'vacancy_id' //the one in vacancies
-});*/
+});
 
 export default Vacancy;

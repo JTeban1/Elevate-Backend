@@ -142,7 +142,7 @@ function showError(message) {
  * Initialization when the DOM is ready
  */
 document.addEventListener("DOMContentLoaded", () => {
-    // Run save for the login page (check if you are already logged in)
+    // Enable guard system for login page protection
     guard("loginPage.html");
 
     // Initialize functionalities

@@ -1,3 +1,4 @@
+// Language translations data
 const translations = {
     en: {
       loginBtn: "Log In",
@@ -68,14 +69,69 @@ const translations = {
   };
   
   
-  function setLanguage(lang) {
-    for (const [id, text] of Object.entries(translations[lang])) {
-      const el = document.getElementById(id);
-      if (el) el.textContent = text;
-    }
+  // Get saved language or default to Spanish
+  function getSavedLanguage() {
+    return localStorage.getItem('preferred-language') || 'es';
   }
-  
-  // Events
-  document.getElementById("btn-en").addEventListener("click", () => setLanguage("en"));
-  document.getElementById("btn-es").addEventListener("click", () => setLanguage("es"));
+
+  // Save language preference
+  function saveLanguage(lang) {
+    localStorage.setItem('preferred-language', lang);
+  }
+
+  // Update toggle button display
+  function updateToggleButton(currentLang) {
+    const toggleButton = document.getElementById('language-toggle');
+    const currentLanguageSpan = document.getElementById('current-language');
+    
+    if (!toggleButton || !currentLanguageSpan) return;
+    
+    // Update displayed language
+    currentLanguageSpan.textContent = currentLang.toUpperCase();
+    
+    // Update ARIA label based on current language
+    const nextLang = currentLang === 'es' ? 'English' : 'Español';
+    toggleButton.setAttribute('aria-label', `Cambiar a ${nextLang}`);
+    toggleButton.setAttribute('title', `Cambiar a ${nextLang}`);
+  }
+
+  // Toggle between languages
+  function toggleLanguage() {
+    const currentLang = getSavedLanguage();
+    const newLang = currentLang === 'es' ? 'en' : 'es';
+    setLanguage(newLang);
+  }
+
+  // Apply translations to page elements
+  function setLanguage(lang) {
+    // Apply translations
+    for (const [id, text] of Object.entries(translations[lang])) {
+      const element = document.getElementById(id);
+      if (element) element.textContent = text;
+    }
+    
+    // Save preference
+    saveLanguage(lang);
+    
+    // Update toggle button
+    updateToggleButton(lang);
+  }
+
+  // Initialize language on page load
+  function initializeLanguage() {
+    const savedLang = getSavedLanguage();
+    setLanguage(savedLang);
+  }
+
+  // Event listeners for single toggle button
+  document.addEventListener('DOMContentLoaded', () => {
+    // Initialize language
+    initializeLanguage();
+    
+    // Add event listener to toggle button
+    const toggleButton = document.getElementById('language-toggle');
+    if (toggleButton) {
+      toggleButton.addEventListener('click', toggleLanguage);
+    }
+  });
   
