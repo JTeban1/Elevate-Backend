@@ -1,7 +1,7 @@
 import { guard } from '../utils/guard.js';
 import { getVacancies, getApplicationsByVacancyIdController } from '../api/vacancies.js';
 import { getCandidates } from '../api/candidates.js';
-import { getApplications, updateApplication } from '../api/applications.js';
+import { getApplications, updateApplication, getAllApplicationsColumn } from '../api/applications.js';
 import { renderNavbar } from '../components/ui/navbar.js';
 import { showSuccess, showError } from '../components/ui/messageToast.js';
 import { updatePagination } from '../components/ui/pagination.js';
@@ -12,6 +12,7 @@ let candidates = [];
 let applications = [];
 let filteredApplications = [];
 let applicationJoin = [];
+let applicationsColumn = [];
 let currentFilters = {
     search: '',
     status: ''
@@ -50,13 +51,15 @@ async function loadVacancyData() {
         }
 
         // Load data in parallel
-        const [vacanciesData, candidatesData, applicationsData, applicationJoinData] = await Promise.all([
+        const [vacanciesData, candidatesData, applicationsData, applicationJoinData, applicationsColumnData] = await Promise.all([
             getVacancies(),
             getCandidates(),
             getApplications(),
-            getApplicationsByVacancyIdController(params.id)
+            getApplicationsByVacancyIdController(params.id),
+            getAllApplicationsColumn()
         ]);
         applicationJoin = applicationJoinData;
+        applicationsColumn = applicationsColumnData
 
         // Find specific vacancy
         vacancy = vacanciesData.find(v => v.vacancy_id === params.id);
@@ -68,10 +71,14 @@ async function loadVacancyData() {
 
         candidates = candidatesData;
         applications = applicationsData;
+        
+        
 
 
         // Filter applications for this vacancy
-        filteredApplications = applications.filter(app => app.vacancy_id === params.id);
+        console.log(applicationsColumn);
+        
+        filteredApplications = applicationsColumn.filter(app => app.vacancy_id === params.id);
 
 
         renderVacancy();
@@ -118,11 +125,14 @@ function renderVacancy() {
  * Render candidate statistics
  */
 function renderStats() {
+    console.log(filteredApplications);
+    
     const total = filteredApplications.length;
     const pending = filteredApplications.filter(app => app.status === 'pending').length;
     const interview = filteredApplications.filter(app => app.status === 'interview').length;
     const offered = filteredApplications.filter(app => app.status === 'offered').length;
     const accepted = filteredApplications.filter(app => app.status === 'accepted').length;
+    const rejected = filteredApplications.filter(app => app.status === 'rejected').length;
 
     document.getElementById('total-applications').textContent = total;
     document.getElementById('stat-total').textContent = total;
@@ -130,6 +140,7 @@ function renderStats() {
     document.getElementById('stat-interview').textContent = interview;
     document.getElementById('stat-offered').textContent = offered;
     document.getElementById('stat-accepted').textContent = accepted;
+    document.getElementById('stat-rejected').textContent = rejected;
 }
 
 /**
