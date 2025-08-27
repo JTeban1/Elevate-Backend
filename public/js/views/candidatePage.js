@@ -2,10 +2,12 @@ import { guard } from '../utils/guard.js';
 import { getCandidates } from '../api/candidates.js';
 import { getApplications } from '../api/applications.js'
 import { renderNavbar } from '../components/ui/navbar.js';
+import { getUser } from '../utils/guard.js';
 
 // Global state
 let candidate = null;
 let applications = [];
+let currentEditingNoteId = null;
 
 /**
  * Get URL parameters
@@ -41,6 +43,7 @@ async function loadCandidate() {
         }
 
         renderCandidate();
+        initializeNotes();
         hideLoading();
 
     } catch (error) {
@@ -239,6 +242,286 @@ function hideLoading() {
     document.getElementById('candidate-content').classList.remove('hidden');
 }
 
+
+/**
+ * Get storage key for notes based on user and candidate
+ */
+function getNotesStorageKey() {
+    const user = getUser();
+    const params = getURLParams();
+    
+    if (!user || !params.id) return null;
+    
+    return `candidate_notes_${user.user_id}_${params.id}`;
+}
+
+/**
+ * Load notes from localStorage
+ */
+function loadNotes() {
+    const storageKey = getNotesStorageKey();
+    if (!storageKey) return [];
+    
+    try {
+        const notesData = localStorage.getItem(storageKey);
+        return notesData ? JSON.parse(notesData) : [];
+    } catch (error) {
+        console.error('Error loading notes:', error);
+        return [];
+    }
+}
+
+/**
+ * Save notes to localStorage
+ */
+function saveNotes(notes) {
+    const storageKey = getNotesStorageKey();
+    if (!storageKey) return;
+    
+    try {
+        localStorage.setItem(storageKey, JSON.stringify(notes));
+    } catch (error) {
+        console.error('Error saving notes:', error);
+    }
+}
+
+/**
+ * Initialize notes functionality
+ */
+function initializeNotes() {
+    const user = getUser();
+    if (!user) {
+        hideNotesSection();
+        return;
+    }
+    
+    // Render existing notes
+    renderNotes();
+    
+    // Setup event listeners
+    setupNotesEventListeners();
+}
+
+/**
+ * Hide notes section if user not logged in
+ */
+function hideNotesSection() {
+    const notesSection = document.querySelector('#personal-notes-section');
+    if (notesSection) {
+        notesSection.style.display = 'none';
+    }
+}
+
+/**
+ * Setup event listeners for notes functionality
+ */
+function setupNotesEventListeners() {
+    // Add note button
+    document.getElementById('add-note-btn')?.addEventListener('click', showNoteForm);
+    
+    // Save note button
+    document.getElementById('save-note-btn')?.addEventListener('click', saveNote);
+    
+    // Cancel note button
+    document.getElementById('cancel-note-btn')?.addEventListener('click', hideNoteForm);
+}
+
+/**
+ * Show note form
+ */
+function showNoteForm() {
+    const form = document.getElementById('note-form');
+    const addBtn = document.getElementById('add-note-btn');
+    
+    if (form && addBtn) {
+        form.classList.remove('hidden');
+        addBtn.style.display = 'none';
+        
+        // Focus on textarea
+        document.getElementById('note-content')?.focus();
+    }
+}
+
+/**
+ * Hide note form and reset
+ */
+function hideNoteForm() {
+    const form = document.getElementById('note-form');
+    const addBtn = document.getElementById('add-note-btn');
+    const content = document.getElementById('note-content');
+    
+    if (form && addBtn) {
+        form.classList.add('hidden');
+        addBtn.style.display = 'block';
+        currentEditingNoteId = null;
+        
+        // Reset form
+        if (content) {
+            content.value = '';
+            content.placeholder = 'Add your personal notes about this candidate...';
+        }
+        
+        // Update button text
+        const saveBtn = document.getElementById('save-note-btn');
+        if (saveBtn) {
+            saveBtn.textContent = 'Save Note';
+        }
+    }
+}
+
+/**
+ * Save note (create or update)
+ */
+function saveNote() {
+    const content = document.getElementById('note-content')?.value.trim();
+    
+    if (!content) return;
+    
+    const notes = loadNotes();
+    const now = new Date().toISOString();
+    
+    if (currentEditingNoteId) {
+        // Update existing note
+        const noteIndex = notes.findIndex(note => note.id === currentEditingNoteId);
+        if (noteIndex !== -1) {
+            notes[noteIndex].content = content;
+            notes[noteIndex].updatedAt = now;
+        }
+    } else {
+        // Create new note
+        const newNote = {
+            id: Date.now().toString(),
+            content: content,
+            createdAt: now,
+            updatedAt: now
+        };
+        notes.unshift(newNote); // Add to beginning
+    }
+    
+    saveNotes(notes);
+    renderNotes();
+    hideNoteForm();
+}
+
+/**
+ * Render all notes
+ */
+function renderNotes() {
+    const notesList = document.getElementById('notes-list');
+    if (!notesList) return;
+    
+    const notes = loadNotes();
+    
+    if (notes.length === 0) {
+        notesList.innerHTML = `
+            <div class="text-center text-gray-500 text-sm py-8">
+                <svg class="w-8 h-8 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-1.586l-4.707 4.707z"></path>
+                </svg>
+                No personal notes yet. Click "Add Note" to start.
+            </div>
+        `;
+        return;
+    }
+    
+    notesList.innerHTML = notes.map(note => createNoteElement(note)).join('');
+    
+    // Add event listeners to note buttons
+    notes.forEach(note => {
+        document.getElementById(`edit-${note.id}`)?.addEventListener('click', () => editNote(note.id));
+        document.getElementById(`delete-${note.id}`)?.addEventListener('click', () => deleteNote(note.id));
+    });
+}
+
+/**
+ * Create HTML element for a note
+ */
+function createNoteElement(note) {
+    const createdDate = new Date(note.createdAt).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    const wasEdited = note.updatedAt !== note.createdAt;
+    const updatedDate = wasEdited ? new Date(note.updatedAt).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    }) : '';
+    
+    return `
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+            <div class="mb-3">
+                <p class="text-gray-800 text-sm leading-relaxed">${escapeHtml(note.content)}</p>
+            </div>
+            <div class="flex items-center justify-between">
+                <div class="text-xs text-gray-500">
+                    <span>Added ${createdDate}</span>
+                    ${wasEdited ? `<span class="ml-2">• Edited ${updatedDate}</span>` : ''}
+                </div>
+                <div class="flex gap-2">
+                    <button id="edit-${note.id}" 
+                            class="text-blue-600 hover:text-blue-700 text-xs font-medium hover:bg-blue-50 px-2 py-1 rounded transition-colors">
+                        Edit
+                    </button>
+                    <button id="delete-${note.id}" 
+                            class="text-red-600 hover:text-red-700 text-xs font-medium hover:bg-red-50 px-2 py-1 rounded transition-colors">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Edit note
+ */
+function editNote(noteId) {
+    const notes = loadNotes();
+    const note = notes.find(n => n.id === noteId);
+    
+    if (!note) return;
+    
+    currentEditingNoteId = noteId;
+    
+    // Fill form with note content
+    const content = document.getElementById('note-content');
+    const saveBtn = document.getElementById('save-note-btn');
+    
+    if (content && saveBtn) {
+        content.value = note.content;
+        content.placeholder = 'Edit your note...';
+        saveBtn.textContent = 'Update Note';
+        
+        showNoteForm();
+    }
+}
+
+/**
+ * Delete note
+ */
+function deleteNote(noteId) {
+    if (!confirm('Are you sure you want to delete this note?')) return;
+    
+    const notes = loadNotes();
+    const filteredNotes = notes.filter(note => note.id !== noteId);
+    
+    saveNotes(filteredNotes);
+    renderNotes();
+}
+
+/**
+ * Escape HTML to prevent XSS
+ */
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
 
 /**
  * Initialization when the DOM is ready
