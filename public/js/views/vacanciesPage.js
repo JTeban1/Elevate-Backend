@@ -295,12 +295,9 @@ async function createVacancy(vacancyData) {
 async function updateVacancy(id, vacancyData) {
     try {
         const updatedVacancy = await updateVacancyAPI(id, vacancyData);
-        const index = vacancies.findIndex(v => v.vacancy_id === id);
-        if (index !== -1) {
-            vacancies[index] = updatedVacancy;
-        }
-        renderVacanciesTable();
-        updateStats();
+        
+        // Reload all vacancies to ensure data consistency
+        await loadVacancies();
         showSuccess('Vacante actualizada exitosamente');
         return updatedVacancy;
     } catch (error) {
