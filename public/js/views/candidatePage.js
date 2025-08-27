@@ -2,10 +2,12 @@ import { guard } from '../utils/guard.js';
 import { getCandidates } from '../api/candidates.js';
 import { getApplications } from '../api/applications.js'
 import { renderNavbar } from '../components/ui/navbar.js';
+import { getUser } from '../utils/guard.js';
 
 // Global state
 let candidate = null;
 let applications = [];
+let currentEditingNoteId = null;
 
 /**
  * Get URL parameters
@@ -41,6 +43,7 @@ async function loadCandidate() {
         }
 
         renderCandidate();
+        initializeNotes();
         hideLoading();
 
     } catch (error) {
