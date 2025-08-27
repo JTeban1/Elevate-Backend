@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../../../config/db_conn.js';
+import Application from './ApplicationEntity.js';
 
 /**
  * Vacancy model representing job postings in the system

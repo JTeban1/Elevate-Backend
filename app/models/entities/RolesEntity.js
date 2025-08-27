@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import sequelize from "../../../config/db_conn";
+import sequelize from "../../../config/db_conn.js";
 
 /**
  * Role entity model representing the roles table in the database.
