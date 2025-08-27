@@ -26,6 +26,6 @@ export const getCandidateSharesByUserId = async (senderId) => {
         });
         return candidateShares
     } catch (error) {
-            console.error('Error fetching applications:', error);
+            console.error('Error fetching candidate shares:', error);
     }
 };
