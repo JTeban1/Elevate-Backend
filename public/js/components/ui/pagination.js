@@ -52,7 +52,7 @@ export function updatePaginationControls(currentPage, totalPages, containerId, o
     if (totalPages <= 1) return;
 
     // Previous button
-    const prevButton = createPaginationButton('Anterior', currentPage === 1, () => {
+    const prevButton = createPaginationButton('Previous', currentPage === 1, () => {
         if (currentPage > 1 && onPageChange) {
             onPageChange(currentPage - 1);
         }
@@ -67,7 +67,7 @@ export function updatePaginationControls(currentPage, totalPages, containerId, o
     });
 
     // Next button
-    const nextButton = createPaginationButton('Siguiente', currentPage === totalPages, () => {
+    const nextButton = createPaginationButton('Next', currentPage === totalPages, () => {
         if (currentPage < totalPages && onPageChange) {
             onPageChange(currentPage + 1);
         }

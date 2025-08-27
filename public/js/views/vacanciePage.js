@@ -75,9 +75,7 @@ async function loadVacancyData() {
         
 
 
-        // Filter applications for this vacancy
-        console.log(applicationsColumn);
-        
+        // Filter applications for this vacancy   
         filteredApplications = applicationsColumn.filter(app => app.vacancy_id === params.id);
 
 
@@ -125,8 +123,6 @@ function renderVacancy() {
  * Render candidate statistics
  */
 function renderStats() {
-    console.log(filteredApplications);
-    
     const total = filteredApplications.length;
     const pending = filteredApplications.filter(app => app.status === 'pending').length;
     const interview = filteredApplications.filter(app => app.status === 'interview').length;
@@ -226,7 +222,7 @@ function createCandidateCard(candidate, application) {
                             <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
-                            Ver Perfil
+                            Show profile
                         </a>
                     </div>
                     <p class="text-sm text-gray-600 truncate">${candidate.occupation}</p>
@@ -247,7 +243,7 @@ function createCandidateCard(candidate, application) {
                 <div class="relative">
                     <button type="button" data-application-id="${application.application_id}" 
                             class="status-change-btn flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
-                        Cambiar Estado
+                        Change Status
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                         </svg>
@@ -459,27 +455,27 @@ function getStatusConfig(status) {
 function getApplicationStatusConfig(status) {
     const configs = {
         'pending': {
-            label: 'Pendiente',
+            label: 'Pending',
             bgColor: 'bg-yellow-100',
             textColor: 'text-yellow-800'
         },
         'interview': {
-            label: 'Entrevista',
+            label: 'Interview',
             bgColor: 'bg-blue-100',
             textColor: 'text-blue-800'
         },
         'offered': {
-            label: 'Ofrecido',
+            label: 'Offered',
             bgColor: 'bg-purple-100',
             textColor: 'text-purple-800'
         },
         'accepted': {
-            label: 'Aceptado',
+            label: 'Accepted',
             bgColor: 'bg-green-100',
             textColor: 'text-green-800'
         },
         'rejected': {
-            label: 'Rechazado',
+            label: 'Rejected',
             bgColor: 'bg-red-100',
             textColor: 'text-red-800'
         }

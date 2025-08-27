@@ -17,8 +17,8 @@ export function createNavbar(activePage = '', options = {}) {
     } = options;
 
     const navigationItems = [
-        { id: 'vacancies', label: 'Vacantes', href: 'vacanciesPage.html' },
-        { id: 'candidates', label: 'Candidatos', href: 'candidatesPage.html' },
+        { id: 'vacancies', label: 'Vacancies', href: 'vacanciesPage.html' },
+        { id: 'candidates', label: 'Candidates', href: 'candidatesPage.html' },
         { id: 'aiCv', label: 'Upload CVs', href: 'aiCvPage.html' }
     ];
 
