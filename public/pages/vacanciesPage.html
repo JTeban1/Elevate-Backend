@@ -181,25 +181,12 @@
 
         <!-- Pagination -->
         <div class="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
-          <div class="text-sm text-gray-600">
+          <div class="text-sm text-gray-600 order-2 sm:order-1">
             Mostrando <span class="font-semibold text-gray-900" id="pagination-start">0</span> a <span
               class="font-semibold text-gray-900" id="pagination-end">0</span> de <span
               class="font-semibold text-gray-900" id="pagination-total">0</span> vacantes
           </div>
-          <div class="flex items-center space-x-2">
-            <button
-              class="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-              Anterior
-            </button>
-            <button
-              class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
-              1
-            </button>
-            <button
-              class="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-              Siguiente
-            </button>
-          </div>
+          <div id="pagination-container" class="order-1 sm:order-2"></div>
         </div>
       </div>
     </main>

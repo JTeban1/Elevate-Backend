@@ -18,5 +18,6 @@ router.get('/:id', vacanciesControllers.getApplicationsByVacancyIdController);
 
 router.post('/', vacanciesControllers.upsertVacancyController);
 
+router.delete('/:id', vacanciesControllers.deleteVacancyController);
 
 export default router;

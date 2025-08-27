@@ -97,7 +97,7 @@ function renderSkills() {
         skills.forEach(skill => {
             const skillElement = document.createElement('span');
             skillElement.className = 'bg-blue-100 text-blue-800 px-3 py-2 rounded-full text-sm font-medium';
-            skillElement.textContent = skill;
+            skillElement.textContent = typeof skill === 'string' ? skill : skill.name || skill.skill || 'Unknown';
             skillsContainer.appendChild(skillElement);
         });
     } catch (error) {
@@ -123,7 +123,8 @@ function renderLanguages() {
         languages.forEach(language => {
             const languageElement = document.createElement('span');
             languageElement.className = 'bg-green-100 text-green-800 px-3 py-2 rounded-full text-sm font-medium';
-            languageElement.textContent = language.level + ' ' + language.language;
+            languageElement.textContent = typeof language === 'string' ? language : 
+                `${language.level || ''} ${language.language || language.name || 'Unknown'}`.trim();
             languagesContainer.appendChild(languageElement);
         });
     } catch (error) {

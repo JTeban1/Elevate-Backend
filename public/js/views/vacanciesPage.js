@@ -105,7 +105,7 @@ function renderVacanciesTable() {
     });
 
     // Update pagination
-    updatePagination(currentPage, totalItems, itemsPerPage, 'pagination-controls', (newPage) => {
+    updatePagination(currentPage, totalItems, itemsPerPage, 'pagination-container', (newPage) => {
         currentPage = newPage;
         renderVacanciesTable();
     });
@@ -119,7 +119,8 @@ function createVacancyRow(vacancy) {
     tr.className = 'hover:bg-gray-50 transition-colors';
 
     const statusConfig = getVacancyStatusConfig(vacancy.status);
-    const initials = vacancy.title.split(' ').map(word => word.charAt(0)).join('').substring(0, 2).toUpperCase();
+    const safeTitle = vacancy.title || 'Sin título';
+    const initials = safeTitle.split(' ').map(word => word.charAt(0)).join('').substring(0, 2).toUpperCase();
 
     // Count applications for this vacancy
     const vacancyApplications = applications.filter(app => app.vacancy_id === vacancy.vacancy_id).length;
@@ -276,9 +277,9 @@ function showTab(tab, element) {
 async function createVacancy(vacancyData) {
     try {
         const newVacancy = await createVacancyAPI(vacancyData);
-        vacancies.push(newVacancy);
-        renderVacanciesTable();
-        updateStats();
+        
+        // Reload all vacancies instead of trusting the response
+        await loadVacancies();
         showSuccess('Vacante creada exitosamente');
         return newVacancy;
     } catch (error) {
@@ -416,7 +417,7 @@ async function deleteConfirmed() {
 /**
  * Handle form submission
  */
-function handleFormSubmit(event) {
+async function handleFormSubmit(event) {
     event.preventDefault();
 
     const form = event.target;
@@ -426,22 +427,28 @@ function handleFormSubmit(event) {
         description: form.querySelector('textarea[placeholder*="principales responsabilidades"]').value.trim(),
         salary: parseFloat(form.querySelector('input[placeholder*="80000"]').value) || 0,
         status: 'open',
-        creation_date: new Date().toISOString().split('T')[0]
+        creation_date: new Date()
     };
+
 
     // Basic Validation
     if (!vacancyData.title || !vacancyData.description) {
         showError('Por favor completa todos los campos obligatorios');
         return;
     }
+    
+    if (vacancyData.salary > 99999999) {
+        showError('El salario no puede ser mayor a $99,999,999');
+        return;
+    }
 
     if (currentEditingId) {
         // Update existing vacancy
         vacancyData.vacancy_id = currentEditingId;
-        updateVacancy(currentEditingId, vacancyData);
+        await updateVacancy(currentEditingId, vacancyData);
     } else {
         // Create new vacancy
-        createVacancy(vacancyData);
+        await createVacancy(vacancyData);
     }
 
     closeModal();
