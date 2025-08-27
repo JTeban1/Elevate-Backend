@@ -7,6 +7,8 @@ import vacanciesControllers from './app/routes/VacanciesRouter.js'
 import applicationsController from './app/routes/ApplicationsRouter.js'
 import candidatesController from './app/routes/CandidatesRouter.js'
 import usersController from './app/routes/UsersRouter.js'
+import candidateSharesController from './app/routes/CandidateSharesRouter.js'
+
 
 // Load environment variables from .env file
 dotenv.config();
@@ -27,6 +29,7 @@ app.use('/api/vacancies', vacanciesControllers);
 app.use('/api/applications', applicationsController);
 app.use('/api/candidates', candidatesController);
 app.use('/api/users', usersController);
+app.use('/api/shares', candidateSharesController);
 
 // Configure the application port, taking the environment variable or the default value (3000)
 const PORT = process.env.PORT || 9000;

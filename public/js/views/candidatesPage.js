@@ -53,25 +53,22 @@ function setupFilters() {
         });
     }
 
-    // Unique skills 
+    // Simple skills extraction
     const allSkills = candidates.flatMap(c => {
-        try {
-            return JSON.parse(c.skills);
-        } catch (error) {
-            return [];
-        }
+        const skills = Array.isArray(c.skills) ? c.skills : [];
+        return skills.map(skill => typeof skill === 'string' ? skill : skill.name || 'Unknown');
     });
     const uniqueSkills = [...new Set(allSkills)];
-    const skillFilter = document.getElementById('skill-filter');
-    if (skillFilter) {
-        skillFilter.innerHTML = '<option value="">Todos los skills</option>';
+    const skillDatalist = document.getElementById('skills-datalist');
+    if (skillDatalist) {
+        skillDatalist.innerHTML = '';
         uniqueSkills.forEach(skill => {
             const option = document.createElement('option');
             option.value = skill;
-            option.textContent = skill;
-            skillFilter.appendChild(option);
+            skillDatalist.appendChild(option);
         });
     }
+
 }
 
 /**
@@ -126,7 +123,7 @@ function renderCandidatesCards() {
     });
 
     // Update pagination
-    updatePagination(currentPage, totalItems, itemsPerPage, 'pagination-controls', (newPage) => {
+    updatePagination(currentPage, totalItems, itemsPerPage, 'pagination-container', (newPage) => {
         currentPage = newPage;
         renderCandidatesCards();
     });
@@ -139,14 +136,19 @@ function createCandidateCard(candidate) {
     const div = document.createElement('div');
     div.className = 'p-6 hover:bg-gray-50 transition-colors';
 
-    // Parsear skills and languages
+    // Parse skills and languages safely
     let skills = [];
     let languages = [];
     try {
-        skills = JSON.parse(candidate.skills);
-        languages = JSON.parse(candidate.languages);
+        // Handle both array and string formats
+        skills = Array.isArray(candidate.skills) ? candidate.skills : 
+                 (candidate.skills ? JSON.parse(candidate.skills) : []);
+        languages = Array.isArray(candidate.languages) ? candidate.languages : 
+                   (candidate.languages ? JSON.parse(candidate.languages) : []);
     } catch (error) {
         console.warn('Error parsing skills/languages for candidate:', candidate.candidate_id);
+        skills = [];
+        languages = [];
     }
     
     // Get applications from the candidate
@@ -183,9 +185,10 @@ function createCandidateCard(candidate) {
                 
                 <!-- Skills and Languages -->
                 <div class="flex flex-wrap gap-2 mb-3">
-                    ${skills.slice(0, 3).map(skill =>
-        `<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800">${skill}</span>`
-    ).join('')}
+                    ${skills.slice(0, 3).map(skill => {
+                        const skillName = typeof skill === 'string' ? skill : skill.name || 'Unknown';
+                        return `<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800">${skillName}</span>`;
+                    }).join('')}
                     ${skills.length > 3 ? `<span class="text-xs text-gray-500">+${skills.length - 3} mas</span>` : ''}
                 </div>
                 
@@ -201,7 +204,13 @@ function createCandidateCard(candidate) {
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 256 256">
                             <path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160ZM176,24a8,8,0,0,0-8,8V48a8,8,0,0,0,16,0V32A8,8,0,0,0,176,24Z"/>
                         </svg>
-                        ${languages.join(', ')}
+                        ${languages.slice(0, 2).map(lang => typeof lang === 'string' ? lang : lang.name || lang.language || 'Unknown').join(', ')}
+                    </span>
+                    <span class="flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 256 256">
+                            <path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.29-38.83-38.51l20.78-24.71c.2-.25.39-.5.57-.77a16,16,0,0,0,1.32-15.06l0-.12L97.54,33.64a16,16,0,0,0-16.62-9.52A56.26,56.26,0,0,0,32,80c0,79.4,64.6,144,144,144a56.26,56.26,0,0,0,55.88-48.92A16,16,0,0,0,222.37,158.46Z"/>
+                        </svg>
+                        ${candidate.phone || 'No disponible'}
                     </span>
                 </div>
             </div>
@@ -253,12 +262,9 @@ function applyFilters(candidatesList) {
 
         // Filter by skill
         if (currentFilters.skill) {
-            try {
-                const candidateSkills = JSON.parse(candidate.skills);
-                if (!candidateSkills.includes(currentFilters.skill)) {
-                    return false;
-                }
-            } catch (error) {
+            const candidateSkills = Array.isArray(candidate.skills) ? candidate.skills : [];
+            const skillNames = candidateSkills.map(skill => typeof skill === 'string' ? skill : skill.name || '');
+            if (!skillNames.some(skill => skill.toLowerCase().includes(currentFilters.skill.toLowerCase()))) {
                 return false;
             }
         }
@@ -327,9 +333,9 @@ function setupEventListeners() {
         });
     }
 
-    // Filtre by skill
+    // Filter by skill (input supports typing)
     if (skillFilter) {
-        skillFilter.addEventListener('change', (e) => {
+        skillFilter.addEventListener('input', (e) => {
             currentFilters.skill = e.target.value;
             currentPage = 1;
             renderCandidatesCards();
