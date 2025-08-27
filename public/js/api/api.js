@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:9000/api";
+import { API_URL } from '../utils/config.js';
 
 // GET (read data)
 export async function fetchData(endpoint) {

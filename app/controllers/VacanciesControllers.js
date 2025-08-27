@@ -96,3 +96,29 @@ export const getApplicationsByVacancyIdController = async (req, res) => {
     });
   }
 };
+
+export const deleteVacancyController = async (req, res) => {
+  try {
+    const vacancyId = req.params.id;
+    const deletedVacancy = await vacanciesModel.deleteVacancy({ vacancy_id: vacancyId });
+    
+    if (!deletedVacancy) {
+      return res.status(404).json({
+        success: false,
+        message: 'Vacancy not found'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Vacancy deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting vacancy:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error deleting vacancy',
+      error: error.message
+    });
+  }
+};
