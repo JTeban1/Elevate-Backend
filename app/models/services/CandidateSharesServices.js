@@ -24,7 +24,7 @@ export const getCandidateSharesByUserId = async (senderId) => {
             ],
             order: [['created_at', 'DESC']],
         });
-        return candidateShares
+        return candidateShares;
     } catch (error) {
             console.error('Error fetching candidate shares:', error);
     }
