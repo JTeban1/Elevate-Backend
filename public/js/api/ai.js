@@ -1,6 +1,6 @@
 import { fetchData, createData, updateData } from "./api.js";
 
-const ENDPOINT = "api/aicv";
+const ENDPOINT = "aicv";
 
 // Get all AI CV applications
 export function getApplications() {

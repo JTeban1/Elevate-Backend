@@ -1,6 +1,6 @@
 import { fetchData, createData, updateData, deleteData } from "./api.js";
 
-const ENDPOINT = "api/candidates";
+const ENDPOINT = "candidates";
 
 // Get all candidates
 export function getCandidates() {
