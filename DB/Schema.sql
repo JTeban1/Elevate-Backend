@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS candidate_shares (
     sender_id INT,
     receiver_id INT,
     application_id INT,
+    vacancy_id INT,
     status ENUM('pending','accepted','rejected') DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -64,5 +65,6 @@ CREATE TABLE IF NOT EXISTS candidate_shares (
     FOREIGN KEY (sender_id) REFERENCES users(user_id) ON DELETE SET NULL,
     FOREIGN KEY (receiver_id) REFERENCES users(user_id) ON DELETE SET NULL,
     FOREIGN KEY (application_id) REFERENCES applications(application_id) ON DELETE SET NULL,
+    FOREIGN KEY (vacancy_id) REFERENCES vacancies(vacancy_id) ON DELETE SET NULL,
     UNIQUE (candidate_id, sender_id, receiver_id, application_id)
 );
