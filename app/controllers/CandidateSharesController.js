@@ -7,6 +7,6 @@ export const getCandidateSharesController = async (req, res) => {
         return res.status(200).json(candidateShares);
     } catch (error) {
         console.error("Error fetching candidateShares:", error);
-        return res.status(500).json({ error: "Error fetching candidatesShares" });
+        return res.status(500).json({ error: "Error fetching candidateShares" });
     }
 };
