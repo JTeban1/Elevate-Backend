@@ -122,10 +122,10 @@ function createVacancyRow(vacancy) {
     const safeTitle = vacancy.title || 'Sin título';
     const initials = safeTitle.split(' ').map(word => word.charAt(0)).join('').substring(0, 2).toUpperCase();
 
-    // Count applications for this vacancy
+    // Count applications for this vacancy 
     const vacancyApplications = applications.filter(app => app.vacancy_id === vacancy.vacancy_id).length;
 
-
+    
     tr.innerHTML = `
         <td class="px-6 py-4 whitespace-nowrap">
             <div class="flex items-center">
@@ -136,7 +136,7 @@ function createVacancyRow(vacancy) {
                 </div>
                 <div class="ml-4">
                     <div class="text-sm font-bold text-gray-900">${vacancy.title}</div>
-                    <div class="text-sm text-gray-500">${vacancy.description.substring(0, 50)}${vacancy.description.length > 50 ? '...' : ''}</div>
+                    <div class="text-sm text-gray-500">${vacancy.description ? `${vacancy.description.substring(0, 50)}${vacancy.description.length > 50 ? '...' : ''}` : 'No description'}</div>
                 </div>
             </div>
         </td>
@@ -153,7 +153,7 @@ function createVacancyRow(vacancy) {
             </div>
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-            $${vacancy.salary.toLocaleString()}
+            ${vacancy.salary != null ? Number(vacancy.salary).toLocaleString() : 'No salary specified'}
         </td>
         <td class="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
             ${formatDate(vacancy.creation_date)}
@@ -277,7 +277,7 @@ function showTab(tab, element) {
 async function createVacancy(vacancyData) {
     try {
         const newVacancy = await createVacancyAPI(vacancyData);
-        
+
         // Reload all vacancies instead of trusting the response
         await loadVacancies();
         showSuccess('Vacante creada exitosamente');
@@ -436,7 +436,7 @@ async function handleFormSubmit(event) {
         showError('Por favor completa todos los campos obligatorios');
         return;
     }
-    
+
     if (vacancyData.salary > 99999999) {
         showError('El salario no puede ser mayor a $99,999,999');
         return;

@@ -17,6 +17,7 @@ router.get('/find', vacanciesControllers.getAllVacanciesByNameController);
 router.get('/:id', vacanciesControllers.getApplicationsByVacancyIdController);
 
 router.post('/', vacanciesControllers.upsertVacancyController);
+router.put('/:id', vacanciesControllers.updateVacancyController);
 
 router.delete('/:id', vacanciesControllers.deleteVacancyController);
 
