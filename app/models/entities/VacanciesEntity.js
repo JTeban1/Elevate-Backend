@@ -1,6 +1,6 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../../../config/db_conn.js';
-import Application from './ApplicationEntity.js';
+
 
 /**
  * Vacancy model representing job postings in the system
@@ -38,16 +38,6 @@ const Vacancy = sequelize.define('Vacancy', {
 }, {
     tableName: 'vacancies',
     timestamps: false
-});
-
-Vacancy.hasMany(Application, {
-    foreignKey : 'vacancy_id', //the one in applications
-    sourceKey : 'vacancy_id' //the one in vacancies
-});
-
-Application.belongsTo(Vacancy, {
-    foreignKey : 'vacancy_id', //the one in applications
-    targetId : 'vacancy_id' //the one in vacancies
 });
 
 export default Vacancy;
