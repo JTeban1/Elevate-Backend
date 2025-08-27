@@ -1,6 +1,6 @@
 import { fetchData, createData, updateData, deleteData } from "./api.js";
 
-const ENDPOINT = "api/vacancies";
+const ENDPOINT = "vacancies";
 
 // Get all vacancies
 export function getVacancies() {
