@@ -19,8 +19,8 @@ async function loadVacancies() {
       `;
     });
   } catch (error) {
-    console.error('Error al mostrar vacantes:', error);
-    alert('Error al mostrar vacantes');
+    console.error('Error when showing vacancies:', error);
+    alert('Error when showing vacancies');
   }
 }
 
@@ -87,9 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupUserDropdown();
 });
 
-// ============================================================================
-// ORIGINAL CV AI FUNCTIONALITY - Teammate's code
-// ============================================================================
 
 document.getElementById('cv_ai').addEventListener('submit', async function (e) {
   e.preventDefault();
@@ -111,15 +108,14 @@ document.getElementById('cv_ai').addEventListener('submit', async function (e) {
       body: formData,
     });
 
-    if (!response.ok) throw new Error('Error en la solicitud: ' + response.status);
+    if (!response.ok) throw new Error('Error in request: ' + response.status);
 
     const data = await response.json();
     console.log(data);
-    alert('CV enviado correctamente');
     form.reset();
   } catch (error) {
-    console.error('Error al enviar el CV:', error);
-    alert('Hubo un error al enviar el CV');
+    console.error('Error while sending cv:', error);
+    alert('Error while sending cv');
   } finally {
     loadingDiv.classList.add('hidden');
   }
