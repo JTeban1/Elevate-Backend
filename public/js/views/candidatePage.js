@@ -533,8 +533,8 @@ document.addEventListener('DOMContentLoaded', function () {
     renderNavbar('navbar-container');
 
     // Run guard to protect the page (DISABLED - waiting for users endpoint)
-    // const currentPage = window.location.pathname.split('/').pop();
-    // guard(currentPage);
+    const currentPage = window.location.pathname.split('/').pop();
+    guard(currentPage);
 
     // If we get here, it means that the guard passed successfully
     loadCandidate();

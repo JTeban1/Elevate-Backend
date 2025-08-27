@@ -461,7 +461,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const currentPage = window.location.pathname.split('/').pop() || 'vacanciesPage.html';
 
     // Execute guard to protect page (DISABLED - waiting for users endpoint)
-    // guard(currentPage);
+    guard(currentPage);
 
 
     // Render navbar component
