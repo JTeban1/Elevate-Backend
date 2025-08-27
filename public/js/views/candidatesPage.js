@@ -26,7 +26,7 @@ async function loadCandidates() {
         applications = await getApplications();
         applicationsColumn = await getAllApplicationsColumn();
 
-        
+
         renderCandidatesCards();
         updateStats();
         setupFilters();
@@ -141,20 +141,20 @@ function createCandidateCard(candidate) {
     let languages = [];
     try {
         // Handle both array and string formats
-        skills = Array.isArray(candidate.skills) ? candidate.skills : 
-                 (candidate.skills ? JSON.parse(candidate.skills) : []);
-        languages = Array.isArray(candidate.languages) ? candidate.languages : 
-                   (candidate.languages ? JSON.parse(candidate.languages) : []);
+        skills = Array.isArray(candidate.skills) ? candidate.skills :
+            (candidate.skills ? JSON.parse(candidate.skills) : []);
+        languages = Array.isArray(candidate.languages) ? candidate.languages :
+            (candidate.languages ? JSON.parse(candidate.languages) : []);
     } catch (error) {
         console.warn('Error parsing skills/languages for candidate:', candidate.candidate_id);
         skills = [];
         languages = [];
     }
-    
+
     // Get applications from the candidate
     const candidateApplications = applicationsColumn.filter(app => app.candidate_id === candidate.candidate_id);
     const applicationCount = candidateApplications.length;
-    
+
     // Generate Avatar Initials
     const initials = candidate.name.split(' ').map(word => word.charAt(0)).join('').substring(0, 2).toUpperCase();
 
@@ -186,9 +186,9 @@ function createCandidateCard(candidate) {
                 <!-- Skills and Languages -->
                 <div class="flex flex-wrap gap-2 mb-3">
                     ${skills.slice(0, 3).map(skill => {
-                        const skillName = typeof skill === 'string' ? skill : skill.name || 'Unknown';
-                        return `<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800">${skillName}</span>`;
-                    }).join('')}
+        const skillName = typeof skill === 'string' ? skill : skill.name || 'Unknown';
+        return `<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800">${skillName}</span>`;
+    }).join('')}
                     ${skills.length > 3 ? `<span class="text-xs text-gray-500">+${skills.length - 3} mas</span>` : ''}
                 </div>
                 
@@ -246,11 +246,12 @@ function applyFilters(candidatesList) {
         // Search filter by text
         if (currentFilters.search) {
             const searchTerm = currentFilters.search.toLowerCase();
-            const nameMatch = candidate.name.toLowerCase().includes(searchTerm);
-            const emailMatch = candidate.email.toLowerCase().includes(searchTerm);
-            const occupationMatch = candidate.occupation.toLowerCase().includes(searchTerm);
+            const nameMatch = (candidate.name ?? "").toLowerCase().includes(searchTerm);
+            const emailMatch = (candidate.email ?? "").toLowerCase().includes(searchTerm);
+            const phoneMatch = (candidate.phone ?? "").toLowerCase().includes(searchTerm);
+            const occupationMatch = (candidate.occupation ?? "").toLowerCase().includes(searchTerm);
 
-            if (!nameMatch && !emailMatch && !occupationMatch) {
+            if (!nameMatch && !emailMatch && !occupationMatch && !phoneMatch) {
                 return false;
             }
         }
@@ -278,7 +279,7 @@ function applyFilters(candidatesList) {
  */
 function updateStats() {
     const totalCandidates = candidates.length;
-    
+
     const candidatesWithApps = candidates.filter(candidate =>
         applicationsColumn.some(app => app.candidate_id === candidate.candidate_id)
     ).length;
