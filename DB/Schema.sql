@@ -66,5 +66,5 @@ CREATE TABLE IF NOT EXISTS candidate_shares (
     FOREIGN KEY (receiver_id) REFERENCES users(user_id) ON DELETE SET NULL,
     FOREIGN KEY (application_id) REFERENCES applications(application_id) ON DELETE SET NULL,
     FOREIGN KEY (vacancy_id) REFERENCES vacancies(vacancy_id) ON DELETE SET NULL,
-    UNIQUE (candidate_id, sender_id, receiver_id, application_id)
+    UNIQUE (candidate_id, sender_id, receiver_id, application_id, vacancy_id)
 );
