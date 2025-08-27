@@ -80,8 +80,8 @@ function setupUserDropdown() {
 document.addEventListener('DOMContentLoaded', () => {
     const currentPage = window.location.pathname.split('/').pop() || 'aiCvPage.html';
     
-    // Run guard to protect the page (DISABLED - waiting for users endpoint)
-    // guard(currentPage);
+    //Run guard to protect the page (DISABLED - waiting for users endpoint)
+    guard(currentPage);
     
     // Setup user dropdown
     setupUserDropdown();

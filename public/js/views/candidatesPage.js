@@ -44,7 +44,7 @@ function setupFilters() {
     const occupations = [...new Set(candidates.map(c => c.occupation))];
     const occupationFilter = document.getElementById('occupation-filter');
     if (occupationFilter) {
-        occupationFilter.innerHTML = '<option value="">Todas las ocupaciones</option>';
+        occupationFilter.innerHTML = '<option value="">All occupations</option>';
         occupations.forEach(occupation => {
             const option = document.createElement('option');
             option.value = occupation;
@@ -176,7 +176,7 @@ function createCandidateCard(candidate) {
                     </div>
                     <div class="flex items-center gap-2 ml-4">
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            ${applicationCount} aplicacion${applicationCount !== 1 ? 'es' : ''}
+                            ${applicationCount} application${applicationCount !== 1 ? 's' : ''}
                         </span>
                     </div>
                 </div>
@@ -198,7 +198,7 @@ function createCandidateCard(candidate) {
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 256 256">
                             <path d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128ZM176,80a8,8,0,0,1-8,8H152a8,8,0,0,1,0-16h16A8,8,0,0,1,176,80Zm56,48a8,8,0,0,1-8,8H208a8,8,0,0,1,0-16h16A8,8,0,0,1,232,128Z"/>
                         </svg>
-                        ${candidate.email}
+                        ${candidate.email || 'No disponible'}
                     </span>
                     <span class="flex items-center gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 256 256">
@@ -380,7 +380,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const currentPage = window.location.pathname.split('/').pop() || 'candidates.html';
 
     // Run guard to protect the page (DISABLED - waiting for users endpoint)
-    // guard(currentPage);
+    guard(currentPage);
 
     // Render navbar component
     renderNavbar('navbar-container', 'candidates');

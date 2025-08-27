@@ -589,8 +589,8 @@ document.addEventListener('DOMContentLoaded', function () {
     renderNavbar('navbar-container', 'vacancies');
 
     // Guard disabled - waiting for users endpoint
-    // const currentPage = window.location.pathname.split('/').pop();
-    // guard(currentPage);
+    const currentPage = window.location.pathname.split('/').pop();
+    guard(currentPage);
 
     setupFilters();
     setupEventListeners();

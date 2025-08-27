@@ -13,5 +13,6 @@ const router = Router();
 
 router.post('/', CvAiController.uploadMiddleware, CvAiController.processUploadedCVsController);
 router.get('/', CvController.getAllCandidatesController); 
+router.put('/', CvController.updateCandidateController)
 
 export default router;
