@@ -71,8 +71,8 @@ async function loadVacancyData() {
 
         candidates = candidatesData;
         applications = applicationsData;
-        
-        
+
+
 
 
         // Filter applications for this vacancy   
@@ -267,8 +267,8 @@ function applyFilters(applicationJoin) {
         // Search filter by name or email
         if (currentFilters.search) {
             const searchTerm = currentFilters.search.toLowerCase();
-            const nameMatch = candidate.name.toLowerCase().includes(searchTerm);
-            const emailMatch = candidate.email.toLowerCase().includes(searchTerm);
+            const nameMatch = (candidate.name ?? "").toLowerCase().includes(searchTerm);
+            const emailMatch = (candidate.email ?? "").toLowerCase().includes(searchTerm);
 
             if (!nameMatch && !emailMatch) {
                 return false;
@@ -396,26 +396,13 @@ async function updateApplicationStatus(applicationId, newStatus) {
         if (!application) return;
 
         // Update in API
-        const updatedApplication = await updateApplication(applicationId, {
+        await updateApplication(applicationId, {
             ...application,
             status: newStatus
         });
 
-        // Update local state
-        const index = applications.findIndex(app => app.application_id == applicationId);
-        if (index !== -1) {
-            applications[index] = updatedApplication;
-        }
-
-        // Update filteredApplications as well
-        const filteredIndex = filteredApplications.findIndex(app => app.application_id == applicationId);
-        if (filteredIndex !== -1) {
-            filteredApplications[filteredIndex] = updatedApplication;
-        }
-
-        // Re-render
-        renderStats();
-        renderCandidates();
+        // Reload all data to ensure consistency - this will also re-render everything
+        await loadVacancyData();
 
         showSuccess(`Estado actualizado a ${getApplicationStatusConfig(newStatus).label}`);
 
