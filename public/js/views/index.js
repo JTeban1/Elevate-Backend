@@ -16,7 +16,6 @@ function initHomePage() {
  */
 function onDOMContentLoaded() {
     initHomePage();
-    console.log('🚀 TalentTrack loaded');
 }
 
 

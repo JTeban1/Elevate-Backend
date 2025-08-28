@@ -52,12 +52,6 @@ export function guard(currentPage) {
     const logged = isLoggedIn();
     const user = getUser();
 
-    console.log('🛡️ GUARD:', {
-        currentPage,
-        isLoggedIn: logged,
-        user: user?.name || 'None',
-        localStorage: localStorage.getItem('currentUser') ? '✅ Has data' : '❌ Empty'
-    });
 
     // Save current page to redirect after login (only if NOT logged in)
     if (!logged && !currentPage.includes('loginPage.html')) {
@@ -74,14 +68,12 @@ export function guard(currentPage) {
 
     // If on a protected page and not logged in
     if (protectedPages.some(page => currentPage.includes(page)) && !logged) {
-        console.log('🚫 Access denied - redirecting to login');
         window.location.href = "loginPage.html";
         return;
     }
 
     // If on login page and already logged in
     if (currentPage.includes('loginPage.html') && logged) {
-        console.log('✅ Already logged in - redirecting back');
         // Check if there's a saved previous page
         const returnUrl = localStorage.getItem('returnUrl') || 'vacanciesPage.html';
         localStorage.removeItem('returnUrl'); // Clean up after use
@@ -89,7 +81,6 @@ export function guard(currentPage) {
         return;
     }
 
-    console.log('✅ Guard passed - access allowed');
 }
 
 /**
