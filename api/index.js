@@ -17,12 +17,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/aicv', CvController);
-app.use('/api/vacancies', vacanciesControllers);
-app.use('/api/applications', applicationsController);
-app.use('/api/candidates', candidatesController);
-app.use('/api/users', usersController);
-app.use('/api/shares', candidateSharesController);
-app.use('/api/auth', authController);
+app.use('/aicv', CvController);
+app.use('/vacancies', vacanciesControllers);
+app.use('/applications', applicationsController);
+app.use('/candidates', candidatesController);
+app.use('/users', usersController);
+app.use('/shares', candidateSharesController);
+app.use('/auth', authController);
 
 export default serverlessExpress({ app });
