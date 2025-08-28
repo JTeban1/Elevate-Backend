@@ -1,4 +1,3 @@
-CREATE DATABASE Proyect;
 USE bo0qdeicu7wycnbnek7j;
 
 

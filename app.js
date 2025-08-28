@@ -8,6 +8,7 @@ import applicationsController from './app/routes/ApplicationsRouter.js'
 import candidatesController from './app/routes/CandidatesRouter.js'
 import usersController from './app/routes/UsersRouter.js'
 import candidateSharesController from './app/routes/CandidateSharesRouter.js'
+import authController from './app/routes/AuthRouter.js'
 
 
 // Load environment variables from .env file
@@ -30,6 +31,7 @@ app.use('/api/applications', applicationsController);
 app.use('/api/candidates', candidatesController);
 app.use('/api/users', usersController);
 app.use('/api/shares', candidateSharesController);
+app.use('/api/auth', authController);
 
 // Configure the application port, taking the environment variable or the default value (3000)
 const PORT = process.env.PORT || 9000;
