@@ -1,3 +1,4 @@
+
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -14,6 +15,12 @@ import authController from '../app/routes/AuthRouter.js';
 dotenv.config();
 
 const app = express();
+
+console.log('Handler loaded: Express serverless function initialized');
+app.use((req, res, next) => {
+	console.log('Request received:', req.method, req.url);
+	next();
+})
 app.use(cors());
 app.use(express.json());
 
