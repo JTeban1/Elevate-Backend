@@ -2,7 +2,7 @@
 // Centralized configuration for all API endpoints and constants
 
 export const API_CONFIG = {
-    BASE_URL: 'http://localhost:9000/api',
+    BASE_URL: 'https://elevate-backend-eight.vercel.app/api',
     ENDPOINTS: {
         USERS: 'users',
         VACANCIES: 'vacancies', 

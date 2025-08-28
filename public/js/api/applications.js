@@ -1,4 +1,5 @@
 import { fetchData, createData, updateData, deleteData } from "./api.js";
+import { API_URL } from '../utils/config.js';
 
 const ENDPOINT = "applications";
 
@@ -24,7 +25,7 @@ export function deleteApplication(id) {
 
 // Get all vacancies with application count
 export async function getAllApplicationsColumn() {
-    const res = await fetch(`http://localhost:9000/api/applications/column`);
+    const res = await fetch(`${API_URL}/applications/column`);
     if (!res.ok) throw new Error(`Error fetching data: ${res.status}`);
     return res.json();
 }

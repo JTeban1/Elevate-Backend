@@ -1,4 +1,5 @@
 import { fetchData, createData, updateData, deleteData } from "./api.js";
+import { API_URL } from '../utils/config.js';
 
 const ENDPOINT = "vacancies";
 
@@ -24,14 +25,14 @@ export function deleteVacancy(id) {
 
 // Get all vacancies with application count
 export async function getAllVacanciesWithCount() {
-    const res = await fetch(`http://localhost:9000/api/vacancies/count`);
+    const res = await fetch(`${API_URL}/vacancies/count`);
     if (!res.ok) throw new Error(`Error fetching data: ${res.status}`);
     return res.json();
 }
 
 // Get applications for specific vacancy
 export async function getApplicationsByVacancyIdController(id) {
-    const res = await fetch(`http://localhost:9000/api/vacancies/${id}`);
+    const res = await fetch(`${API_URL}/vacancies/${id}`);
     if (!res.ok) throw new Error(`Error fetching data: ${res.status}`);
     return res.json();
 }
