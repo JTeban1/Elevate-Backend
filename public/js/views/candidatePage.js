@@ -1,8 +1,9 @@
 import { guard } from '../utils/guard.js';
-import { getCandidates } from '../api/candidates.js';
+import { getCandidates, getCandidateNotes, updateCandidateNotes } from '../api/candidates.js';
 import { getApplications } from '../api/applications.js'
 import { renderNavbar } from '../components/ui/navbar.js';
 import { getUser } from '../utils/guard.js';
+import { showSuccess, showError } from '../components/ui/messageToast.js';
 
 // Global state
 let candidate = null;
@@ -244,60 +245,19 @@ function hideLoading() {
 }
 
 
-/**
- * Get storage key for notes based on user and candidate
- */
-function getNotesStorageKey() {
-    const user = getUser();
-    const params = getURLParams();
-    
-    if (!user || !params.id) return null;
-    
-    return `candidate_notes_${user.user_id}_${params.id}`;
-}
-
-/**
- * Load notes from localStorage
- */
-function loadNotes() {
-    const storageKey = getNotesStorageKey();
-    if (!storageKey) return [];
-    
-    try {
-        const notesData = localStorage.getItem(storageKey);
-        return notesData ? JSON.parse(notesData) : [];
-    } catch (error) {
-        console.error('Error loading notes:', error);
-        return [];
-    }
-}
-
-/**
- * Save notes to localStorage
- */
-function saveNotes(notes) {
-    const storageKey = getNotesStorageKey();
-    if (!storageKey) return;
-    
-    try {
-        localStorage.setItem(storageKey, JSON.stringify(notes));
-    } catch (error) {
-        console.error('Error saving notes:', error);
-    }
-}
 
 /**
  * Initialize notes functionality
  */
-function initializeNotes() {
+async function initializeNotes() {
     const user = getUser();
     if (!user) {
         hideNotesSection();
         return;
     }
     
-    // Render existing notes
-    renderNotes();
+    // Load notes from database
+    await loadAndRenderNotes();
     
     // Setup event listeners
     setupNotesEventListeners();
@@ -325,6 +285,10 @@ function setupNotesEventListeners() {
     
     // Cancel note button
     document.getElementById('cancel-note-btn')?.addEventListener('click', hideNoteForm);
+    
+    // Delete note modal buttons
+    document.getElementById('cancel-delete-note-btn')?.addEventListener('click', closeDeleteNoteModal);
+    document.getElementById('confirm-delete-note-btn')?.addEventListener('click', confirmDeleteNote);
 }
 
 /**
@@ -351,9 +315,8 @@ function hideNoteForm() {
     const addBtn = document.getElementById('add-note-btn');
     const content = document.getElementById('note-content');
     
-    if (form && addBtn) {
+    if (form) {
         form.classList.add('hidden');
-        addBtn.style.display = 'block';
         currentEditingNoteId = null;
         
         // Reset form
@@ -368,70 +331,98 @@ function hideNoteForm() {
             saveBtn.textContent = 'Save Note';
         }
     }
+    
+    // Don't automatically show Add Note button - let loadAndRenderNotes() handle visibility
 }
 
 /**
  * Save note (create or update)
  */
-function saveNote() {
+async function saveNote() {
     const content = document.getElementById('note-content')?.value.trim();
     
     if (!content) return;
     
-    const notes = loadNotes();
-    const now = new Date().toISOString();
-    
-    if (currentEditingNoteId) {
-        // Update existing note
-        const noteIndex = notes.findIndex(note => note.id === currentEditingNoteId);
-        if (noteIndex !== -1) {
-            notes[noteIndex].content = content;
-            notes[noteIndex].updatedAt = now;
-        }
-    } else {
-        // Create new note
-        const newNote = {
-            id: Date.now().toString(),
-            content: content,
-            createdAt: now,
-            updatedAt: now
-        };
-        notes.unshift(newNote); // Add to beginning
+    try {
+        await updateCandidateNotes(candidate.candidate_id, content);
+        await loadAndRenderNotes();
+        hideNoteForm();
+        showSuccess('Note saved successfully');
+    } catch (error) {
+        console.error('Error saving note:', error);
+        showError('Error saving note');
     }
-    
-    saveNotes(notes);
-    renderNotes();
-    hideNoteForm();
 }
 
 /**
- * Render all notes
+ * Load and render notes from database
  */
-function renderNotes() {
+async function loadAndRenderNotes() {
     const notesList = document.getElementById('notes-list');
+    const addNoteBtn = document.getElementById('add-note-btn');
     if (!notesList) return;
     
-    const notes = loadNotes();
-    
-    if (notes.length === 0) {
+    try {
+        const response = await getCandidateNotes(candidate.candidate_id);
+        const notes = response.notes;
+        
+        if (!notes || notes.trim() === '') {
+            // Show Add Note button in header
+            if (addNoteBtn) addNoteBtn.style.display = 'block';
+            
+            notesList.innerHTML = `
+                <div class="text-center text-gray-500 text-sm py-8">
+                    <svg class="w-8 h-8 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012-2h-1.586l-4.707 4.707z"></path>
+                    </svg>
+                    No personal notes yet. Click "Add Note" to start.
+                </div>
+            `;
+            return;
+        }
+        
+        // Hide Add Note button in header when there are notes
+        if (addNoteBtn) addNoteBtn.style.display = 'none';
+        
+        // Display the note content with Edit/Delete buttons
         notesList.innerHTML = `
-            <div class="text-center text-gray-500 text-sm py-8">
-                <svg class="w-8 h-8 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-1.586l-4.707 4.707z"></path>
-                </svg>
-                No personal notes yet. Click "Add Note" to start.
+            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <div class="mb-3">
+                    <p class="text-gray-800 text-sm leading-relaxed">${escapeHtml(notes)}</p>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="text-xs text-gray-500">
+                        <span>Personal note</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="edit-note-btn" 
+                                class="text-blue-600 hover:text-blue-700 text-xs font-medium hover:bg-blue-50 px-2 py-1 rounded transition-colors">
+                            Edit
+                        </button>
+                        <button id="delete-note-btn" 
+                                class="text-red-600 hover:text-red-700 text-xs font-medium hover:bg-red-50 px-2 py-1 rounded transition-colors">
+                            Delete
+                        </button>
+                    </div>
+                </div>
             </div>
         `;
-        return;
+        
+        // Add event listeners
+        document.getElementById('edit-note-btn')?.addEventListener('click', () => editNote(notes));
+        document.getElementById('delete-note-btn')?.addEventListener('click', deleteNote);
+        
+    } catch (error) {
+        console.error('Error loading notes:', error);
+        // Show Add Note button on error
+        if (addNoteBtn) addNoteBtn.style.display = 'block';
+        
+        notesList.innerHTML = `
+            <div class="text-center text-red-500 text-sm py-8">
+                <p>Error loading notes. Please try again.</p>
+            </div>
+        `;
     }
-    
-    notesList.innerHTML = notes.map(note => createNoteElement(note)).join('');
-    
-    // Add event listeners to note buttons
-    notes.forEach(note => {
-        document.getElementById(`edit-${note.id}`)?.addEventListener('click', () => editNote(note.id));
-        document.getElementById(`delete-${note.id}`)?.addEventListener('click', () => deleteNote(note.id));
-    });
 }
 
 /**
@@ -481,20 +472,13 @@ function createNoteElement(note) {
 /**
  * Edit note
  */
-function editNote(noteId) {
-    const notes = loadNotes();
-    const note = notes.find(n => n.id === noteId);
-    
-    if (!note) return;
-    
-    currentEditingNoteId = noteId;
-    
-    // Fill form with note content
+function editNote(noteContent) {
+    // Load existing note content into form
     const content = document.getElementById('note-content');
     const saveBtn = document.getElementById('save-note-btn');
     
     if (content && saveBtn) {
-        content.value = note.content;
+        content.value = noteContent;
         content.placeholder = 'Edit your note...';
         saveBtn.textContent = 'Update Note';
         
@@ -503,16 +487,47 @@ function editNote(noteId) {
 }
 
 /**
- * Delete note
+ * Delete note - opens confirmation modal
  */
-function deleteNote(noteId) {
-    if (!confirm('Are you sure you want to delete this note?')) return;
-    
-    const notes = loadNotes();
-    const filteredNotes = notes.filter(note => note.id !== noteId);
-    
-    saveNotes(filteredNotes);
-    renderNotes();
+function deleteNote() {
+    openDeleteNoteModal();
+}
+
+/**
+ * Open delete note confirmation modal
+ */
+function openDeleteNoteModal() {
+    const modal = document.getElementById('deleteNoteModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+    }
+}
+
+/**
+ * Close delete note confirmation modal
+ */
+function closeDeleteNoteModal() {
+    const modal = document.getElementById('deleteNoteModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+/**
+ * Confirm note deletion (actual deletion)
+ */
+async function confirmDeleteNote() {
+    try {
+        // Delete by setting notes to empty string
+        await updateCandidateNotes(candidate.candidate_id, '');
+        await loadAndRenderNotes();
+        showSuccess('Note deleted successfully');
+        closeDeleteNoteModal();
+    } catch (error) {
+        console.error('Error deleting note:', error);
+        showError('Error deleting note');
+        closeDeleteNoteModal();
+    }
 }
 
 /**

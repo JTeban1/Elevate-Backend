@@ -428,3 +428,102 @@ export const getCandidatesByFilterController = async (req, res) => {
   }
 };
 
+/**
+ * Controller function to get notes for a specific candidate.
+ * 
+ * @async
+ * @function getCandidateNotesController
+ * @param {Object} req - Express request object
+ * @param {Object} req.params - Route parameters
+ * @param {string|number} req.params.id - The unique candidate ID
+ * @param {Object} res - Express response object
+ * @returns {Promise<Object>} Returns HTTP response with notes or error message
+ * @throws {Error} Returns 500 status with error message if database query fails
+ * 
+ * @description This controller handles GET requests to retrieve notes for a specific candidate.
+ * Returns only the notes field to optimize data transfer.
+ * 
+ * @example
+ * // Example request
+ * GET /api/candidates/123/notes
+ * 
+ * // Success response (200)
+ * {
+ *   "notes": "This candidate has excellent communication skills..."
+ * }
+ * 
+ * // Not found response (404)
+ * {
+ *   "error": "Candidate not found"
+ * }
+ */
+export const getCandidateNotesController = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const candidate = await candidatesModel.getCandidateById(id);
+    if (!candidate) {
+      return res.status(404).json({ error: "Candidate not found" });
+    }
+    return res.status(200).json({ notes: candidate.notes || "" });
+  } catch (error) {
+    console.error("Error fetching candidate notes:", error);
+    return res.status(500).json({ error: "Error fetching candidate notes" });
+  }
+};
+
+/**
+ * Controller function to update notes for a specific candidate.
+ * 
+ * @async
+ * @function updateCandidateNotesController
+ * @param {Object} req - Express request object
+ * @param {Object} req.params - Route parameters
+ * @param {string|number} req.params.id - The unique candidate ID
+ * @param {Object} req.body - Request body containing notes data
+ * @param {string} req.body.notes - The notes content to save
+ * @param {Object} res - Express response object
+ * @returns {Promise<Object>} Returns HTTP response with success message or error
+ * @throws {Error} Returns 500 status with error message if database update fails
+ * 
+ * @description This controller handles PUT requests to update only the notes field
+ * for a specific candidate. This is more efficient than updating the entire candidate record.
+ * 
+ * @example
+ * // Example request
+ * PUT /api/candidates/123/notes
+ * Content-Type: application/json
+ * 
+ * {
+ *   "notes": "Updated notes about this candidate..."
+ * }
+ * 
+ * // Success response (200)
+ * {
+ *   "message": "Notes updated successfully",
+ *   "notes": "Updated notes about this candidate..."
+ * }
+ * 
+ * // Not found response (404)
+ * {
+ *   "error": "Candidate not found"
+ * }
+ */
+export const updateCandidateNotesController = async (req, res) => {
+  const { id } = req.params;
+  const { notes } = req.body;
+  
+  try {
+    const updatedRows = await candidatesModel.updateCandidateById(id, { notes });
+    if (updatedRows === 0) {
+      return res.status(404).json({ error: "Candidate not found" });
+    }
+    return res.status(200).json({ 
+      message: "Notes updated successfully",
+      notes: notes || ""
+    });
+  } catch (error) {
+    console.error("Error updating candidate notes:", error);
+    return res.status(500).json({ error: "Error updating candidate notes" });
+  }
+};
+

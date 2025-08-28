@@ -12,7 +12,9 @@ import * as CvAiController from '../controllers/UploadCandidate.js';
 const router = Router();
 
 router.post('/', CvAiController.uploadMiddleware, CvAiController.processUploadedCVsController);
-router.get('/', CvController.getAllCandidatesController); 
-router.put('/', CvController.updateCandidateController)
+router.get('/', CvController.getAllCandidatesController);
+router.get('/:id/notes', CvController.getCandidateNotesController);
+router.put('/:id/notes', CvController.updateCandidateNotesController);
+router.put('/', CvController.updateCandidateController);
 
 export default router;
