@@ -39,7 +39,7 @@ async function loadCandidate() {
         candidate = candidates.find(c => c.candidate_id == params.id);
 
         if (!candidate) {
-            showLoadingError('Candidato no encontrado');
+            showLoadingError('Candidate not found');
             return;
         }
 
