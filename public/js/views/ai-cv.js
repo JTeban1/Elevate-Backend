@@ -110,8 +110,7 @@ document.getElementById('cv_ai').addEventListener('submit', async function (e) {
 
     if (!response.ok) throw new Error('Error in request: ' + response.status);
 
-    const data = await response.json();
-    console.log(data);
+    await response.json();
     form.reset();
   } catch (error) {
     console.error('Error while sending cv:', error);
