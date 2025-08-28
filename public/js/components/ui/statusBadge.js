@@ -10,19 +10,19 @@
 export function getVacancyStatusConfig(status) {
     const configs = {
         'open': {
-            label: 'Abierta',
+            label: 'Open',
             bgColor: 'bg-emerald-100',
             textColor: 'text-emerald-800',
             dotColor: 'bg-emerald-400'
         },
         'closed': {
-            label: 'Cerrada',
+            label: 'Closed',
             bgColor: 'bg-gray-100',
             textColor: 'text-gray-800',
             dotColor: 'bg-gray-400'
         },
         'paused': {
-            label: 'Pausada',
+            label: 'Paused',
             bgColor: 'bg-yellow-100',
             textColor: 'text-yellow-800',
             dotColor: 'bg-yellow-400'

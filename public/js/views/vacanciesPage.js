@@ -31,7 +31,7 @@ async function loadVacancies() {
         updateStats();
     } catch (error) {
         console.error('Error loading vacancies:', error);
-        showError('Error al cargar las vacantes. Verifica que JSON Server esté ejecutándose.');
+        showError('Error loading vacancies. Verify that the server is connected.');
     }
 }
 
@@ -62,7 +62,7 @@ function renderVacanciesTable() {
 
     if (vacanciesToShow.length === 0) {
         // Determining the appropriate message
-        let message = 'No hay vacantes disponibles';
+        let message = 'There are no vacancies available.';
 
         // If there are active filters, show specific message
         const hasActiveFilters = currentFilters.search || currentFilters.status;
@@ -70,16 +70,16 @@ function renderVacanciesTable() {
 
         if (hasActiveFilters || hasActiveTab) {
             if (hasActiveFilters && hasActiveTab) {
-                message = `No hay vacantes que coincidan con los filtros y pestaña seleccionada`;
+                message = `There are no vacancies that match the filters and selected tab.`;
             } else if (hasActiveFilters) {
-                message = `No hay vacantes que coincidan con los filtros aplicados`;
+                message = `There are no vacancies that match the applied filters.`;
             } else if (hasActiveTab) {
                 const tabLabels = {
-                    'open': 'abiertas',
-                    'closed': 'cerradas',
-                    'paused': 'pausadas'
+                    'open': 'open',
+                    'closed': 'closed',
+                    'paused': 'paused'
                 };
-                message = `No hay vacantes ${tabLabels[currentTab] || currentTab}`;
+                message = `There are no vacancies ${tabLabels[currentTab] || currentTab}`;
             }
         }
 
@@ -91,7 +91,7 @@ function renderVacanciesTable() {
                             <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/>
                         </svg>
                         <p class="font-medium text-gray-600">${message}</p>
-                        <p class="text-sm text-gray-400">Intenta ajustar los filtros o crear una nueva vacante</p>
+                        <p class="text-sm text-gray-400">Try adjusting the filters or creating a new vacancy.</p>
                     </div>
                 </td>
             </tr>
@@ -119,13 +119,13 @@ function createVacancyRow(vacancy) {
     tr.className = 'hover:bg-gray-50 transition-colors';
 
     const statusConfig = getVacancyStatusConfig(vacancy.status);
-    const safeTitle = vacancy.title || 'Sin título';
+    const safeTitle = vacancy.title || 'Without title';
     const initials = safeTitle.split(' ').map(word => word.charAt(0)).join('').substring(0, 2).toUpperCase();
 
     // Count applications for this vacancy 
     const vacancyApplications = applications.filter(app => app.vacancy_id === vacancy.vacancy_id).length;
 
-    
+
     tr.innerHTML = `
         <td class="px-6 py-4 whitespace-nowrap">
             <div class="flex items-center">
@@ -151,7 +151,7 @@ function createVacancyRow(vacancy) {
         <td class="hidden sm:table-cell px-6 py-4 whitespace-nowrap">
             <div class="flex items-center">
                 <span class="text-2xl font-bold text-blue-600">${vacancy.applicationsCount}</span>
-                <span class="text-sm text-gray-500 ml-2">candidatos</span>
+                <span class="text-sm text-gray-500 ml-2">Candidates</span>
             </div>
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
@@ -282,11 +282,11 @@ async function createVacancy(vacancyData) {
 
         // Reload all vacancies instead of trusting the response
         await loadVacancies();
-        showSuccess('Vacante creada exitosamente');
+        showSuccess('Vacancy successfully created');
         return newVacancy;
     } catch (error) {
         console.error('Error creating vacancy:', error);
-        showError('Error al crear la vacante');
+        showError('Error creating the vacancy');
         throw error;
     }
 }
@@ -300,11 +300,11 @@ async function updateVacancy(id, vacancyData) {
         
         // Reload all vacancies to ensure data consistency
         await loadVacancies();
-        showSuccess('Vacante actualizada exitosamente');
+        showSuccess('Vacancy successfully updated');
         return updatedVacancy;
     } catch (error) {
         console.error('Error updating vacancy:', error);
-        showError('Error al actualizar la vacante');
+        showError('Error updating vacancy');
         throw error;
     }
 }
@@ -318,10 +318,10 @@ async function deleteVacancy(id) {
         vacancies = vacancies.filter(v => v.vacancy_id !== id);
         renderVacanciesTable();
         updateStats();
-        showSuccess('Vacante eliminada exitosamente');
+        showSuccess('Vacancy successfully deleted');
     } catch (error) {
         console.error('Error deleting vacancy:', error);
-        showError('Error al eliminar la vacante');
+        showError('Error deleting vacancy');
         throw error;
     }
 }
@@ -335,7 +335,7 @@ function openCreateModal() {
     const modalTitle = document.getElementById('modalTitle');
     const form = modal.querySelector('form');
 
-    modalTitle.textContent = 'Nueva Vacante';
+    modalTitle.textContent = 'New Vacancy';
     form.reset();
     modal.classList.remove('hidden');
 }
@@ -352,12 +352,12 @@ function openEditModal(vacancyId) {
     const modalTitle = document.getElementById('modalTitle');
     const form = modal.querySelector('form');
 
-    modalTitle.textContent = 'Editar Vacante';
+    modalTitle.textContent = 'Edit Vacancy';
 
     // Fill form with existing data
     form.querySelector('input[placeholder*="Senior Software Engineer"]').value = vacancy.title;
     form.querySelector('input[placeholder*="80000"]').value = vacancy.salary;
-    form.querySelector('textarea[placeholder*="principales responsabilidades"]').value = vacancy.description;
+    form.querySelector('textarea[placeholder*="main responsibilities"]').value = vacancy.description;
     form.querySelector('select[name="status"]')?.setAttribute('value', vacancy.status);
 
     modal.classList.remove('hidden');
@@ -423,7 +423,7 @@ async function handleFormSubmit(event) {
 
     const vacancyData = {
         title: form.querySelector('input[placeholder*="Senior Software Engineer"]').value.trim(),
-        description: form.querySelector('textarea[placeholder*="principales responsabilidades"]').value.trim(),
+        description: form.querySelector('textarea[placeholder*="main responsibilities"]').value.trim(),
         salary: parseFloat(form.querySelector('input[placeholder*="80000"]').value) || 0,
         status: 'open',
         creation_date: new Date()
@@ -432,12 +432,12 @@ async function handleFormSubmit(event) {
 
     // Basic Validation
     if (!vacancyData.title || !vacancyData.description) {
-        showError('Por favor completa todos los campos obligatorios');
+        showError('Please complete all required fields.');
         return;
     }
 
     if (vacancyData.salary > 99999999) {
-        showError('El salario no puede ser mayor a $99,999,999');
+        showError('The salary cannot exceed $99,999,999.');
         return;
     }
 

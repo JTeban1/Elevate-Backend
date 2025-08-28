@@ -60,7 +60,7 @@ export function createNavbar(activePage = '', options = {}) {
                             <p class="text-xs text-gray-500" id="user-email">usuario@example.com</p>
                         </div>
                         <div class="py-1">
-                            <a href="#" id="logout-btn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Cerrar Sesión</a>
+                            <a href="#" id="logout-btn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
                         </div>
                     </div>
                 </div>
