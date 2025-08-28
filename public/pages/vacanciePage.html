@@ -22,10 +22,23 @@
       <div class="max-w-7xl w-full mx-auto">
 
         <!-- Loading State -->
-        <div id="loading-vacancy" class="flex items-center justify-center min-h-[400px] text-center text-gray-500">
-          <div class="flex flex-col items-center gap-3">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <p class="font-medium">Loading vacancy details...</p>
+        <div id="loading-vacancy" class="flex items-center justify-center min-h-[600px] text-center text-gray-500">
+          <div class="flex flex-col items-center gap-4">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <p class="font-medium text-lg">Loading vacancy details...</p>
+          </div>
+        </div>
+
+        <!-- Error State - Vacancy not found -->
+        <div id="vacancy-not-found" class="hidden flex items-center justify-center min-h-[600px] text-center text-gray-500">
+          <div class="flex flex-col items-center gap-4">
+            <div class="w-16 h-16 bg-red-100 rounded-xl flex items-center justify-center">
+              <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"></path>
+              </svg>
+            </div>
+            <p class="font-medium text-red-600 text-lg">Vacancy not found</p>
+            <a href="vacanciesPage.html" class="text-blue-600 hover:text-blue-800 underline font-medium">Back to Vacancies</a>
           </div>
         </div>
 
@@ -202,10 +215,10 @@
             <div class="divide-y divide-gray-100">
               <div id="candidates-container">
                 <!-- Loading candidates -->
-                <div class="p-6 text-center text-gray-500">
-                  <div class="flex flex-col items-center gap-3">
-                    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                    <p class="text-sm">Loading candidates...</p>
+                <div class="py-12 px-6 text-center text-gray-500">
+                  <div class="flex flex-col items-center gap-4">
+                    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+                    <p class="font-medium">Loading candidates...</p>
                   </div>
                 </div>
               </div>
