@@ -162,16 +162,20 @@ function createCandidateCard(candidate) {
         <div class="flex items-center gap-6">
             <!-- Avatar -->
             <div class="flex-shrink-0">
-                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-sm">
+                <a href="candidatePage.html?id=${candidate.candidate_id}" class="block w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-sm hover:shadow-md hover:scale-105 transition-all duration-200">
                     <span class="text-white font-bold text-sm">${initials}</span>
-                </div>
+                </a>
             </div>
             
             <!-- Main information -->
             <div class="flex-1 min-w-0">
                 <div class="flex items-start justify-between mb-2">
                     <div>
-                        <h3 class="text-lg font-bold text-gray-900 truncate">${candidate.name}</h3>
+                        <h3 class="text-lg font-bold truncate">
+                            <a href="candidatePage.html?id=${candidate.candidate_id}" class="text-gray-900 hover:text-blue-600 transition-colors duration-200">
+                                ${candidate.name}
+                            </a>
+                        </h3>
                         <p class="text-sm text-blue-600 font-medium">${candidate.occupation}</p>
                     </div>
                     <div class="flex items-center gap-2 ml-4">

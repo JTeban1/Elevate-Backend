@@ -1,6 +1,6 @@
 import { isEmailValid, isPasswordValid } from "../utils/validators.js";
 import { guard } from "../utils/guard.js";
-import { getUsers } from "../api/users.js";
+import { loginUser } from "../api/users.js";
 
 /**
  * Initialize password toggle functionality
@@ -35,23 +35,6 @@ function initPasswordToggle() {
 }
 
 /**
- * Authenticates user
- */
-async function authenticateUser(email, password) {
-    try {
-        const users = await getUsers();
-
-        // Search username by email and password
-        const user = users.find(u => u.email === email && u.password === password);
-
-        return user || null;
-    } catch (error) {
-        console.error('Error fetching users:', error);
-        throw error;
-    }
-}
-
-/**
  * Initialize the login form
  */
 function initLoginForm() {
@@ -83,10 +66,12 @@ function initLoginForm() {
         submitButton.disabled = true;
 
         try {
-            // Authentication
-            const user = await authenticateUser(email, password);
+            // Authentication using new backend API
+            const response = await loginUser(email, password);
 
-            if (user) {
+            if (response.success && response.data) {
+                const user = response.data;
+                
                 // Save Session
                 localStorage.setItem('currentUser', JSON.stringify({
                     user_id: user.user_id,
@@ -96,14 +81,19 @@ function initLoginForm() {
                     loginTime: new Date().toISOString()
                 }));
 
-                // Redirect to vacancies
-                window.location.href = 'vacanciesPage.html';
+                // Show success message
+                showMessage("Login successful! Redirecting...", 'success');
+
+                // Redirect to vacancies after a short delay
+                setTimeout(() => {
+                    window.location.href = 'vacanciesPage.html';
+                }, 1000);
             } else {
-                showError("Invalid email or password. Please try again.");
+                showError("Login failed. Please try again.");
             }
         } catch (error) {
             console.error("Authentication error:", error);
-            showError("Login failed. Please check your connection and try again.");
+            showError(error.message || "Login failed. Please check your connection and try again.");
         } finally {
             // Restore button
             submitButton.textContent = originalText;
@@ -116,24 +106,40 @@ function initLoginForm() {
  * Displays temporary error message
  */
 function showError(message) {
-    // Create or Find Error Item
-    let errorDiv = document.getElementById('error-message');
+    showMessage(message, 'error');
+}
 
-    if (!errorDiv) {
-        errorDiv = document.createElement('div');
-        errorDiv.id = 'error-message';
-        errorDiv.className = 'bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm animate-fade-in mb-4';
-
-        const form = document.getElementById('loginForm');
-        form.insertBefore(errorDiv, form.firstChild);
+/**
+ * Displays temporary message
+ */
+function showMessage(message, type = 'error') {
+    // Remove existing message
+    const existingMessage = document.getElementById('message');
+    if (existingMessage) {
+        existingMessage.remove();
     }
 
-    errorDiv.textContent = message;
+    // Create message element
+    const messageDiv = document.createElement('div');
+    messageDiv.id = 'message';
+    
+    const baseClasses = 'px-4 py-3 rounded-xl text-sm animate-fade-in mb-4';
+    
+    if (type === 'success') {
+        messageDiv.className = `bg-green-50 border border-green-200 text-green-600 ${baseClasses}`;
+    } else {
+        messageDiv.className = `bg-red-50 border border-red-200 text-red-600 ${baseClasses}`;
+    }
+
+    messageDiv.textContent = message;
+
+    const form = document.getElementById('loginForm');
+    form.insertBefore(messageDiv, form.firstChild);
 
     // Hide after 5 seconds
     setTimeout(() => {
-        if (errorDiv) {
-            errorDiv.remove();
+        if (messageDiv) {
+            messageDiv.remove();
         }
     }, 5000);
 }

@@ -7,6 +7,7 @@ const sequelize = new Sequelize(process.env.MYSQL_ADDON_DB, process.env.MYSQL_AD
     host: process.env.MYSQL_ADDON_HOST,
     port: process.env.MYSQL_ADDON_PORT,
     dialect: 'mysql',
+    logging: false, // Disable SQL query logging
     dialectOptions: {
         ssl: {
             rejectUnauthorized: false,

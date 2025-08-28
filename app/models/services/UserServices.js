@@ -31,6 +31,44 @@ export const getAllUsers = async () => {
     }
 };
 
+/**
+ * Retrieves a user by their email address
+ * @async
+ * @function getUserByEmail
+ * @param {string} email - The email address to search for
+ * @returns {Promise<Object|null>} A promise that resolves to the user object or null if not found
+ * @throws {Error} Throws an error if the database operation fails
+ */
+export const getUserByEmail = async (email) => {
+    try {
+        const user = await User.findOne({
+            where: { email }
+        });
+        return user;
+    } catch (error) {
+        console.error('Error fetching user by email:', error);
+        throw error;
+    }
+};
+
+/**
+ * Retrieves a user by their ID
+ * @async
+ * @function getUserById
+ * @param {number} userId - The user ID to search for
+ * @returns {Promise<Object|null>} A promise that resolves to the user object or null if not found
+ * @throws {Error} Throws an error if the database operation fails
+ */
+export const getUserById = async (userId) => {
+    try {
+        const user = await User.findByPk(userId);
+        return user;
+    } catch (error) {
+        console.error('Error fetching user by ID:', error);
+        throw error;
+    }
+};
+
 // CREATE methods
 /**
  * Creates a new user or updates an existing user based on unique constraints

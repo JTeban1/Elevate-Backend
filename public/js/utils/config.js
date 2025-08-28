@@ -8,7 +8,8 @@ export const API_CONFIG = {
         VACANCIES: 'vacancies', 
         CANDIDATES: 'candidates',
         APPLICATIONS: 'applications',
-        AI: 'ai'
+        AI: 'ai',
+        AUTH: 'auth'
     }
 };
 
@@ -26,5 +27,6 @@ export const API_URLS = {
     VACANCIES: buildApiUrl(API_CONFIG.ENDPOINTS.VACANCIES),
     CANDIDATES: buildApiUrl(API_CONFIG.ENDPOINTS.CANDIDATES),
     APPLICATIONS: buildApiUrl(API_CONFIG.ENDPOINTS.APPLICATIONS),
-    AI: buildApiUrl(API_CONFIG.ENDPOINTS.AI)
+    AI: buildApiUrl(API_CONFIG.ENDPOINTS.AI),
+    AUTH: buildApiUrl(API_CONFIG.ENDPOINTS.AUTH)
 };
