@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../../../config/db_conn.js";
+import argon2 from "argon2";
 
 /**
  * User entity model representing a user in the system.
@@ -41,5 +42,37 @@ const User = sequelize.define("User", {
     tableName: "users",
     timestamps: false
 });
+
+/**
+ * Static method to hash a password using Argon2id
+ * @param {string} password - Plain text password to hash
+ * @returns {Promise<string>} Hashed password
+ */
+User.hashPassword = async function(password) {
+    try {
+        return await argon2.hash(password, {
+            type: argon2.argon2id,
+            memoryCost: 2 ** 16, // 64 MB
+            timeCost: 3,
+            parallelism: 1,
+        });
+    } catch (error) {
+        throw new Error('Error hashing password: ' + error.message);
+    }
+};
+
+/**
+ * Static method to verify a password against a hash
+ * @param {string} hashedPassword - The stored hashed password
+ * @param {string} plainPassword - The plain text password to verify
+ * @returns {Promise<boolean>} True if password matches, false otherwise
+ */
+User.verifyPassword = async function(hashedPassword, plainPassword) {
+    try {
+        return await argon2.verify(hashedPassword, plainPassword);
+    } catch (error) {
+        throw new Error('Error verifying password: ' + error.message);
+    }
+};
 
 export default User;
