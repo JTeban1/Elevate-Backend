@@ -161,7 +161,7 @@ function renderCandidates() {
         `;
         updatePagination(1, 0, itemsPerPage, 'pagination-controls', (newPage) => {
             currentPage = newPage;
-            renderApplicationsTable();
+            renderCandidates();
         });
         return;
     }
@@ -186,7 +186,7 @@ function renderCandidates() {
     // Update pagination
     updatePagination(currentPage, totalItems, itemsPerPage, 'pagination-controls', (newPage) => {
         currentPage = newPage;
-        renderApplicationsTable();
+        renderCandidates();
     });
 }
 

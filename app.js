@@ -38,12 +38,4 @@ const PORT = process.env.PORT || 9000;
 
 app.listen(PORT, async () => {
     console.log(`✅ Server running at http://localhost:${PORT}`);
-
-    // Inicializar datos por defecto
-    try {
-        await initDefaults();
-        console.log("verified user");
-    } catch (err) {
-        console.error("vunverified user", err.message);
-    }
 });
