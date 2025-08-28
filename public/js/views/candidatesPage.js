@@ -189,7 +189,7 @@ function createCandidateCard(candidate) {
         const skillName = typeof skill === 'string' ? skill : skill.name || 'Unknown';
         return `<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800">${skillName}</span>`;
     }).join('')}
-                    ${skills.length > 3 ? `<span class="text-xs text-gray-500">+${skills.length - 3} mas</span>` : ''}
+                    ${skills.length > 3 ? `<span class="text-xs text-gray-500">+${skills.length - 3} more</span>` : ''}
                 </div>
                 
                 <!-- Additional information -->
@@ -198,7 +198,7 @@ function createCandidateCard(candidate) {
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 256 256">
                             <path d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128ZM176,80a8,8,0,0,1-8,8H152a8,8,0,0,1,0-16h16A8,8,0,0,1,176,80Zm56,48a8,8,0,0,1-8,8H208a8,8,0,0,1,0-16h16A8,8,0,0,1,232,128Z"/>
                         </svg>
-                        ${candidate.email || 'No disponible'}
+                        ${candidate.email || 'Unavailable'}
                     </span>
                     <span class="flex items-center gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 256 256">
@@ -210,7 +210,7 @@ function createCandidateCard(candidate) {
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 256 256">
                             <path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.29-38.83-38.51l20.78-24.71c.2-.25.39-.5.57-.77a16,16,0,0,0,1.32-15.06l0-.12L97.54,33.64a16,16,0,0,0-16.62-9.52A56.26,56.26,0,0,0,32,80c0,79.4,64.6,144,144,144a56.26,56.26,0,0,0,55.88-48.92A16,16,0,0,0,222.37,158.46Z"/>
                         </svg>
-                        ${candidate.phone || 'No disponible'}
+                        ${candidate.phone || 'Unavailable'}
                     </span>
                 </div>
             </div>

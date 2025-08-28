@@ -63,6 +63,9 @@ function renderCandidate() {
     document.getElementById('candidate-name').textContent = candidate.name;
     document.getElementById('candidate-job').textContent = candidate.occupation;
     document.getElementById('candidate-email').textContent = candidate.email;
+    document.getElementById('candidate-phone').textContent = candidate.phone;
+
+    
 
     // Applications count (for reference but not displayed on this page)
     const candidateApplications = applications.filter(app => app.candidate_id === candidate.candidate_id);
