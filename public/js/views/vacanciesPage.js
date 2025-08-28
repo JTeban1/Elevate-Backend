@@ -358,7 +358,12 @@ function openEditModal(vacancyId) {
     form.querySelector('input[placeholder*="Senior Software Engineer"]').value = vacancy.title;
     form.querySelector('input[placeholder*="80000"]').value = vacancy.salary;
     form.querySelector('textarea[placeholder*="main responsibilities"]').value = vacancy.description;
-    form.querySelector('select[name="status"]')?.setAttribute('value', vacancy.status);
+    
+    // Set current status in select
+    const statusSelect = document.getElementById('vacancy-status-select');
+    if (statusSelect) {
+        statusSelect.value = vacancy.status;
+    }
 
     modal.classList.remove('hidden');
 }
@@ -425,7 +430,7 @@ async function handleFormSubmit(event) {
         title: form.querySelector('input[placeholder*="Senior Software Engineer"]').value.trim(),
         description: form.querySelector('textarea[placeholder*="main responsibilities"]').value.trim(),
         salary: parseFloat(form.querySelector('input[placeholder*="80000"]').value) || 0,
-        status: 'open',
+        status: document.getElementById('vacancy-status-select')?.value || 'open',
         creation_date: new Date()
     };
 
