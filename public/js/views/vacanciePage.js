@@ -46,7 +46,7 @@ async function loadVacancyData() {
         const params = getURLParams();
 
         if (!params.id) {
-            showError('Vacancy ID not provided');
+            showVacancyNotFound();
             return;
         }
 
@@ -65,7 +65,7 @@ async function loadVacancyData() {
         vacancy = vacanciesData.find(v => v.vacancy_id === params.id);
 
         if (!vacancy) {
-            showError('Vacancy not found');
+            showVacancyNotFound();
             return;
         }
 
@@ -157,6 +157,14 @@ function renderCandidates() {
                 </svg>
                 <p class="font-medium text-gray-600">No candidates found</p>
                 <p class="text-sm text-gray-400 mt-1">Try adjusting your filters</p>
+                <div class="mt-6 flex items-center justify-center">
+                    <a href="aiCvPage.html" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                        Upload CVs
+                    </a>
+                </div>
             </div>
         `;
         updatePagination(1, 0, itemsPerPage, 'pagination-controls', (newPage) => {
@@ -476,6 +484,15 @@ function getApplicationStatusConfig(status) {
 function hideLoading() {
     document.getElementById('loading-vacancy').classList.add('hidden');
     document.getElementById('vacancy-content').classList.remove('hidden');
+}
+
+/**
+ * Show vacancy not found state
+ */
+function showVacancyNotFound() {
+    document.getElementById('loading-vacancy').classList.add('hidden');
+    document.getElementById('vacancy-content').classList.add('hidden');
+    document.getElementById('vacancy-not-found').classList.remove('hidden');
 }
 
 

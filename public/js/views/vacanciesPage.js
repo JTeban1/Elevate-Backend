@@ -130,12 +130,14 @@ function createVacancyRow(vacancy) {
         <td class="px-6 py-4 whitespace-nowrap">
             <div class="flex items-center">
                 <div class="flex-shrink-0 h-10 w-10">
-                    <div class="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                    <a href="vacanciePage.html?id=${vacancy.vacancy_id}" class="block h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center hover:shadow-lg hover:scale-105 transition-all duration-200">
                         <span class="text-white font-bold text-sm">${initials}</span>
-                    </div>
+                    </a>
                 </div>
                 <div class="ml-4">
-                    <div class="text-sm font-bold text-gray-900">${vacancy.title}</div>
+                    <div class="text-sm font-bold">
+                        <a href="vacanciePage.html?id=${vacancy.vacancy_id}" class="text-gray-900 hover:text-blue-600 transition-colors duration-200">${vacancy.title}</a>
+                    </div>
                     <div class="text-sm text-gray-500">${vacancy.description ? `${vacancy.description.substring(0, 50)}${vacancy.description.length > 50 ? '...' : ''}` : 'No description'}</div>
                 </div>
             </div>
