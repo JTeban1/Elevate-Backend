@@ -486,8 +486,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Setup user form
     const userForm = document.getElementById('userForm');
-    if (userForm) {
-    }
 
     // Setup filters
     setupFilters();
