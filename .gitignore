@@ -6,9 +6,7 @@ backup-files/
 # Variables de entorno
 .env
 .env.* 
-
-package-lock.json
-
+.vercel
 
 # Logs
 npm-debug.log*
