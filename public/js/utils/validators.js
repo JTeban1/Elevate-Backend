@@ -10,7 +10,7 @@ export function isEmpty(value) {
 export function isPasswordValid(password) {
     if (isEmpty(password)) return false;
     
-    // Regex para contraseña segura (6+ chars, mayúscula, minúscula, número, caracter especial)
+    // Regex for secure password (6+ chars, uppercase, lowercase, number, special character)
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*!?.\-_+])[A-Za-z\d@#$%^&*!?.\-_+]{6,}$/;
     
     return passwordRegex.test(password);
