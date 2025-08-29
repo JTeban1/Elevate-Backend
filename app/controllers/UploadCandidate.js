@@ -43,15 +43,15 @@ function createPrompt(cvs, vacancy, filters) {
         "education": [{ "degree": "", "institution": "", "years": "YYYY-YYYY" }],
         "references": [{ "name": "", "occupation": "", "phone": "" }],
         "general_experience": 0,
-        "status": "approved | rejected",
-        "ai_reason": "Reason why approved or rejected"
+        "status": "accepted | rejected",
+        "ai_reason": "Reason why accepted or rejected"
       }
 
       Rules:
       - Always return an array, even if there is only one CV.
       - If years of experience are not explicit, estimate based on text.
       - general_experience = sum of all experience.years.
-      - status = "approved" if the candidate meets vacancy requirements (${vacancy}) and has knowledge in ${filters}, else "rejected".
+      - status = "accepted" if the candidate meets vacancy requirements (${vacancy}) and has knowledge in ${filters}, else "rejected".
       - ai_reason must justify the status clearly in 1–2 sentences.
 
       Schema for each candidate (example below) don't use this data, it's just an example: 
@@ -72,7 +72,7 @@ function createPrompt(cvs, vacancy, filters) {
             "education": [{ "degree": "BSc Computer Science", "institution": "Universidad de Medellín", "years": "2008-2012" }],
             "references": [{ "name": "Carlos Perez", "occupation": "CTO", "phone": "+57 3109876543" }],
             "general_experience": 8,
-            "status": "approved",
+            "status": "accepted",
             "ai_reason": "The candidate has over 8 years of experience in full-stack development and matches the vacancy requirements."
           }
         ]
