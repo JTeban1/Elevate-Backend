@@ -14,41 +14,8 @@
 
 <body class="bg-gray-50 font-['Inter'] min-h-screen">
   <div class="flex flex-col min-h-screen">
-    <!-- HEADER -->
-    <header class="flex items-center justify-between px-4 md:px-10 py-4 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 text-white shadow-lg">
-      <a href="../index.html" class="flex items-center gap-3 hover:scale-105 transition-transform duration-300">
-        <div class="w-8 h-8 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/20">
-          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-        </div>
-        <h2 class="text-xl md:text-2xl font-bold tracking-wide">TalentTrack</h2>
-      </a>
-      <nav class="hidden md:flex gap-8 text-base font-medium">
-        <a class="hover:text-blue-100 transition-colors px-3 py-2 rounded-lg hover:bg-white/10" href="vacanciesPage.html">Vacancies</a>
-        <a class="hover:text-blue-100 transition-colors px-3 py-2 rounded-lg hover:bg-white/10" href="candidatesPage.html">Candidates</a>
-        <a class="border-b-2 border-blue-100 pb-2 text-blue-100 font-bold px-3 py-2" href="aiCvPage.html">Upload CVs</a>
-      </nav>
-      <div class="flex items-center gap-4">
-        <!-- Avatar con Iniciales -->
-        <div class="relative">
-          <div id="user-avatar" class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center ring-2 ring-white/30 shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
-            <span id="user-initials" class="text-white font-bold text-sm">JD</span>
-          </div>
-          
-          <!-- Dropdown del usuario (oculto por defecto) -->
-          <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-            <div class="px-4 py-3 border-b border-gray-200">
-              <p class="text-sm font-medium text-gray-900" id="user-name">John Doe</p>
-              <p class="text-xs text-gray-500" id="user-email">john@example.com</p>
-            </div>
-            <div class="py-1">
-              <a href="#" id="logout-btn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Cerrar Sesión</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
+    <!-- HEADER - Using navbar component -->
+    <div id="navbar-container"></div>
 
     <!-- CONTENT -->
     <main class="flex flex-col flex-1 px-4 md:px-10 py-6">

@@ -1,3 +1,5 @@
+import { isAdmin } from '../../utils/auth.js';
+
 /**
  * Navbar component with integrated user dropdown functionality
  * Provides consistent header across all pages with navigation and user management
@@ -21,6 +23,11 @@ export function createNavbar(activePage = '', options = {}) {
         { id: 'candidates', label: 'Candidates', href: 'candidatesPage.html' },
         { id: 'aiCv', label: 'Upload CVs', href: 'aiCvPage.html' }
     ];
+
+    // Add Users link only for admins
+    if (isAdmin()) {
+        navigationItems.push({ id: 'users', label: 'Users', href: 'usersPage.html' });
+    }
 
     const navigationHTML = showNavigation ? navigationItems.map(item => {
         const isActive = activePage === item.id;
@@ -56,8 +63,9 @@ export function createNavbar(activePage = '', options = {}) {
                     
                     <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                         <div class="px-4 py-3 border-b border-gray-200">
-                            <p class="text-sm font-medium text-gray-900" id="user-name">Usuario</p>
-                            <p class="text-xs text-gray-500" id="user-email">usuario@example.com</p>
+                            <p class="text-sm font-medium text-gray-900" id="navbar-user-name">Usuario</p>
+                            <p class="text-xs text-gray-500" id="navbar-user-email">usuario@example.com</p>
+                            <p class="text-xs text-blue-600 font-medium" id="user-role">Rol</p>
                         </div>
                         <div class="py-1">
                             <a href="#" id="logout-btn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
@@ -106,16 +114,29 @@ function setupUserDropdown() {
     const loggedUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     const userName = loggedUser.name || 'Usuario';
     const userEmail = loggedUser.email || 'usuario@example.com';
+    
+    // Map role_id to role name
+    const getRoleName = (roleId) => {
+        switch(roleId) {
+            case 1: return 'Admin';
+            case 2: return 'Recruiter';
+            default: return 'User';
+        }
+    };
+    
+    const userRole = getRoleName(loggedUser.role_id);
     const initials = userName.split(' ').map(name => name.charAt(0)).join('').substring(0, 2).toUpperCase();
 
     // Update user interface
     const userInitialsElement = document.getElementById('user-initials');
-    const userNameElement = document.getElementById('user-name');
-    const userEmailElement = document.getElementById('user-email');
+    const userNameElement = document.getElementById('navbar-user-name');
+    const userEmailElement = document.getElementById('navbar-user-email');
+    const userRoleElement = document.getElementById('user-role');
 
     if (userInitialsElement) userInitialsElement.textContent = initials;
     if (userNameElement) userNameElement.textContent = userName;
     if (userEmailElement) userEmailElement.textContent = userEmail;
+    if (userRoleElement) userRoleElement.textContent = userRole;
 
     // Logout functionality
     const logoutBtn = document.getElementById('logout-btn');

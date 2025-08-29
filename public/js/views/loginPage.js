@@ -55,7 +55,7 @@ function initLoginForm() {
         }
 
         if (!isPasswordValid(password)) {
-            showError("Password must be at least 4 characters long");
+            showError("Password: 6+ chars, A-Z, a-z, 0-9, special char");
             return;
         }
 

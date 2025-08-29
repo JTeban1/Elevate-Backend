@@ -52,9 +52,13 @@ export function guard(currentPage) {
     const logged = isLoggedIn();
     const user = getUser();
 
+    // If currentPage is not provided, get it from URL
+    if (!currentPage) {
+        currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    }
 
     // Save current page to redirect after login (only if NOT logged in)
-    if (!logged && !currentPage.includes('loginPage.html')) {
+    if (!logged && currentPage && !currentPage.includes('loginPage.html')) {
         localStorage.setItem('returnUrl', currentPage);
     }
 
@@ -63,17 +67,18 @@ export function guard(currentPage) {
         'vacanciesPage.html',
         'candidatesPage.html',
         'candidatePage.html',
-        'aiCvPage.html'
+        'aiCvPage.html',
+        'usersPage.html'
     ];
 
     // If on a protected page and not logged in
-    if (protectedPages.some(page => currentPage.includes(page)) && !logged) {
+    if (currentPage && protectedPages.some(page => currentPage.includes(page)) && !logged) {
         window.location.href = "loginPage.html";
         return;
     }
 
     // If on login page and already logged in
-    if (currentPage.includes('loginPage.html') && logged) {
+    if (currentPage && currentPage.includes('loginPage.html') && logged) {
         // Check if there's a saved previous page
         const returnUrl = localStorage.getItem('returnUrl') || 'vacanciesPage.html';
         localStorage.removeItem('returnUrl'); // Clean up after use

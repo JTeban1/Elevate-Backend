@@ -12,6 +12,7 @@ const router = Router();
 
 router.get("/", usersController.getAllUsersController);
 router.post("/", usersController.createUserController);
+router.put("/:id", usersController.updateUserController);
 router.delete("/:id", usersController.deleteUserController);
 
 export default router;

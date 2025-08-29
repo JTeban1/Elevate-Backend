@@ -120,6 +120,39 @@ export const createUserUpsert = async (userData) => {
     }
 };
 
+// UPDATE method
+/**
+ * Updates a user in the database by their user ID
+ * @async
+ * @function updateUser
+ * @param {number|string} userId - The unique identifier of the user to update
+ * @param {Object} userData - The user data to update
+ * @param {string} [userData.name] - The user's name
+ * @param {string} [userData.email] - The user's email
+ * @param {string} [userData.password] - The user's password (will be hashed)
+ * @param {number} [userData.role_id] - The user's role ID
+ * @returns {Promise<Object>} A promise that resolves to the updated user
+ * @throws {Error} Throws an error if the database operation fails or user not found
+ */
+export const updateUser = async (userId, userData) => {
+    try {
+        const [updatedRowsCount] = await User.update(userData, {
+            where: { user_id: userId },
+            returning: true
+        });
+
+        if (updatedRowsCount === 0) {
+            throw new Error('User not found');
+        }
+
+        const updatedUser = await User.findByPk(userId);
+        return updatedUser;
+    } catch (error) {
+        console.error('Error updating user:', error);
+        throw error;
+    }
+};
+
 // DELETE method
 /**
  * Deletes a user from the database by their user ID

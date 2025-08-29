@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
   <link rel="stylesheet" as="style" onload="this.rel='stylesheet'"
     href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" />
-  <title>TalentTrack Vacancies</title>
+  <title>TalentTrack Users</title>
   <link rel="stylesheet" href="../css/config.css">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 </head>
@@ -23,16 +23,16 @@
         <!-- Header Section -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
           <div>
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Vacancy Management</h1>
-            <p class="text-gray-600">Manage all available positions in your company</p>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">User Management</h1>
+            <p class="text-gray-600">Manage all users in your company</p>
           </div>
           <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
-            <button id="create-vacancy-btn"
+            <button id="create-user-btn"
               class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 w-full md:w-auto">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256">
                 <path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z" />
               </svg>
-              New Vacancy
+              New User
             </button>
           </div>
         </div>
@@ -43,8 +43,8 @@
             class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-200 hover:shadow-lg hover:scale-105 transition-all duration-300">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-gray-600 text-sm font-medium">Total Vacancies</p>
-                <p id="total-vacancies" class="text-2xl font-bold text-gray-900">0</p>
+                <p class="text-gray-600 text-sm font-medium">Total Users</p>
+                <p id="total-users" class="text-2xl font-bold text-gray-900">0</p>
               </div>
               <div class="bg-blue-50 p-3 rounded-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256"
@@ -59,8 +59,8 @@
             class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-200 hover:shadow-lg hover:scale-105 transition-all duration-300">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-gray-600 text-sm font-medium">Open Vacancies</p>
-                <p id="open-vacancies" class="text-2xl font-bold text-green-600">0</p>
+                <p class="text-gray-600 text-sm font-medium">Admins</p>
+                <p id="admin-users" class="text-2xl font-bold text-green-600">0</p>
               </div>
               <div class="bg-green-50 p-3 rounded-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256"
@@ -75,8 +75,8 @@
             class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-200 hover:shadow-lg hover:scale-105 transition-all duration-300">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-gray-600 text-sm font-medium">Applications</p>
-                <p id="total-applications" class="text-2xl font-bold text-blue-600">0</p>
+                <p class="text-gray-600 text-sm font-medium">Recruiters</p>
+                <p id="recruiter-users" class="text-2xl font-bold text-blue-600">0</p>
               </div>
               <div class="bg-blue-50 p-3 rounded-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256"
@@ -95,7 +95,7 @@
             <div>
               <label class="block text-sm font-semibold text-slate-700 mb-2">Search</label>
               <div class="relative">
-                <input id="search-input" type="text" placeholder="Company, description..."
+                <input id="search-input" type="text" placeholder="Name, email..."
                   class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"
                   class="absolute left-3 top-2.5 text-gray-400">
@@ -105,13 +105,10 @@
               </div>
             </div>
             <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">Status</label>
-              <select id="status-filter"
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Role</label>
+              <select id="role-filter"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                <option value="">All status</option>
-                <option value="open">Opened</option>
-                <option value="closed">Closed</option>
-                <option value="paused">Paused</option>
+                <option value="">All roles</option>
               </select>
             </div>
           </div>
@@ -133,45 +130,37 @@
             class="border-b-4 border-blue-600 text-blue-600 font-bold pb-3 transition-all hover:border-blue-700 whitespace-nowrap">
             All (<span id="tab-all-count">0</span>)
           </button>
-          <button id="tab-open"
+          <button id="tab-admin"
             class="border-b-4 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 pb-3 transition-all whitespace-nowrap">
-            Opened (<span id="tab-open-count">0</span>)
+            Admins (<span id="tab-admin-count">0</span>)
           </button>
-          <button id="tab-closed"
+          <button id="tab-recruiter"
             class="border-b-4 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 pb-3 transition-all whitespace-nowrap">
-            Closed (<span id="tab-closed-count">0</span>)
-          </button>
-          <button id="tab-paused"
-            class="border-b-4 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 pb-3 transition-all whitespace-nowrap">
-            Paused (<span id="tab-paused-count">0</span>)
+            Recruiters (<span id="tab-recruiter-count">0</span>)
           </button>
         </div>
 
-        <!-- Improved Vacancy Table -->
+        <!-- Improved User Table -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
                 <tr>
-                  <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Vacancy</th>
-                  <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
+                  <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">User</th>
+                  <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Role</th>
                   <th
                     class="hidden sm:table-cell px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                    Applications</th>
-                  <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Salary</th>
-                  <th
-                    class="hidden lg:table-cell px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                    Deadline</th>
+                    Email</th>
                   <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody id="vacancies-tbody" class="bg-white divide-y divide-gray-100">
+              <tbody id="users-tbody" class="bg-white divide-y divide-gray-100">
                 <!-- Loading state -->
                 <tr id="loading-row">
-                  <td colspan="6" class="px-6 py-16 text-center text-gray-500">
+                  <td colspan="4" class="px-6 py-16 text-center text-gray-500">
                     <div class="flex flex-col items-center gap-4">
                       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                      <p class="font-medium text-lg">Loading vacancies...</p>
+                      <p class="font-medium text-lg">Loading users...</p>
                     </div>
                   </td>
                 </tr>
@@ -185,7 +174,7 @@
           <div class="text-sm text-gray-600 order-2 sm:order-1">
             Showing <span class="font-semibold text-gray-900" id="pagination-start">0</span> to <span
               class="font-semibold text-gray-900" id="pagination-end">0</span> of <span
-              class="font-semibold text-gray-900" id="pagination-total">0</span> vacancies
+              class="font-semibold text-gray-900" id="pagination-total">0</span> users
           </div>
           <div id="pagination-container" class="order-1 sm:order-2 flex items-center space-x-2"></div>
         </div>
@@ -193,12 +182,12 @@
     </main>
   </div>
 
-  <!-- Modal for Create/Edit Vacancy -->
-  <div id="vacancyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+  <!-- Modal for Create/Edit User -->
+  <div id="userModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
       <div class="p-6 border-b border-slate-200">
         <div class="flex items-center justify-between">
-          <h3 id="modalTitle" class="text-xl font-bold text-gray-900">New Vacancy</h3>
+          <h3 id="modalTitle" class="text-xl font-bold text-gray-900">New User</h3>
           <button id="close-modal-btn"
             class="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-lg transition-all hover:scale-105">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256">
@@ -208,44 +197,45 @@
           </button>
         </div>
       </div>
-      <form class="p-6 space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Basic Info -->
-          <div class="md:col-span-2">
-            <h4 class="text-lg font-semibold text-gray-900 mb-4">Basic Information</h4>
+      <form id="user-form" class="p-6 space-y-6">
+        <input type="hidden" id="user-id">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name*</label>
+          <input type="text" id="user-name" required
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            placeholder="e.g., John Doe">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Email*</label>
+          <input type="email" id="user-email" required
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            placeholder="e.g., john.doe@example.com">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+          <div class="relative">
+            <input type="password" id="user-password"
+              class="w-full pl-4 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              placeholder="Enter new password (optional)">
+            <button type="button" id="toggle-user-password"
+              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+              <svg id="user-eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                </path>
+              </svg>
+            </button>
           </div>
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">Job Title*</label>
-            <input type="text" required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="ej: Senior Software Engineer">
-          </div>
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">Salary*</label>
-            <input type="number" required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="ej: 80000">
-          </div>
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">Status*</label>
-            <select id="vacancy-status-select" required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
-              <option value="open">🟢 Open</option>
-              <option value="closed">🔴 Closed</option>
-              <option value="paused">🟡 Paused</option>
-            </select>
-          </div>
-
-          <!-- Description -->
-          <div class="md:col-span-2 mt-6">
-            <h4 class="text-lg font-semibold text-gray-900 mb-4">Job Details</h4>
-          </div>
-          <div class="md:col-span-2">
-            <label class="block text-sm font-semibold text-gray-700 mb-2">Job Description*</label>
-            <textarea required rows="4"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="Describe the main responsibilities and duties of the position..."></textarea>
-          </div>
+          <p class="text-xs text-gray-500 mt-1">Leave blank if you don't want to change it.</p>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Role*</label>
+          <select id="user-role-select" required
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+            <!-- Roles will be populated dynamically -->
+          </select>
         </div>
 
         <!-- Action Buttons -->
@@ -257,7 +247,7 @@
           </button>
           <button type="submit"
             class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-            Save Vacancy
+            Save User
           </button>
         </div>
       </form>
@@ -276,8 +266,8 @@
               d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z" />
           </svg>
         </div>
-        <h3 class="text-lg font-bold text-center text-gray-900 mb-2">Delete Vacancy</h3>
-        <p class="text-center text-gray-600 mb-6">Are you sure you want to delete this vacancy? This action cannot be undone.</p>
+        <h3 class="text-lg font-bold text-center text-gray-900 mb-2">Delete User</h3>
+        <p class="text-center text-gray-600 mb-6">Are you sure you want to delete this user? This action cannot be undone.</p>
         <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
           <button id="cancel-delete-btn"
             class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-200 transition-colors flex-1">
@@ -293,7 +283,7 @@
   </div>
 
   <!-- Modularized scripts -->
-  <script type="module" src="../js/views/vacanciesPage.js"></script>
+  <script type="module" src="../js/views/usersPage.js"></script>
 </body>
 
 </html>

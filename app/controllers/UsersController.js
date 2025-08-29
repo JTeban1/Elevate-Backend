@@ -48,6 +48,29 @@ export const createUserController = async (req, res) => {
 };
 
 /**
+ * Updates a user by ID
+ * @async
+ * @function updateUserController
+ * @param {Object} req - Express request object
+ * @param {Object} req.params - Request parameters
+ * @param {string} req.params.id - User ID to update
+ * @param {Object} req.body - User data to update
+ * @param {Object} res - Express response object
+ * @returns {Promise<Object>} Returns updated user data or error message
+ */
+export const updateUserController = async (req, res) => {
+    const { id } = req.params;
+    const userData = req.body;
+    try {
+        const updatedUser = await usersModel.updateUser(id, userData);
+        return res.status(200).json(updatedUser);
+    } catch (error) {
+        console.error("Error updating user:", error);
+        return res.status(500).json({ error: "Error updating user" });
+    }
+};
+
+/**
  * Deletes a user by ID
  * @async
  * @function deleteUserController
