@@ -5,6 +5,7 @@ import { renderNavbar } from '../components/ui/navbar.js';
 import { showSuccess, showError } from '../components/ui/messageToast.js';
 import { updatePagination } from '../components/ui/pagination.js';
 import { getVacancyStatusConfig } from '../components/ui/statusBadge.js';
+import { isAdmin } from '../utils/auth.js';
 
 // Global application state
 let vacancies = [];
@@ -458,6 +459,9 @@ async function handleFormSubmit(event) {
     closeModal();
 }
 
+
+
+
 /**
  * Initialize when DOM is ready
  */
@@ -479,6 +483,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (form) {
         form.addEventListener('submit', handleFormSubmit);
     }
+
+    // Setup user form
+    const userForm = document.getElementById('userForm');
 
     // Setup filters
     setupFilters();
@@ -549,6 +556,7 @@ function setupEventListeners() {
         createBtn.addEventListener('click', openCreateModal);
     }
 
+
     // Filter tabs
     const tabAll = document.getElementById('tab-all');
     const tabOpen = document.getElementById('tab-open');
@@ -578,6 +586,7 @@ function setupEventListeners() {
     if (cancelModalBtn) {
         cancelModalBtn.addEventListener('click', closeModal);
     }
+
 
     // Delete Modal Buttons
     const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
