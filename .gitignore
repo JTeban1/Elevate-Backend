@@ -23,7 +23,7 @@ build/
 backup-files/
 
 
-
+public/
 .claude/
 todos.md
 progress.md
