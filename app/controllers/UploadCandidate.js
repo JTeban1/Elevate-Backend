@@ -145,7 +145,7 @@ export const processUploadedCVsController = async (req, res) => {
     const vacancyId = req.body.vacancy_id;
 
     if (!files || files.length === 0) {
-      return res.status(400).json({ error: "No se recibieron archivos" });
+      return res.status(400).json({ error: "No files were received." });
     }
 
   // 1. Extract text from all PDFs
@@ -249,11 +249,11 @@ export const processUploadedCVsController = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: "CVs procesados en lotes y registrados en la base de datos",
+      message: "Cvs processed in chunks and registered in the database",
       data: created,
     });
   } catch (error) {
-    console.error("Error procesando CVs:", error);
-    return res.status(500).json({ error: "Error procesando CVs" });
+    console.error("Error processing cvs:", error);
+    return res.status(500).json({ error: "Error processing cvs" });
   }
 };
