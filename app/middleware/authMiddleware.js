@@ -7,10 +7,32 @@ import jwt from 'jsonwebtoken';
 import * as UserServices from '../models/services/UserServices.js';
 
 /**
- * Middleware to verify JWT token (for future implementation)
+ * Middleware to verify JWT authentication token from request headers
+ * 
+ * @async
+ * @function verifyToken
  * @param {Object} req - Express request object
- * @param {Object} res - Express response object  
+ * @param {Object} req.headers - Request headers
+ * @param {string} req.headers.authorization - Authorization header containing Bearer token
+ * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
+ * @returns {Promise<void>} Calls next() if token is valid, otherwise sends error response
+ * 
+ * @description
+ * - Extracts JWT token from Authorization header (Bearer format)
+ * - Verifies token using JWT_SECRET environment variable
+ * - Retrieves user from database using decoded user_id
+ * - Adds user object to request for use in subsequent middleware/routes
+ * - Returns 401 status with error message if token is missing, invalid, or user not found
+ * 
+ * @throws {Error} Token verification errors are caught and return 401 response
+ * 
+ * @example
+ * // Usage in Express route
+ * app.get('/protected', verifyToken, (req, res) => {
+ *   // req.user is now available
+ *   res.json({ user: req.user });
+ * });
  */
 export const verifyToken = async (req, res, next) => {
     try {
@@ -49,9 +71,11 @@ export const verifyToken = async (req, res, next) => {
 };
 
 /**
- * Middleware to check user role
- * @param {Array|string} allowedRoles - Array of allowed role IDs or single role ID
- * @returns {Function} Express middleware function
+ * Creates middleware to check if user has required role permissions
+ * @param {number|number[]} allowedRoles - Single role ID or array of role IDs that are allowed
+ * @returns {Function} Express middleware function that checks user role permissions
+ * @description Returns a middleware function that verifies the user's role is in the allowed roles list.
+ * Requires that verifyToken middleware has run first to populate req.user
  */
 export const requireRole = (allowedRoles) => {
     return (req, res, next) => {
@@ -70,11 +94,13 @@ export const requireRole = (allowedRoles) => {
 };
 
 /**
- * Basic authentication check for session-based auth (current implementation)
- * This is a simplified version for demonstration
+ * Basic authentication middleware that checks for user ID in headers
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
+ * @returns {void} - Calls next() on success or sends error response
+ * @description Simple authentication check that looks for 'user-id' header.
+ * This is a placeholder implementation for session-based authentication
  */
 export const requireAuth = (req, res, next) => {
     // For session-based auth, you might check for session data
@@ -95,9 +121,11 @@ export const requireAuth = (req, res, next) => {
 };
 
 /**
- * Middleware to validate request body fields
- * @param {Array} requiredFields - Array of required field names
- * @returns {Function} Express middleware function
+ * Creates middleware to validate required fields in request body
+ * @param {string[]} requiredFields - Array of field names that must be present in request body
+ * @returns {Function} Express middleware function that validates request body fields
+ * @description Returns a middleware function that checks if all required fields are present
+ * in the request body. Sends error response with missing field details if validation fails
  */
 export const validateFields = (requiredFields) => {
     return (req, res, next) => {
@@ -116,10 +144,19 @@ export const validateFields = (requiredFields) => {
 };
 
 /**
- * Rate limiting middleware (basic implementation)
- * @param {number} maxRequests - Maximum requests per window
- * @param {number} windowMs - Time window in milliseconds
- * @returns {Function} Express middleware function
+ * Creates a rate limiting middleware function that tracks and limits requests per client IP
+ * @param {number} [maxRequests=10] - Maximum number of requests allowed per time window
+ * @param {number} [windowMs=900000] - Time window in milliseconds (default: 15 minutes)
+ * @returns {Function} Express middleware function that enforces rate limiting
+ * @description This middleware tracks client requests by IP address and blocks requests
+ * that exceed the specified limit within the time window. Returns a 429 status code
+ * when the rate limit is exceeded.
+ * @example
+ * // Apply rate limiting with default settings (10 requests per 15 minutes)
+ * app.use(rateLimit());
+ * 
+ * // Apply custom rate limiting (5 requests per 5 minutes)
+ * app.use(rateLimit(5, 5 * 60 * 1000));
  */
 export const rateLimit = (maxRequests = 10, windowMs = 15 * 60 * 1000) => {
     const clients = new Map();
