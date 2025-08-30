@@ -1,12 +1,30 @@
+/**
+ * @file Controller for uploading and processing CVs in PDF, extracting structured data using OpenAI, and storing it in the database.
+ * @module controllers/UploadCandidate
+ */
 import multer from "multer";
 import pdf from "pdf-extraction";
 import OpenAI from "openai";
 
+/**
+ * Multer middleware to handle uploading up to 50 PDF files in memory.
+ * The expected field is "cv[]".
+ * @type {import('multer').Instance}
+ */
 const storage = multer.memoryStorage();
 export const uploadMiddleware = multer({ storage }).array("cv[]", 50);
 
+/**
+ * OpenAI instance for chat/completions API calls.
+ * @type {OpenAI}
+ */
 const openai = new OpenAI({ apiKey: process.env.OPENAI_KEY });
 
+/**
+ * Cleans the extracted text from a PDF by removing unnecessary spaces and characters.
+ * @param {string} text - Text extracted from the PDF.
+ * @returns {string} Clean and normalized text.
+ */
 function cleanText(text) {
   return text
     .replace(/\s{2,}/g, " ")
@@ -15,11 +33,23 @@ function cleanText(text) {
     .trim();
 }
 
+/**
+ * Extracts and cleans the text from a PDF file buffer.
+ * @param {Buffer} buffer - Buffer of the PDF file.
+ * @returns {Promise<string>} Clean text extracted from the PDF.
+ */
 async function extractTextFromPdf(buffer) {
   const data = await pdf(buffer);
   return cleanText(data.text);
 }
 
+/**
+ * Generates the prompt for OpenAI with instructions and the CVs to process.
+ * @param {string[]} cvs - Array of cleaned CV texts.
+ * @param {string} vacancy - Vacancy title.
+ * @param {string} filters - Vacancy filters or requirements.
+ * @returns {string} Prompt ready to send to OpenAI.
+ */
 function createPrompt(cvs, vacancy, filters) {
   return `
       You are an assistant that extracts structured data from resumes.  
@@ -83,7 +113,13 @@ function createPrompt(cvs, vacancy, filters) {
 `;
 }
 
-// Helper para dividir en lotes
+// Helper to split into batches
+/**
+ * Splits an array into sub-arrays (batches) of a given maximum size.
+ * @param {Array} array - Array to split.
+ * @param {number} size - Maximum size of each batch.
+ * @returns {Array[]} Array of batches.
+ */
 function chunkArray(array, size) {
   const result = [];
   for (let i = 0; i < array.length; i += size) {
@@ -92,6 +128,15 @@ function chunkArray(array, size) {
   return result;
 }
 
+/**
+ * Main controller to process the upload of CVs in PDF, extract structured information using OpenAI, and register candidates and applications in the database.
+ *
+ * @async
+ * @function processUploadedCVsController
+ * @param {import('express').Request} req - HTTP request object, expects PDF files and vacancy data in the body.
+ * @param {import('express').Response} res - HTTP response object.
+ * @returns {Promise<void>} Responds with success or error JSON.
+ */
 export const processUploadedCVsController = async (req, res) => {
   try {
     const files = req.files;
@@ -103,14 +148,14 @@ export const processUploadedCVsController = async (req, res) => {
       return res.status(400).json({ error: "No se recibieron archivos" });
     }
 
-    // 1. Extraer texto de todos los PDFs
+  // 1. Extract text from all PDFs
     const cvsText = [];
     for (const file of files) {
       const text = await extractTextFromPdf(file.buffer);
       cvsText.push(text);
     }
 
-    // 2. Procesar en lotes de 5
+  // 2. Process in batches of 5
     const chunks = chunkArray(cvsText, 5);
     let allCandidates = [];
 
@@ -127,7 +172,7 @@ export const processUploadedCVsController = async (req, res) => {
 
       let parsedResponse = JSON.parse(result.choices[0].message.content);
 
-      // Normalizar si GPT devuelve { candidates: [...] }
+  // Normalize if GPT returns { candidates: [...] }
       if (parsedResponse.candidates) {
         parsedResponse = parsedResponse.candidates;
       }
@@ -139,10 +184,10 @@ export const processUploadedCVsController = async (req, res) => {
       allCandidates = allCandidates.concat(candidates);
     }
 
-    // 3. Filtrar candidatos vacíos (sin nombre o email)
+  // 3. Filter out empty candidates (without name or email)
     const validCandidates = allCandidates.filter((c) => c && c.name && c.email);
 
-    // 4. Guardar en la DB
+  // 4. Save to the DB
     const Candidate = (await import("../models/entities/CandidateEntity.js"))
       .default;
     const { createCandidate } = await import(
@@ -190,7 +235,7 @@ export const processUploadedCVsController = async (req, res) => {
         });
       }
 
-      // Evitar duplicados en el array de respuesta
+  // Avoid duplicates in the response array
       if (
         !created.find(
           (c) =>
