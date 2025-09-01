@@ -158,6 +158,15 @@ export default class AuthController {
                 });
             }
             
+            // Strict password validation for new passwords
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*!?.\-_+])[A-Za-z\d@#$%^&*!?.\-_+]{6,}$/;
+            if (!passwordRegex.test(newPassword)) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'New password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@#$%^&*!?.-_+)'
+                });
+            }
+            
             // Verify current credentials
             await AuthServices.loginUser(email, currentPassword);
             
