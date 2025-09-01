@@ -288,7 +288,6 @@ Elevate-Backend/
 └── 📄 LICENSE                       # License information
 ```
 
-- Test responsive design on various screen sizes
 
 ## 🚀 Deployment
 
