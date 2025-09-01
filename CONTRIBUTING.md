@@ -209,24 +209,136 @@ chore(deps): update express to version 5.1.0
 ## Project Structure
 
 ```text
-Proyect/
-├── app/
-│   ├── controllers/     # Request handlers and business logic
-│   │   └── CvController.js
-│   ├── models/         # Data models and database interactions
-│   │   └── CvModel.js
-│   └── routes/         # API route definitions
-│       └── CvRoutes.js
-├── config/
-│   └── db.js          # Database configuration
-├── public/            # Static files and client-side code
-│   ├── ai-cv.html
-│   └── js/
-│       └── ai-cv.js
-├── app.js             # Main application entry point
-├── package.json       # Project dependencies and scripts
-└── README.md          # Project documentation
+Elevate-Backend/
+├── app/                          # Application core
+│   ├── controllers/              # Request handlers & business logic
+│   │   ├── ApplicationsController.js
+│   │   ├── AuthController.js
+│   │   ├── CandidatesController.js
+│   │   ├── CandidateSharesController.js
+│   │   ├── UploadCandidate.js    # AI CV processing controller
+│   │   ├── UsersController.js
+│   │   └── VacanciesControllers.js
+│   ├── middleware/               # Custom middleware
+│   │   └── authMiddleware.js
+│   ├── models/                   # Data layer
+│   │   ├── entities/             # Database models (Sequelize)
+│   │   │   ├── ApplicationEntity.js
+│   │   │   ├── CandidateEntity.js
+│   │   │   ├── CandidateSharesEntity.js
+│   │   │   ├── RolesEntity.js
+│   │   │   ├── UserEntity.js
+│   │   │   └── VacanciesEntity.js
+│   │   └── services/             # Business logic services
+│   │       ├── ApplicationServices.js
+│   │       ├── AuthServices.js
+│   │       ├── CandidateServices.js
+│   │       ├── CandidateSharesServices.js
+│   │       ├── UserServices.js
+│   │       └── VacanciesServices.js
+│   └── routes/                   # API route definitions
+│       ├── ApplicationsRouter.js
+│       ├── AuthRouter.js
+│       ├── CandidateSharesRouter.js
+│       ├── CandidatesRouter.js
+│       ├── UsersRouter.js
+│       └── VacanciesRouter.js
+├── config/                       # Configuration files
+│   └── db_conn.js               # Database connection (Sequelize)
+├── DB/                          # Database files
+│   ├── ER Model.mwb             # Entity relationship model
+│   └── Schema.sql               # Database schema
+├── public/                      # Frontend static files
+│   ├── assets/                  # Images and media
+│   │   └── img/
+│   │       ├── hero.webp
+│   │       └── team.webp
+│   ├── css/                     # Stylesheets
+│   │   └── config.css
+│   ├── js/                      # JavaScript modules
+│   │   ├── api/                 # API integration layer
+│   │   │   ├── ai.js
+│   │   │   ├── api.js
+│   │   │   ├── applications.js
+│   │   │   ├── candidates.js
+│   │   │   ├── roles.js
+│   │   │   ├── users.js
+│   │   │   └── vacancies.js
+│   │   ├── components/          # Reusable UI components
+│   │   │   └── ui/
+│   │   │       ├── candidateCard.js
+│   │   │       ├── messageToast.js
+│   │   │       ├── navbar.js
+│   │   │       ├── pagination.js
+│   │   │       ├── statusBadge.js
+│   │   │       └── utils.js
+│   │   ├── utils/               # Utility functions
+│   │   │   ├── auth.js
+│   │   │   ├── config.js
+│   │   │   ├── guard.js
+│   │   │   └── validators.js
+│   │   └── views/               # Page controllers
+│   │       ├── ai-cv.js
+│   │       ├── candidatePage.js
+│   │       ├── candidatesPage.js
+│   │       ├── index.js
+│   │       ├── loginPage.js
+│   │       ├── translate.js
+│   │       ├── usersPage.js
+│   │       ├── vacanciePage.js
+│   │       └── vacanciesPage.js
+│   ├── pages/                   # HTML pages
+│   │   ├── aiCvPage.html
+│   │   ├── candidatePage.html
+│   │   ├── candidatesPage.html
+│   │   ├── loginPage.html
+│   │   ├── test-auth.html
+│   │   ├── usersPage.html
+│   │   ├── vacanciePage.html
+│   │   └── vacanciesPage.html
+│   └── index.html               # Main landing page
+├── app.js                       # Application entry point
+├── package.json                 # Dependencies and scripts
+├── README.md                    # Project documentation
+├── CONTRIBUTING.md              # Contribution guidelines
+├── AUTH_IMPLEMENTATION.md       # Authentication documentation
+├── LICENSE                      # License information
+└── test-auth.html              # Authentication testing page
 ```
+
+### Key Directories Explained
+
+#### `/app` - Application Core
+- **`controllers/`**: Handle HTTP requests, validate input, call services, return responses
+- **`models/entities/`**: Sequelize model definitions for database tables
+- **`models/services/`**: Business logic layer, database operations, data processing
+- **`routes/`**: Express.js route definitions and middleware setup
+- **`middleware/`**: Custom middleware functions (authentication, validation, etc.)
+
+#### `/config` - Configuration
+- **`db_conn.js`**: Database connection configuration using Sequelize ORM
+
+#### `/DB` - Database Files
+- **`Schema.sql`**: Complete database schema with tables, relationships, and constraints
+- **`ER Model.mwb`**: Visual entity-relationship diagram (MySQL Workbench format)
+
+#### `/public` - Frontend Application
+- **`js/api/`**: API integration modules for different entities
+- **`js/components/`**: Reusable UI components and utilities
+- **`js/utils/`**: Helper functions, authentication, validation utilities
+- **`js/views/`**: Page-specific JavaScript controllers
+- **`pages/`**: HTML page templates
+- **`assets/`**: Static assets (images, fonts, etc.)
+- **`css/`**: Stylesheets and configuration
+
+### Technology Stack by Directory
+
+- **Backend (`/app`, `/config`)**: Node.js, Express.js, Sequelize, MySQL
+- **AI Processing (`/app/controllers/UploadCandidate.js`)**: OpenAI GPT-4, PDF parsing
+- **Frontend (`/public`)**: Vanilla JavaScript (ES6+), HTML5, CSS3, Tailwind CSS
+- **Database (`/DB`)**: MySQL with optimized schema design
+- **Authentication**: Argon2id password hashing, session management
+- **File Processing**: Multer for uploads, PDF text extraction
 
 ## Additional Guidelines
 

@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS candidates (
     name VARCHAR(150),
     email VARCHAR(255) UNIQUE,
     date_of_birth DATE,
+    phone VARCHAR(100),
     occupation VARCHAR(100),
     summary TEXT,
     experience JSON,
