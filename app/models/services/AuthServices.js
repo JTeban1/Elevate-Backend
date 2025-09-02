@@ -103,6 +103,12 @@ export default class AuthServices {
             errors.push('Password must be at least 6 characters long');
         }
         
+        // Strict password validation for registration
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*!?.\-_+])[A-Za-z\d@#$%^&*!?.\-_+]{6,}$/;
+        if (password && !passwordRegex.test(password)) {
+            errors.push('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@#$%^&*!?.-_+)');
+        }
+        
         if (role_id && (typeof role_id !== 'number' || role_id < 1)) {
             errors.push('Role ID must be a positive number');
         }
