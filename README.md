@@ -14,7 +14,7 @@
 - **Intelligent PDF Processing**: Extract and analyze candidate information from PDF resumes
 - **OpenAI GPT-4 Integration**: Advanced natural language processing for candidate evaluation
 - **Automated Candidate Scoring**: AI-driven assessment based on job requirements
-- **Batch Processing**: Process multiple CVs simultaneously with optimized performance
+- **Batch Processing**: Process multiple CVs simultaneously
 
 ### 👥 **Comprehensive Candidate Management**
 - **Structured Candidate Profiles**: Store detailed candidate information with JSON fields
@@ -32,12 +32,12 @@
 - **Argon2id Encryption**: Industry-standard password hashing
 - **Role-Based Access**: Multi-role user management system
 - **Secure Authentication**: Robust login and registration system
-- **Data Protection**: Secure handling of sensitive candidate information
+<!-- - **Data Protection**: Secure handling of sensitive candidate information -->
 
 ### 🌐 **Modern Web Interface**
 - **Responsive Design**: Optimized for desktop and mobile devices
 - **Multi-language Support**: Internationalization with English/Spanish support
-- **Real-time Updates**: Dynamic interface with modern JavaScript
+<!-- - **Real-time Updates**: Dynamic interface with modern JavaScript -->
 - **Professional UI/UX**: Clean, intuitive design for better user experience
 
 ## 🏗️ Architecture
@@ -290,7 +290,6 @@ Elevate-Backend/
 ├── 📄 README.md                     # Project documentation
 ├── 📄 CONTRIBUTING.md               # Contribution guidelines
 ├── 📄 AUTH_IMPLEMENTATION.md        # Authentication documentation
-└── 📄 LICENSE                       # License information
 ```
 
 
@@ -312,9 +311,9 @@ MYSQL_ADDON_PASSWORD=your-production-password
 OPENAI_KEY=your-production-openai-key
 ```
 
-### **SSL Configuration**
+<!-- ### **SSL Configuration**
 - Use environment variables for SSL certificates
-- Implement proper CORS policies
+- Implement proper CORS policies -->
 
 ## 🤝 Contributing
 
@@ -332,22 +331,22 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 4. Push to branch: `git push origin feature/amazing-feature`
 5. Open a Pull Request
 
-## 📄 License
+<!-- ## 📄 License
 
-This project is licensed under the **ISC License**. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the **ISC License**. See the [LICENSE](LICENSE) file for details. -->
 
 ## 🌟 Acknowledgments
 
 - **OpenAI** for providing powerful AI capabilities
 - **Express.js** community for excellent web framework
-- **Sequelize** team for robust ORM
+- **Sequelize** for robust ORM
 - **TailwindCSS** for modern styling approach
 
 ## 📞 Support & Contact
 
 - **🐛 Issues**: [GitHub Issues](https://github.com/JTeban1/Proyect/issues)
 <!-- - **📖 Documentation**: [Project Wiki](https://github.com/JTeban1/Proyect/wiki) -->
-- **💬 Discussions**: [GitHub Discussions](https://github.com/JTeban1/Proyect/discussions)
+<!-- - **💬 Discussions**: [GitHub Discussions](https://github.com/JTeban1/Proyect/discussions) -->
 
 ---
 
