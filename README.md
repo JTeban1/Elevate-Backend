@@ -70,10 +70,15 @@ Elevate follows a robust **MVC (Model-View-Controller)** architecture pattern wi
 ### **Backend**
 - **Runtime**: Node.js 20+
 - **Framework**: Express.js 5.1.0
-- **Database**: MySQL 8.0+ with Sequelize ORM
-- **Authentication**: Argon2id password hashing
-- **AI/ML**: OpenAI GPT-4 API integration
-- **File Processing**: Multer for file uploads, PDF extraction
+- **Database**: MySQL 8.0+ with Sequelize 6.37.7
+- **Database Driver**: mysql2 3.14.3
+- **Authentication**: Argon2 0.44.0 password hashing (argon2id)
+- **AI/ML**: OpenAI 5.15.0 GPT-4 API integration
+- **File Processing**: Multer 2.0.2 for file uploads
+- **PDF Processing**: PDF-extraction 1.0.2 for CV text extraction
+- **Environment Config**: dotenv 17.2.1 for environment variables
+- **CORS**: cors 2.8.5 for cross-origin requests
+- **File System**: fs 0.0.1-security for file operations
 
 ### **Frontend**
 - **Languages**: Modern ES6+ JavaScript, HTML5, CSS3
@@ -82,7 +87,7 @@ Elevate follows a robust **MVC (Model-View-Controller)** architecture pattern wi
 - **Features**: SPA routing, real-time updates, multi-language support
 
 ### **Infrastructure**
-- **Database**: Relational MySQL with optimized schema
+- **Database**: Relational MySQL 8.0+ with optimized schema
 - **Storage**: File system with secure file handling
 - **API**: RESTful API design with consistent response patterns
 - **Security**: CORS, input validation, secure headers
