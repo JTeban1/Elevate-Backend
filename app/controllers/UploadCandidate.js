@@ -185,7 +185,7 @@ export const processUploadedCVsController = async (req, res) => {
     }
 
   // 3. Filter out empty candidates (without name or email)
-    const validCandidates = allCandidates.filter((c) => c && c.name && c.email);
+    const validCandidates = allCandidates.filter((c) => c && c.name);
 
   // 4. Save to the DB
     const Candidate = (await import("../models/entities/CandidateEntity.js"))
