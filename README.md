@@ -4,7 +4,7 @@
 [![Express](https://img.shields.io/badge/Express-5.1.0-blue)](https://expressjs.com/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-orange)](https://mysql.com/)
 [![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4-purple)](https://openai.com/)
-[![License](https://img.shields.io/badge/License-ISC-yellow)](LICENSE)
+<!-- [![License](https://img.shields.io/badge/License-ISC-yellow)](LICENSE) -->
 
 **Elevate** is a modern, AI-powered recruitment platform designed to streamline the hiring process for companies of all sizes. Built with cutting-edge technologies, it combines artificial intelligence with intuitive user experience to transform how organizations discover, evaluate, and hire top talent.
 
